@@ -3,7 +3,6 @@
 % GECCO Submission Number: 
 % GECCO Camera-Ready Number: 
 
-\usepackage{cite}
 \usepackage{graphicx}
 \usepackage{psfrag}
 \usepackage{subfigure}
@@ -24,6 +23,10 @@
 \setlength{\graphwidth}{0.46\textwidth}
 \setlength{\figheight}{0.26\textheight}
 \setlength{\figsmallheight}{0.8\figheight}
+
+% AML bibliography references
+\newcommand{\bib}[1]{../../papers/#1}
+
 
 \providecommand{\Norm}[2][2]{\ensuremath{\|#2\|_{#1}}}
 \providecommand{\Est}[1]{\ensuremath{\widehat{#1}}}
@@ -100,11 +103,6 @@
 \renewcommand{\dbltopfraction}{0.8}
 \renewcommand{\textfraction}{0.1}
 
-% Names of things
-\providecommand{\RadiusSEPSOLong}{Contracting Radius SEPSO}
-\providecommand{\DistanceSEPSOLong}{Contracting Radius, Increasing Bounce SEPSO}
-\providecommand{\RadiusSEPSO}{CRS}
-\providecommand{\DistanceSEPSO}{CRIBS}
 
 %\widowpenalty=10000
 %\clubpenalty=10000
@@ -162,8 +160,8 @@ TODO.
 \section{Particle Swarm Optimization}
 \label{sec:pso}
 
-TODO: **Matt, you probably want to put this in your own words, but if we
-really run out of time, you don't really have to.**
+TODO: Matt, you probably want to put this in your own words, but if we
+really run out of time, you don't really have to.
 
 Particle Swarm Optimization simulates the motion of particles in the domain of
 a function.  These particles search for the optimum by evaluating the function
@@ -188,9 +186,9 @@ $\pvel$ with respect to personal best $\pbest$ and global best $\gbest$:
 \label{eq:posupdate}
     \ppos_{t+1} &= \ppos_t + \pvel_{t+1}
 \end{align}
-where \(\coeff_1 = \coeff_2 = 2.05\), \(\URand()\) is a vector of samples
-drawn from a standard uniform distribution, and \( \otimes \) represents
-element-wise multiplication.  The constriction constant \( \constriction \)
+where $\coeff_1 = \coeff_2 = 2.05$, $\URand()$ is a vector of samples
+drawn from a standard uniform distribution, and $\otimes$ represents
+element-wise multiplication.  The constriction constant $\constriction$
 is:
 \begin{align}
     \notag
@@ -198,7 +196,7 @@ is:
 \end{align}
 where
 $\coeff = \coeff_1 + \coeff_2$ and $\kappa$ is usually
-$1.0$.~\citep{clerc-tec02}
+$1.0$~\cite{clerc-tec02}.
 
 
 
@@ -209,9 +207,9 @@ $1.0$.~\citep{clerc-tec02}
 \section{MapReduce}
 \label{sec:mapreduce}
 
-TODO: **Matt, you probably want to put this in your own words, but if we
+TODO: Matt, you probably want to put this in your own words, but if we
 really run out of time, you don't really have to.  This should also be trimmed
-down.**
+down.
 
 MapReduce is a functional programming model that is well suited to parallel
 computation.  In the model, a program consists of a map function and a reduce
@@ -235,7 +233,7 @@ key and outputs a new list of values (often ``reduced'' in length from the
 original list of values).
 
 The following notation and example are based on the original
-presentation~\citep{dean-osdi04}.
+presentation~\cite{dean-osdi04}.
 
 \subsection{Map Function}
 
@@ -567,11 +565,11 @@ with failed nodes.
 
 \bibliographystyle{plain}
 \bibliography{%
-\bib{mapreduce/dean-osdi04},%
-\bib{pso/clerc-tec02},%
-\bib{pso/kennedy-icnn95},%
-\bib{pso/bratton-sis07},%
-\bib{aml/mcnabb-cec07}}
+    \bib{mapreduce/dean-osdi04},%
+    \bib{pso/clerc-tec02},%
+    \bib{pso/kennedy-icnn95},%
+    \bib{pso/bratton-sis07},%
+    \bib{aml/mcnabb-cec07}}
 
 
 \end{document}
