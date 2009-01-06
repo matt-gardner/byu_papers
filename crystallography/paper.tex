@@ -115,18 +115,23 @@
 %\crdata{1-59593-186-4/06/0007}
 
 \title{MRPSO: MapReduce Particle Swarm Optimization}
-\numberofauthors{3}
+\numberofauthors{4}
 %\author{%
+%\alignauthor Matthew Gardner\\
+%    \affaddr{Brigham Young University}\\
+%    \affaddr{Computer Science Dept.}\\
+%    \affaddr{3361 TMCB, Provo, UT 84602}\\
+%    \email{mjg82@cs.byu.edu}
 %\alignauthor Andrew McNabb\\
 %    \affaddr{Brigham Young University}\\
 %    \affaddr{Computer Science Dept.}\\
 %    \affaddr{3361 TMCB, Provo, UT 84602}\\
 %    \email{a@cs.byu.edu}
-%\alignauthor Christopher Monson\\
-%    \affaddr{Google, Inc.}\\
-%    \affaddr{4720 Forbes Ave., Lower Level}\\
-%    \affaddr{Pittsburgh, PA 15213}\\
-%    \email{c@cs.byu.edu}
+%\alignauthor Branton Campbell\\
+%    \affaddr{Brigham Young University}\\
+%    \affaddr{Physics Dept.}\\
+%    \affaddr{N261 ESC, Provo, UT 84602}\\
+%    \email{branton_campbell@byu.edu}
 %\alignauthor Kevin Seppi\\
 %    \affaddr{Brigham Young University}\\
 %    \affaddr{Computer Science Dept.}\\
@@ -144,7 +149,7 @@ TODO.
 \end{abstract}
 
 \section*{Track Category}
-FIXME. Ant Colony Optimization, Swarm Intelligence, and Artificial Immune Systems
+FIXME. Ant Colony Optimization, Swarm Intelligence
 
 \category{FIXME. G.1.6}{Numerical Analysis}{Optimization}[\\ nonlinear programming, unconstrained optimization]
 
@@ -153,9 +158,50 @@ FIXME. Ant Colony Optimization, Swarm Intelligence, and Artificial Immune System
 \keywords{FIXME. Swarm intelligence, Parallelization, Optimization}
 
 \section{Introduction}
+\label{sec:intro}
 
 TODO.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Crystallography
+
+\section{Crystallography}
+\label{sec:crystallography}
+
+FIXME.
+TODO: Where to put the butterfly problem definition? Should I describe 
+simulated annealing or gradient descent, at least briefly?
+
+The point of crystallography is to determine the structure of a crystal.  This
+is done by shining x-rays through the crystal and observing the patterns that
+come out.  Those patterns are then compared to the output of a model of the 
+crystal -- if the two match, the model can be considered correct.  The model
+may consist of the positions of all of the atoms in the crystal, the 
+distortion coefficients of the materials, the length and width of nanopolar
+domains, or various other parameters.  The task of finding the parameters to 
+the model that best fit the data is well suited to optimization techniques.  
+The function to be optimized is an error function -- the average difference
+between the model output and the data, for every data point.
+
+There are commercial packages that readily solve some crystallography problems,
+such as (ask Dr. Campbell), that uses simulated annealing for specific types 
+of problems.  Gradient descent is also a commonly used method for solving these
+problems.  Particle swarm optimization, however (to our knowledge?), has not 
+been used.  
+
+We encountered a problem for which gradient descent proved uneffective.  
+
+To solve crystallography problems, one must fit the parameters of the model
+to the data.  The more data is used, the more accurate the result will be, but
+with large amounts of data the evaluation time can be inhibitively large.  In
+our first attempts at solving this problem, the function evaluation took close
+to an hour.  We then trimmed the amount of data we were using, and the time for
+a function evaluation decreased to about four minutes.  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PSO
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
