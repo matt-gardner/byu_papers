@@ -145,7 +145,12 @@
 \maketitle
 
 \begin{abstract}
-TODO.
+FIXME.
+
+In this paper we present a crystallography problem whose function evaluation
+takes several minutes to evaluate.  We discuss issues in solving this problem
+specifically, and in optimizing expensive functions in general with particle 
+swarm optimization.
 \end{abstract}
 
 \section*{Track Category}
@@ -163,55 +168,53 @@ FIXME. Ant Colony Optimization, Swarm Intelligence
 \section{Introduction}
 \label{sec:intro}
 
-FIXME.  A lot.
-
-TODO.
-Particle swarm optimization is most often used with functions that are quickly
-evaluated.  Many real-life problems take much longer.  What does one do when 
-presented with a function that takes several minutes or hours to evaluate?  
-
-In this paper we present a crystallography problem whose function evaluation
-takes several minutes to evaluate.  We discuss issues in solving this problem
-specifically, and in optimizing expensive functions in general with particle 
-swarm optimization.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Crystallography
-
-\section{Crystallography}
-\label{sec:crystallography}
-
 FIXME.
-TODO: Where to put the butterfly problem definition? Should I describe 
-simulated annealing or gradient descent, at least briefly?
 
-The point of crystallography is to determine the structure of a crystal.  This
+Crystallography is the science of determining the structure of a crystal.  This
 is done by shining x-rays through the crystal and observing the patterns that
-come out.  Those patterns are then compared to the output of a model of the 
-crystal -- if the two match, the model can be considered correct.  The model
-may consist of the positions of all of the atoms in the crystal, the 
-distortion coefficients of the materials, the length and width of nanopolar
-domains, or various other parameters.  The task of finding the parameters to 
-the model that best fit the data is well suited to optimization techniques.  
-The function to be optimized is an error function -- the average difference
-between the model output and the data, for every data point.
+come out, generally consisting of intensities of light at various points in
+space.  Those patterns are then compared to the output of a model of the
+crystal -- the predicted intensities of light at the same points in space.  If
+the two match, the model can be considered correct.  The model may consist of
+the positions of all of the atoms in the crystal, the distortion coefficients
+of the material, the length and width of nanopolar domains, or various other
+parameters.  The task of finding the parameters to the model that best fit the
+data is well suited to optimization techniques.  The function to be optimized
+is an error function -- the average difference between the model output and the
+data, for every data point.
 
 There are commercial packages that readily solve some crystallography problems,
-such as (ask Dr. Campbell), that uses simulated annealing for specific types 
-of problems.  Gradient descent is also a commonly used method for solving these
-problems.  Particle swarm optimization, however (to our knowledge?), has not 
-been used.  
+such as (ask Dr. Campbell), that uses simulated annealing for specific types of
+problems.  Gradient descent is also a commonly used method for solving these
+problems.  Particle swarm optimization (PSO), described in a later section, has
+also been used, but only in limited contexts \cite{liu-anc05}.
 
-We encountered a problem for which gradient descent proved uneffective.  
+To solve crystallography problems, one must fit the parameters of the model to
+the data.  The more data is used, the more accurate the result will be, but
+with large amounts of data the error function evaluation time can be
+inhibitively large, easily reaching minutes or even hours.  In such cases,
+performing any kind of optimization on a single machine is infeasible; parallel
+techniques are needed.
 
-To solve crystallography problems, one must fit the parameters of the model
-to the data.  The more data is used, the more accurate the result will be, but
-with large amounts of data the evaluation time can be inhibitively large.  In
-our first attempts at solving this problem, the function evaluation took close
-to an hour.  We then trimmed the amount of data we were using, and the time for
-a function evaluation decreased to about four minutes.  
+We present a crystallography problem whose error function evaluation takes
+several minutes. We then present our solution to the problem, using MRPSO, a
+parallel particle swarm optimization implementation \cite{mcnabb-cec07}.  The
+issues we encountered and solved dealing with this crystallography problem are
+applicable to any problem whose function evaluation takes large amounts of
+time.  
+
+Section~\ref{sec:butterfly} introduces the crystallography problem we solved.
+Section~\ref{sec:pso} explains the particle swarm optimization algorithm, and
+section~\ref{sec:mapreduce} explains MapReduce and PSO in the context of
+MapReduce.  Section~\ref{sec:results} then describes our solution to the
+problem.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Butterfly Problem
+\section{Crystallography Problem}
+\label{sec:butterfly}
+TODO.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PSO
@@ -618,6 +621,26 @@ formulation of the problem allows the work to be divided in small enough
 pieces that the MapReduce system can balance work across processors and deal
 with failed nodes.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Results
+\section{Results (Maybe Issues with Optimization?)}
+\label{sec:results}
+TODO.
+
+In the course of solving this problem, it was discovered that a few of the 
+variables were correlated.  In initial attempts at optimization, the algorithm
+never converged -- the function value reached a certain point and stayed close
+to that point while a couple of the parameters fluctuated greatly in a 
+correlated fashion.  Figure (make figure) shows a range of values that two of
+parameters took on, without changing the function value more than (check number)
+.5, or this \%.  Upon noticing this empirical correlation, the function was
+more closely examined, and a theoretical correlation was also discovered.  
+Given that the parameters were correlated and the function had too many free
+variables, one of the parameters was fixed at a reasonable value, and the 
+optimization algorithm successfully and quickly solved the problem.
+
+Work has been done on the use of particle swarm optimization in parallel with 
+large numbers of particles \cite{mcnabb-gecco09}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
@@ -628,7 +651,8 @@ with failed nodes.
     \bib{pso/clerc-tec02},%
     \bib{pso/kennedy-icnn95},%
     \bib{pso/bratton-sis07},%
-    \bib{aml/mcnabb-cec07}}
+    \bib{aml/mcnabb-cec07},%
+    \bib{pso/crystallography/liu-anc05}}
 
 
 \end{document}
