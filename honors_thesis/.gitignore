@@ -1,0 +1,10 @@
+*.swp
+paper.aux*
+paper.d
+*.log
+paper.bbl
+paper.blg
+paper.dvi
+paper.fls
+paper.pdf
+paper.ps

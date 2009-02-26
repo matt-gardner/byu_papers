@@ -622,25 +622,42 @@ pieces that the MapReduce system can balance work across processors and deal
 with failed nodes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Issues with Optimization
+\section{Issues with Optimization}
+\label{sec:issues}
+TODO.
+
+In the course of solving this problem, it was discovered that a few of the
+variables were correlated.  In initial attempts at optimization, the algorithm
+never converged -- the function value reached a certain point and stayed close
+to that point while a couple of the parameters fluctuated greatly in a
+correlated fashion.  Figure (make figure) shows a range of values that two of
+parameters took on, without changing the function value more than (check
+number) .5, or this \%.  Upon noticing this empirical correlation, the function
+was more closely examined, and a theoretical correlation was also discovered.
+Given that the parameters were correlated and the function had too many free
+variables, one of the parameters was fixed at a reasonable value, and the
+optimization algorithm successfully and quickly solved the problem.
+
+The topology that was used in the PSO algorithm was the gbest topology.
+Experiments were done with lbest to determine which was more efficient, and it
+was discovered that for this problem gbest was better.  Averages over three
+runs are shown in Figure (make figure) for the two topologies.  
+
+Work has been done showing that when running PSO in parallel with large swarms
+more complicated topologies can do just as well as gbest while decreasing the
+amount of communication required~\cite{mcnabb-gecco09}.  However, as the
+function evaluation for this problem takes several minutes, the amount of
+communication time for gbest is negligible when compared to the function
+evaluation time.  The communication overhead for each iteration was discovered
+to be about 8 seconds for the MRPSO implementation used.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Results
-\section{Results (Maybe Issues with Optimization?)}
+\section{Results}
 \label{sec:results}
 TODO.
 
-In the course of solving this problem, it was discovered that a few of the 
-variables were correlated.  In initial attempts at optimization, the algorithm
-never converged -- the function value reached a certain point and stayed close
-to that point while a couple of the parameters fluctuated greatly in a 
-correlated fashion.  Figure (make figure) shows a range of values that two of
-parameters took on, without changing the function value more than (check number)
-.5, or this \%.  Upon noticing this empirical correlation, the function was
-more closely examined, and a theoretical correlation was also discovered.  
-Given that the parameters were correlated and the function had too many free
-variables, one of the parameters was fixed at a reasonable value, and the 
-optimization algorithm successfully and quickly solved the problem.
-
-Work has been done on the use of particle swarm optimization in parallel with 
-large numbers of particles \cite{mcnabb-gecco09}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
