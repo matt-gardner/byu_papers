@@ -31,7 +31,6 @@ computation performed.  The work I propose focuses on one of those algorithms,
 particle swarm optimization, and improving its performance in a large-scale,
 parallel world.
 
-
 \section{Statement of Intent}
 
 I will study the feasibility and potential performance gain of speculative
@@ -40,28 +39,38 @@ use of additional computational resources, presumably extra processors running
 in parallel, to perform two or more iterations of particle swarm optimization
 at a time.
 
-\section{Methodology}
+\section{Procedures}
 
-The methodology of this research will procede as follows:
+The bulk of the work for this project will be writing code and running
+experiments.  Research has been done to see what has been done in the field, to
+know what the results need to be compared to.  In implementing speculative
+execution, care will be taken that the algorithm behaves exactly like the
+original, standard particle swarm optimization (PSO) algorithm in every aspect
+except the speed-up.  The same constants will be used as are commonly published
+in the literature.
 
-Compare to original How to control for external factors (nice in CS, though not
-in other sciences) Once you've run experiments, what are you looking for?
-Anything you can say about what code you're using, and how you intend to
-compare results.  People are concerned about how you're going to draw
-conclusions.  It matters what kind of statistical tests you are going to do.
-We're going to run a number of trials because it's a randomized algorithm.
-Test against multiple functions, with multiple topologies - some synthetic
-functions, and some real-world applications.  Run with standard constriction
-coefficient.  How do you compare your results to things other people have done?
-
-
-\begin{itemize}
-
-\item
-
-\end{itemize}
+In running experiments, many trials will be run and averaged, as there is a
+random component in this algorithm.  Statistics will be used for all
+comparisons to the original PSO algorithm.  The success criterion will be a
+better performance of the algorithm as measured by the lowest function
+evaluation seen over a number of iterations for several benchmark and
+real-world problems.  Speculative execution takes more work than regular PSO
+with the same number of particles, so the two algorithms will be compared at
+points where they use equal amounts of processing power.
 
 \section{Preliminary Prospectus of Finished Thesis}
+
+\begin{enumerate}
+\item Introduction
+\item Related Work
+\item Particle Swarm Optimization
+\item Speculative Execution
+\item Speculative Execution in PSO
+\item Experiments
+\item Results and Conclusions
+\item Future Work
+\item References
+\end{enumerate}
 
 \section{Preliminary Research}
 
