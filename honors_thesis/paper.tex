@@ -9,11 +9,57 @@
 \begin{document}
 \maketitle
 
-\section{Statement of Intent}
-
 \section{Background and Significance}
 
-\section{Methodology/Procedures}
+Optimization problems are ubiquitous in our modern world.  Businesses such as
+Google need to decide where to place ads, scientists need to fit models to
+data, and airlines need to schedule their flights.  All of those problems are
+optimization problems, and optimization techniques can be used to find
+solutions.  Optimization algorithms are derived from all sorts of natural
+phenomena.  Some methods look at the landscape of the function as they are
+searching and follow hills to the best values, as in the gradient ascent
+method.  Other methods take ideas from biology or metallurgy, like genetic
+algorithms and simulated annealing.  Particle swarm optimization is a recently
+developed optimization technique that draws on ideas from the sociology of
+flocking birds.  All of these methods, however, are fundamentally sequential in
+nature---they need to be run in a specific order, and because of that, they are
+typically only run on one machine.  The problems people want to solve are
+getting bigger, and larger problems need to run on multiple machines in
+parallel.  Parallel implementations of these algorithms have been attempted,
+but they do not often perform as well as sequential versions for the amount of
+computation performed.  The work I propose focuses on one of those algorithms,
+particle swarm optimization, and improving its performance in a large-scale,
+parallel world.
+
+
+\section{Statement of Intent}
+
+I will study the feasibility and potential performance gain of speculative
+execution in particle swarm optimization.  By speculative execution I mean the
+use of additional computational resources, presumably extra processors running
+in parallel, to perform two or more iterations of particle swarm optimization
+at a time.
+
+\section{Methodology}
+
+The methodology of this research will procede as follows:
+
+Compare to original How to control for external factors (nice in CS, though not
+in other sciences) Once you've run experiments, what are you looking for?
+Anything you can say about what code you're using, and how you intend to
+compare results.  People are concerned about how you're going to draw
+conclusions.  It matters what kind of statistical tests you are going to do.
+We're going to run a number of trials because it's a randomized algorithm.
+Test against multiple functions, with multiple topologies - some synthetic
+functions, and some real-world applications.  Run with standard constriction
+coefficient.  How do you compare your results to things other people have done?
+
+
+\begin{itemize}
+
+\item
+
+\end{itemize}
 
 \section{Preliminary Prospectus of Finished Thesis}
 
@@ -21,11 +67,34 @@
 
 \section{Qualifications of Investigator}
 
+I am a Computer Science major.  My main focuses in my undergraduate career have
+been optimization, natural language processing, and machine learning.  The
+optimization emphasis has come mainly in my work with Dr. Kevin Seppi, for whom
+I am a research assistant.  I have spent the last year working with him,
+working mainly on particle swarm optimization topics.  We worked together with
+Dr. Branton Campbell, a physics professor, to solve a crystallography problem
+for him using a parallel implementation of PSO.  Those results will be
+submitted to Nature Materials.  Recently we, along with a graduate student who
+works in the lab, submitted a paper to the Congress on Evolutionary
+Computation, a major venue for optimization techniques.  The paper was on
+topologies and communication in large particle swarms, and formed the
+beginnings of the work I propose.
+
 \section{Qualifications of Faculty Advisor}
+
+Dr. Kevin Seppi is the head of the Applied Machine Learning Laboratory at BYU.
+Three of his last five graduate students have done their graduate work in
+particle swarm optimization, and he has authored or co-authored over 10 papers
+on the topic.  I took CS 236 from him in the fall of 2007 and decided I wanted
+to do research in the area he was researching, so I joined his lab.  I too
+became interested in PSO and have worked in that area for the past year.
 
 \section{Schedule}
 
 \section{Expenses/Budget}
+
+This project will not require any outside funding.  The only expenditure
+will be my own time researching, conducting experiments, and writing.
 
 \section{Closure}
 
