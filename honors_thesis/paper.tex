@@ -1,8 +1,22 @@
 \documentclass[onecolumn, 12pt]{article}
 \usepackage{fullpage}
 \usepackage{graphicx}
+\usepackage{cite}
+\usepackage{amsmath}
 
-\title{Honors Thesis}
+\DeclareMathOperator{\URand}{U}
+\providecommand{\ppos}{\ensuremath{\Vec{x}}}
+\providecommand{\pvel}{\ensuremath{\Vec{v}}}
+\providecommand{\gbest}{\ensuremath{\Vec{g}}}
+\providecommand{\pbest}{\ensuremath{\Vec{p}}}
+\providecommand{\constriction}{\ensuremath{\chi}}
+\providecommand{\coeff}{\ensuremath{\phi}}
+\newcommand{\bib}[1]{../../bib/#1}
+
+\topmargin .5in
+
+
+\title{Honors Thesis Proposal}
 \author{Matthew Gardner}
 \date{\today}
 
@@ -37,28 +51,32 @@ I will study the feasibility and potential performance gain of speculative
 execution in particle swarm optimization.  By speculative execution I mean the
 use of additional computational resources, presumably extra processors running
 in parallel, to perform two or more iterations of particle swarm optimization
-at a time.
+at a time, speeding up the algorithm significantly.
 
 \section{Procedures}
 
 The bulk of the work for this project will be writing code and running
-experiments.  Research has been done to see what has been done in the field, to
-know what the results need to be compared to.  In implementing speculative
-execution, care will be taken that the algorithm behaves exactly like the
-original, standard particle swarm optimization (PSO) algorithm in every aspect
-except the speed-up.  The same constants will be used as are commonly published
-in the literature.
+experiments.  I have already read many conference papers on particle swarm
+optimization to know the current state of the field, so I will know what the
+results need to be compared to.  In implementing speculative execution, I will
+take care that the algorithm behaves exactly like the original, standard
+particle swarm optimization (PSO) algorithm in every aspect except the
+speed-up.  The same constants will be used as are commonly published in the
+literature.
 
 In running experiments, many trials will be run and averaged, as there is a
-random component in this algorithm.  Statistics will be used for all
+random component in this algorithm.  I will use statistical tests for all
 comparisons to the original PSO algorithm.  The success criterion will be a
 better performance of the algorithm as measured by the lowest function
 evaluation seen over a number of iterations for several benchmark and
-real-world problems.  Speculative execution takes more work than regular PSO
-with the same number of particles, so the two algorithms will be compared at
-points where they use equal amounts of processing power.
+real-world problems.  Speculative execution takes more computation than regular
+PSO with the same number of particles, so the two algorithms will be compared
+at points where they use equal amounts of processing power.
 
 \section{Preliminary Prospectus of Finished Thesis}
+
+The finished thesis will be presented as a conference paper, including the
+following sections:
 
 \begin{enumerate}
 \item Introduction
@@ -73,6 +91,67 @@ points where they use equal amounts of processing power.
 \end{enumerate}
 
 \section{Preliminary Research}
+
+\subsection{Particle Swarm Optimization}
+
+Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
+Eberhart.  It tries to intelligently search a multi-dimensional space by
+mimicking the swarming and flocking behavior of birds and other
+animals.~\cite{kennedy-icnn95} It is a sociological algorithm that depends on
+interaction between particles to quickly and consistently find the optimal
+solution to a problem.  The algorithm keeps track of a number of potential
+solutions, called particles, which move somewhat randomly through the search
+space.  Particles remember the best place they have been, or solution they have
+evaluated, and are attracted back to that place, as well as to the best
+solution other particles have seen.  Specifically, the formulas for updating
+the position $\ppos_t$ and velocity $\pvel_t$ of a particle at iteration $t$ are
+as follows:
+\begin{align}
+\label{eq:velupdate}
+	\pvel_{t+1} &=
+		\constriction \left[ \pvel_t +
+			\coeff_1\URand()\otimes(\pbest - \ppos_t) +
+			\coeff_2\URand()\otimes(\gbest - \ppos_t)
+		\right] \\
+\label{eq:posupdate}
+	\ppos_{t+1} &= \ppos_t + \pvel_{t+1}
+\end{align}
+where \( \URand() \) is a vector of random numbers drawn from a uniform
+distribution, the \( \otimes \) operator is an element-wise vector
+multiplication, $\pbest$ is the best position the current particle has seen,
+and $\gbest$ is the best position any of the other particles have seen.  \(
+\coeff_1 \), \( \coeff_2 \), and \( \constriction \) are parameters with
+prescribed values required to ensure convergence (2.05, 2.05, and .73,
+respectively).~\cite{clerc-tec02}~\cite{poli-aea08}
+
+The sociology in this algorithm defines which other particles form the
+``neighborhood'' of a given particle---the other particles whose best solution
+it sees.  There are many ways to define a particle's neighborhood, varying from
+the entire rest of the swarm to just one other particle.  
+
+The way a neighborhood is defined can have drastic effects on the performance
+of the algorithm; the more neighbors each particle has, the faster information
+spreads throughout the particles, and the quicker the algorithm converges.  For
+some problems it is possible that the algorithm converges too quickly and gets
+caught in a local optimum; it stops on a hill when there is a mountain next to
+it.  For those kinds of problems, less communication, or smaller neighborhoods,
+is often preferable.
+
+\subsection{Speculative Execution}
+
+Speculative execution in a program is the execution of code that may or may not
+end up actually being needed.  Modern processors routinely do this when a
+conditional branch is encountered; they try to predict which branch will
+actually be needed, and continue their execution.  If it turns out that the
+prediction was incorrect, the work is discarded.  But if the prediction was
+right, the program can execute much faster than if it had waited on the branch.  
+
+In particle swarm optimization, speculative execution can be performed because
+the next position a particle moves to doesn't depend on the value of the
+function at its current position.  That means you can just compute all possible
+next positions (depending on whether or not the gbest or pbest were updated---\gbest 
+and \pbest in equation \ref{eq:velupdate} got updated), and evaluate each position 
+in parallel.  That computes two iterations at the same time.
 
 \section{Qualifications of Investigator}
 
@@ -96,9 +175,32 @@ Three of his last five graduate students have done their graduate work in
 particle swarm optimization, and he has authored or co-authored over 10 papers
 on the topic.  I took CS 236 from him in the fall of 2007 and decided I wanted
 to do research in the area he was researching, so I joined his lab.  I too
-became interested in PSO and have worked in that area for the past year.
+became interested in PSO and have worked in that area with him for the past
+year.
 
 \section{Schedule}
+
+\begin{tabular}{|l|l|}
+\hline
+Run preliminary tests to ensure feasibility & February 28, 2009 \\
+\hline
+Finish writing and debugging code & March 30, 2009 \\
+\hline
+Finish gathering data and statistics & June 30, 2009 \\
+\hline
+Complete analysis of data and begin writing thesis & September 1, 2009 \\
+\hline
+Submit completed copy of thesis to advisor & November 15, 2009 \\
+\hline
+Submit paper detailing results to CEC 2010 & December 20, 2009 \\
+\hline
+Final thesis and portfolio submitted & February 1, 2010 \\
+\hline
+Thesis defense completed & March 1, 2010 \\
+\hline
+Final four thesis copies submitted & March 8, 2010 \\
+\hline
+\end{tabular}
 
 \section{Expenses/Budget}
 
@@ -107,9 +209,13 @@ will be my own time researching, conducting experiments, and writing.
 
 \section{Closure}
 
-\section{References}
+Thank you for reviewing my proposal.  I look forward to exploring speculative
+execution in particle swarm optimization.
 
-\section{Appendices}
-
+\bibliographystyle{plain}
+\bibliography{%
+\bib{pso/kennedy-icnn95},%
+\bib{pso/clerc-tec02},%
+\bib{pso/poli-aea08}}
 
 \end{document}
