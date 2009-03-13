@@ -29,7 +29,7 @@ Optimization problems are ubiquitous in our modern world.  Businesses such as
 Google need to decide where to place ads, scientists need to fit models to
 data, and airlines need to schedule their flights.  All of those problems are
 optimization problems, and optimization techniques can be used to find
-solutions.  Optimization algorithms are derived from all sorts of natural
+solutions.  Optimization algorithms have been derived from all sorts of natural
 phenomena.  Some methods look at the landscape of the function as they are
 searching and follow hills to the best values, as in the gradient ascent
 method.  Other methods take ideas from biology or metallurgy, like genetic
@@ -61,22 +61,21 @@ optimization to know the current state of the field, so I will know what the
 results need to be compared to.  In implementing speculative execution, I will
 take care that the algorithm behaves exactly like the original, standard
 particle swarm optimization (PSO) algorithm in every aspect except the
-speed-up.  The same constants will be used as are commonly published in the
-literature.
+speed-up.  My work can then be accurately compared to other work in the field.
 
 In running experiments, many trials will be run and averaged, as there is a
 random component in this algorithm.  I will use statistical tests for all
 comparisons to the original PSO algorithm.  The success criterion will be a
 better performance of the algorithm as measured by the lowest function
-evaluation seen over a number of iterations for several benchmark and
-real-world problems.  Speculative execution takes more computation than regular
+evaluation seen over a number of function evaluations for several benchmark and
+real-world problems.  Speculative execution takes more computation than parallel
 PSO with the same number of particles, so the two algorithms will be compared
-at points where they use equal amounts of processing power.
+at points where they use equal amounts of function evaluations.
 
 \section{Preliminary Prospectus of Finished Thesis}
 
-The finished thesis will be presented as a conference paper, including the
-following sections:
+The finished thesis will be presented in the format of a peer-reviewed
+conference paper, including the following sections:
 
 \begin{enumerate}
 \item Introduction
@@ -142,16 +141,27 @@ is often preferable.
 Speculative execution in a program is the execution of code that may or may not
 end up actually being needed.  Modern processors routinely do this when a
 conditional branch is encountered; they try to predict which branch will
-actually be needed, and continue their execution.  If it turns out that the
+actually be needed and continue their execution.  If it turns out that the
 prediction was incorrect, the work is discarded.  But if the prediction was
 right, the program can execute much faster than if it had waited on the branch.  
 
-In particle swarm optimization, speculative execution can be performed because
-the next position a particle moves to doesn't depend on the value of the
-function at its current position.  That means you can just compute all possible
-next positions (depending on whether or not the gbest or pbest were updated---\gbest 
-and \pbest in equation \ref{eq:velupdate} got updated), and evaluate each position 
-in parallel.  That computes two iterations at the same time.
+In a lot of optimization algorithms, speculative execution is impossible,
+because the next iteration of the algorithm depends on the evaluation of the
+function during the previous iteration.  In simulated annealing, for instance,
+the probability of accepting a new position depends on the difference in
+function value between the new position and the current one.  In gradient
+descent, the gradient of the function must be determined (which includes
+actually evaluating it) to know how far to move before sampling the function
+again.  But particle swarm optimization is rather unique in that it doesn't
+require the evaluation of the function to know what the next position of each
+particle will be.  It simply depends on \emph{which} particle ended up having
+the best position and whether or not the current particle found a better spot
+than it had seen before.  That means you can just compute all possible next
+positions---all combinations of which particle is the new gbest and whether or
+not pbest was updated (\gbest and \pbest from \eqref{eq:velupdate})---and
+evaluate each position in parallel.  That computes two iterations at the same
+time.  It uses a lot of extra work to get the second iteration, but for some
+functions more iterations are worth more than extra particles.
 
 \section{Qualifications of Investigator}
 
@@ -162,10 +172,10 @@ I am a research assistant.  I have spent the last year working with him,
 working mainly on particle swarm optimization topics.  We worked together with
 Dr. Branton Campbell, a physics professor, to solve a crystallography problem
 for him using a parallel implementation of PSO.  Those results will be
-submitted to Nature Materials.  Recently we, along with a graduate student who
-works in the lab, submitted a paper to the Congress on Evolutionary
-Computation, a major venue for optimization techniques.  The paper was on
-topologies and communication in large particle swarms, and formed the
+submitted to Nature Materials.  Recently we, along with Andrew McNabb, a
+graduate student who works in the lab, submitted a paper to the Congress on
+Evolutionary Computation, a major venue for optimization techniques.  The paper
+was on topologies and communication in large particle swarms, and formed the
 beginnings of the work I propose.
 
 \section{Qualifications of Faculty Advisor}
