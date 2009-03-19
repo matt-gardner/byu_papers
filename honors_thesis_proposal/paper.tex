@@ -47,11 +47,12 @@ parallel world.
 
 \section{Statement of Intent}
 
-I will study the feasibility and potential performance gain of speculative
-execution in particle swarm optimization.  By speculative execution I mean the
-use of additional computational resources, presumably extra processors running
-in parallel, to perform two or more iterations of particle swarm optimization
-at a time, speeding up the algorithm significantly.
+I will study the feasibility and potential performance gain of a technique
+which we call speculative execution in particle swarm optimization.  By
+speculative execution I mean the use of additional computational resources,
+presumably extra processors running in parallel, to perform two or more
+iterations of particle swarm optimization at a time, speeding up the algorithm
+significantly.
 
 \section{Procedures}
 
@@ -68,9 +69,10 @@ random component in this algorithm.  I will use statistical tests for all
 comparisons to the original PSO algorithm.  The success criterion will be a
 better performance of the algorithm as measured by the lowest function
 evaluation seen over a number of function evaluations for several benchmark and
-real-world problems.  Speculative execution takes more computation than parallel
+real-world problems.  Speculative execution requires more function evaluations 
+per particle than a na\"ive parallel PSO, %TODO
 PSO with the same number of particles, so the two algorithms will be compared
-at points where they use equal amounts of function evaluations.
+at points where they use equal amounts of function evaluations per iteration.
 
 \section{Preliminary Prospectus of Finished Thesis}
 
@@ -117,10 +119,11 @@ as follows:
 \end{align}
 where \( \URand() \) is a vector of random numbers drawn from a uniform
 distribution, the \( \otimes \) operator is an element-wise vector
-multiplication, $\pbest$ is the best position the current particle has seen,
-and $\gbest$ is the best position any of the other particles have seen.  \(
-\coeff_1 \), \( \coeff_2 \), and \( \constriction \) are parameters with
-prescribed values required to ensure convergence (2.05, 2.05, and .73,
+multiplication, $\pbest$ (called pbest) is the best position the current
+particle has seen, and $\gbest$ (called gbest) is the best position any of the
+other particles have seen.  \( \coeff_1 \), \( \coeff_2 \), and \(
+\constriction \) are parameters with prescribed values required to ensure
+convergence (2.05, 2.05, and .73,
 respectively).~\cite{clerc-tec02}~\cite{poli-aea08}
 
 The sociology in this algorithm defines which other particles form the
@@ -145,23 +148,24 @@ actually be needed and continue their execution.  If it turns out that the
 prediction was incorrect, the work is discarded.  But if the prediction was
 right, the program can execute much faster than if it had waited on the branch.  
 
-In a lot of optimization algorithms, speculative execution is impossible,
-because the next iteration of the algorithm depends on the evaluation of the
-function during the previous iteration.  In simulated annealing, for instance,
-the probability of accepting a new position depends on the difference in
-function value between the new position and the current one.  In gradient
-descent, the gradient of the function must be determined (which includes
-actually evaluating it) to know how far to move before sampling the function
-again.  But particle swarm optimization is rather unique in that it doesn't
-require the evaluation of the function to know what the next position of each
-particle will be.  It simply depends on \emph{which} particle ended up having
-the best position and whether or not the current particle found a better spot
-than it had seen before.  That means you can just compute all possible next
-positions---all combinations of which particle is the new gbest and whether or
-not pbest was updated (\gbest and \pbest from \eqref{eq:velupdate})---and
-evaluate each position in parallel.  That computes two iterations at the same
-time.  It uses a lot of extra work to get the second iteration, but for some
-functions more iterations are worth more than extra particles.
+In many optimization algorithms speculative execution is impossible, because
+the next iteration of the algorithm depends on the evaluation of the function
+during the previous iteration.  In simulated annealing, for instance, the
+probability of accepting a new position depends on the difference in function
+value between the new position and the current one.  In gradient descent, the
+gradient of the function must be determined (which includes actually evaluating
+it) to know how far to move before sampling the function again.  But particle
+swarm optimization is rather unique in that it does not require the evaluation
+of the function to know what the next position of each particle will be.  It
+simply depends on \emph{which} particle ended up having the best position and
+whether or not the current particle found a better spot than it had seen
+before.  That means you can just compute all possible next positions---all
+combinations of which particle is the new gbest and whether or not pbest was
+updated (\gbest\ and \pbest\ from \eqref{eq:velupdate})---and evaluate each
+position in parallel.  That computes two iterations at the same time.  It uses
+a lot of extra work to get the second iteration, but for some functions
+performing more iterations makes more progress than adding extra particles.
+
 
 \section{Qualifications of Investigator}
 
@@ -194,7 +198,7 @@ year.
 \hline
 Run preliminary tests to ensure feasibility & February 28, 2009 \\
 \hline
-Finish writing and debugging code & March 30, 2009 \\
+Finish writing and debugging code & April 30, 2009 \\
 \hline
 Finish gathering data and statistics & June 30, 2009 \\
 \hline
@@ -214,8 +218,10 @@ Final four thesis copies submitted & March 8, 2010 \\
 
 \section{Expenses/Budget}
 
-This project will not require any outside funding.  The only expenditure
-will be my own time researching, conducting experiments, and writing.
+This project will not require any outside funding.  The only expenditure will
+be my own time researching, conducting experiments, and writing.  I have
+received a grant from the Office of Research and Creative Activities to perform
+this research, for which I am grateful.
 
 \section{Closure}
 
