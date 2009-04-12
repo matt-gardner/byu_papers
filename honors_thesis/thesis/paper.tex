@@ -55,9 +55,7 @@ brief description of optimization in general.  In Section~\ref{sec:topology},
 I describe the sociological aspect of particle swarm optimization and
 improvements that we have made for large swarms.  Section~\ref{sec:specex} then
 introduces the idea of speculative execution in general and shows how it can be
-done in particle swarm optimization.  Section~\ref{sec:results} shows results
-of experiments run, and in Section~\ref{sec:conclusion} I draw some
-conclusions.
+done in particle swarm optimization.  I then conclude in Section~\ref{sec:conclusion}.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -335,18 +333,23 @@ Complete in this case.
 Speculative execution in a program is the execution of code that may or may not
 end up actually being needed.  Modern processors routinely do this when a
 conditional branch is encountered---they try to predict which branch will
-actually be needed and continue their execution.  If it turns out that the
+end up being needed and continue their execution.  If it turns out that the
 prediction was incorrect, the work is discarded.  But if the prediction was
 right, the program can execute much faster than if it had waited on the branch.  
+
 \subsection{Speculative Execution in Particle Swarm Optimization}
 
 In many optimization algorithms speculative execution is impossible, because
 the next iteration of the algorithm depends on the evaluation of the function
-during the previous iteration.  In simulated annealing, for instance, the
-probability of accepting a new position depends on the difference in function
-value between the new position and the current one.  In gradient descent, the
-gradient of the function must be determined (which includes actually evaluating
-it) to know how far to move before sampling the function again.  
+during the previous iteration.  To know which positions to speculatively
+evaluate you have to already have evaluated the current position, and then it's
+not speculative anymore.  In simulated annealing, for instance, the probability
+of accepting a new position depends on the difference in function value between
+the new position and the current one.  In gradient descent, the gradient of the
+function must be determined (which includes actually evaluating it) to know how
+far to move before sampling the function again.  It may be possible to modify
+these algorithms to allow for speculative execution, but their standard
+executions cannot be done speculatively.
 
 Particle swarm optimization is rather unique in that it does not require the
 evaluation of the function to know what the next position of each particle will
@@ -360,14 +363,59 @@ two iterations at the same time.
 
 \subsection{Is is worth it?}
 
-It uses a lot of extra work to get the second iteration, but for some functions
-performing more iterations makes more progress than adding extra particles.
+Speculative execution uses a lot of extra work to compute two iterations at the
+same time, but for some functions performing more iterations makes more
+progress than adding extra particles.  The No Free Lunch theorem again shows
+its head here, though, because if you do better with one algorithm on a certain
+function or set of functions, that's because you do worse on other functions.
+There are, however, a set of functions that do better with more iterations than
+with more particles.
+
+Figure~\ref{fig:sphere} shows an example of this: the function Sphere.  The
+graph shows the best function value found over a number of function
+evaluations.  This is different than previous graphs that have shown function
+value against a number of iterations.  At each iteration, a swarm of 50
+particles performs 50 function evaluations, where a swarm of 4000 particles
+performs 4000 evaluations.  Figure~\ref{fig:sphere} shows that the extra 3950
+function evaluations spent on the extra particles in a 4000 particle swarm
+really don't do any good.  It would be more worth it to just do more iterations
+of a 50 particle swarm than to have a swarm of 4000 particles.
+
+The benefit of adding more particles comes in when you have hundreds or
+thousands of processors in a parallel cluster.  You can't use 4000 machines to
+run a swarm of 50 particles---3950 of the processors would be idle the whole
+time.  Adding more particles to the swarm then improves performance without
+adding any extra time (ignoring inter-processor communication cost for the
+moment).  But for some functions, a better idea than using the extra 3950
+processors to add more particles to the swarm is to use the processors
+speculatively so that two iterations can be done at the same time.
+Figure~\ref{fig:sphere} shows just one example of a function that would be
+better optimized by performing speculative execution than by adding extra
+particles.
+
+\begin{figure}
+  \centering
+  \includegraphics{evals_sphere.eps}
+  \caption{Best value found on the function Sphere versus the number of 
+  function evaluations with varying swarm sizes.}
+  \label{fig:sphere}
+\end{figure}
+
+
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-Thank you for reviewing my proposal.  I look forward to exploring speculative
-execution in particle swarm optimization.
+In a world where people are swimming in processing power, many old algorithms
+need to be rethought.  Parallel computing architectures allow for new
+techniques that were previously impossible.  In the realm of optimization,
+particle swarm optimization is uniquely capable of reaping great benefits from
+parallel processing.  I have reviewed just a few ways in which PSO can be
+improved to harness the increased power of parallel clusters.  As more
+researchers tackle the problems of modifying and adapting algorithms to better
+utilize the resources that are now available, our ability to solve problems
+with computers will increase dramatically.
+
 
 \bibliographystyle{plain}
 \bibliography{%
