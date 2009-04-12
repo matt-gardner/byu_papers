@@ -371,6 +371,14 @@ function or set of functions, that's because you do worse on other functions.
 There are, however, a set of functions that do better with more iterations than
 with more particles.
 
+\begin{figure}
+  \centering
+  \includegraphics{evals_sphere.eps}
+  \caption{Best value found on the function Sphere versus the number of 
+  function evaluations with varying swarm sizes.}
+  \label{fig:sphere}
+\end{figure}
+
 Figure~\ref{fig:sphere} shows an example of this: the function Sphere.  The
 graph shows the best function value found over a number of function
 evaluations.  This is different than previous graphs that have shown function
@@ -392,14 +400,6 @@ speculatively so that two iterations can be done at the same time.
 Figure~\ref{fig:sphere} shows just one example of a function that would be
 better optimized by performing speculative execution than by adding extra
 particles.
-
-\begin{figure}
-  \centering
-  \includegraphics{evals_sphere.eps}
-  \caption{Best value found on the function Sphere versus the number of 
-  function evaluations with varying swarm sizes.}
-  \label{fig:sphere}
-\end{figure}
 
 
 
