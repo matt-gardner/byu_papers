@@ -1,0 +1,32 @@
+My dad got a PhD in physics.  His dad got a PhD in physics, and his
+dissertation won a Nobel prize.  His dad, my great grandfather, was the founder
+of modern soil physics.  My mom's dad was on the Manhattan project.  I grew up
+with a love of physics, wanting to win a Nobel prize by coming up with a
+Unified Field Theory.
+
+When I got to college I set out to start my career in physics.  I had space to
+fill in my schedule, so I decided to double major in computer science, because
+it was also interesting to me.  I thoroughly enjoyed both my physics and my
+computer science classes, though physics was still my top priority.
+
+After my freshman year, I took a two year break from school, during which I
+ended up learning Spanish and translating a lot between English and Spanish.
+That experience got me thinking about machine translation, how fascinating and
+life-changing it would be to build a system that could accurately interpret
+between languages in real time, and my leaning towards computer science began
+to grow greater than my leaning towards physics.
+
+I got back to school and started working with a physics professor in his
+research lab.  I found it rather boring, and that solidified my desire to go
+into computer science instead of physics.  Since then I have been doing
+research with a computer science professor, learning all about machine
+learning techniques.  I spent a summer as an intern at Google and was even 
+more fascinated by the kinds of problems that can be solved with computers.
+
+There are so many ways that computers have the potential to dramatically
+improve the way we live, from speech recognition and natural language
+processing so that computers can understand spoken instructions, to robotic
+medical assistants that can improve our health care, and large-scale data
+analysis that can find associations and draw conclusions that humans could
+never do on their own.  I want to solve problems that help make the world a
+better place, and computer science is a great place to do that.
