@@ -16,7 +16,8 @@
 \topmargin .5in
 
 
-\title{Honors Thesis Proposal}
+\title{Honors Thesis Proposal\\Speculative Execution in Particle Swarm
+Optimization}
 \author{Matthew Gardner}
 \date{\today}
 
@@ -51,47 +52,11 @@ I will study the feasibility and potential performance gain of a technique
 which we call speculative execution in particle swarm optimization.  By
 speculative execution I mean the use of additional computational resources,
 presumably extra processors running in parallel, to perform two or more
-iterations of particle swarm optimization at a time, speeding up the algorithm
-significantly.
+iterations of particle swarm optimization at a time, thus finding better values
+faster.
 
 \section{Procedures}
-
-The bulk of the work for this project will be writing code and running
-experiments.  I have already read many conference papers on particle swarm
-optimization to know the current state of the field, so I will know what the
-results need to be compared to.  In implementing speculative execution, I will
-take care that the algorithm behaves exactly like the original, standard
-particle swarm optimization (PSO) algorithm in every aspect except the
-speed-up.  My work can then be accurately compared to other work in the field.
-
-In running experiments, many trials will be run and averaged, as there is a
-random component in this algorithm.  I will use statistical tests for all
-comparisons to the original PSO algorithm.  The success criterion will be a
-better performance of the algorithm as measured by the lowest function
-evaluation seen over a number of function evaluations for several benchmark and
-real-world problems.  Performing speculative execution in PSO requires more
-function evaluations per particle than regular PSO, so to be fair the two
-algorithms will be compared with configurations where each uses the same number
-of functions evaluations per iteration, not the same number of particles.
-
-\section{Preliminary Prospectus of Finished Thesis}
-
-The finished thesis will be presented in the format of a peer-reviewed
-conference paper, including the following sections:
-
-\begin{enumerate}
-\item Introduction
-\item Related Work
-\item Particle Swarm Optimization
-\item Speculative Execution
-\item Speculative Execution in PSO
-\item Experiments
-\item Results and Conclusions
-\item Future Work
-\item References
-\end{enumerate}
-
-\section{Preliminary Research}
+\label{sec:proc}
 
 \subsection{Particle Swarm Optimization}
 
@@ -140,13 +105,14 @@ it.  For those kinds of problems, less communication, or smaller neighborhoods,
 is often preferable.
 
 \subsection{Speculative Execution}
+\label{sec:specex}
 
 Speculative execution in a program is the execution of code that may or may not
 end up actually being needed.  Modern processors routinely do this when a
 conditional branch is encountered; they try to predict which branch will
 actually be needed and continue their execution.  If it turns out that the
 prediction was incorrect, the work is discarded.  But if the prediction was
-right, the program can execute much faster than if it had waited on the branch.  
+right, the program can execute much faster than if it had waited on the branch.
 
 In many optimization algorithms speculative execution is impossible, because
 the next iteration of the algorithm depends on the evaluation of the function
@@ -166,6 +132,74 @@ position in parallel.  That computes two iterations at the same time.  It uses
 a lot of extra work to get the second iteration, but for some functions
 performing more iterations makes more progress than adding extra particles.
 
+\subsection{Planned Experiments}
+
+I will implement speculative execution in particle swarm optimization.  I will
+take care that my implementation can behave exactly like the original particle
+swarm optimization, so a fair comparison can be made.  At each iteration a 
+number of positions are speculatively evaluated, and to make it behave like
+the original PSO all that needs to be done is throw away the particles that
+do not match the actual execution path of the original particles.  
+
+After showing that speculative execution reproduces PSO without affecting
+results, I will expand the idea to use the information gathered from
+speculative particles.  The positions that are speculatively evaluated are
+potentially, and probably provably, worthwhile samples from the sampling
+distribution of PSO.  Throwing them away discards useful information that could
+help the algorithm in more ways than just speeding it up.  The end result would
+be an algorithm that not only performs twice as many iterations as standard
+PSO, but takes useful samples and potentially does better while going faster.
+
+I will test this algorithm on standard benchmark functions, including at least
+the Sphere, Rastrigin and Griewank functions.  I will compare the performance
+of the speculative algorithms to the standard PSO on those functions with
+varying swarm sizes.
+
+\subsection{Evaluation}
+
+In running experiments, I will run many trials and average the results, as
+there is a random component in this algorithm.  I will use statistical tests,
+such as a paired permutation test, for all comparisons to the original PSO
+algorithm.  The success criterion will be a better performance of the algorithm
+as measured by the lowest function evaluation seen over a number of function
+evaluations.  Performing speculative execution in PSO requires more function
+evaluations per particle than regular PSO, so to be fair the algorithms will be
+compared with configurations where each uses the same number of function
+evaluations per iteration, not the same number of particles.
+
+\section{Preliminary Prospectus of Finished Thesis}
+
+The finished thesis will be presented in the format of a peer-reviewed
+conference paper, including the following sections:
+
+\begin{enumerate}
+  \item Introduction
+  \item Related Work
+  \item Particle Swarm Optimization
+  \item Speculative Execution
+  \item Speculative Execution in PSO
+  \item Experiments
+  \item Results and Conclusions
+  \item Future Work
+  \item References
+\end{enumerate}
+
+\section{Preliminary Research}
+
+Before going forward with this idea, I ran some basic, preliminary tests that
+show that for some functions, performing more iterations of PSO with fewer
+particles does better than performing fewer iterations with more particles.
+The tests were very preliminary but were enough to establish the feasibility of
+using speculative execution to improve the performance of PSO on some
+functions.  
+
+Since then I have finished coding both speculative algorithms mentioned in
+Section~\ref{sec:proc}.  Further, though still preliminary, testing shows again
+that these methods perform better than standard PSO on a number of functions.
+What remains to be done is to do more exhaustive tests, collecting results that
+can be published.  I anticipate that the results that I find as I continue
+testing these algorithms will drive further improvements, but the direction of
+those improvements has yet to be seen.
 
 \section{Qualifications of Investigator}
 
@@ -198,11 +232,11 @@ year.
 \hline
 Run preliminary tests to ensure feasibility & February 28, 2009 \\
 \hline
-Finish writing and debugging code & April 30, 2009 \\
+Finish writing and debugging code & April 25, 2009 \\
 \hline
-Finish gathering data and statistics & June 30, 2009 \\
+Finish gathering data and statistics & August 31, 2009 \\
 \hline
-Complete analysis of data and begin writing thesis & September 1, 2009 \\
+Complete analysis of data and begin writing thesis & October 1, 2009 \\
 \hline
 Submit completed copy of thesis to advisor & November 15, 2009 \\
 \hline
