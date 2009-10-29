@@ -1,0 +1,134 @@
+\documentclass[onecolumn, 12pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{cite}
+
+\newcommand{\bib}[1]{/aml/home/mjg82/bib/#1}
+
+\title{Speculative Evaluation in Particle Swarm Optimization}
+\author{Matthew Gardner\\Mentor: Kevin Seppi, Computer Science}
+\date{}
+
+\begin{document}
+\maketitle
+
+Optimization problems are ubiquitous in our modern world.  Businesses such as
+Google need to decide where to place ads, scientists need to fit models to
+data, and airlines need to schedule their flights.  All of these problems are
+optimization problems, and optimization techniques can be used to find
+solutions.  Particle swarm optimization (PSO) is a relatively new optimization
+technique that draws on ideas from the sociology of flocking birds.  It was
+originally developed for use on a single machine, and attempts at modifying the
+algorithm to run in parallel are still quite preliminary.  However, the
+problems people want to solve are getting bigger, and larger problems require
+more computation power than is available on any single computer.  To
+effectively solve those problems, optimization algorithms need to be improved
+to efficiently use parallel clusters of machines.  This project addressed that
+issue.
+
+Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
+Eberhart~\cite{kennedy-icnn95}.  The algorithm is used to intelligently search
+a multi-dimensional space by mimicking the swarming and flocking behavior of
+birds and other animals. It is a social algorithm that depends on interaction
+between particles to quickly and consistently find the optimal solution to some
+objective function.
+
+The motion of particles through the search space has three components: an
+inertial component that gives particles momentum as they move, a cognitive
+component where particles remember the best solution they have found and are
+attracted back to that place, and a social component by which particles are
+attracted to the best solution that any of their neighbors have found.
+
+Within the last few years, researchers have begun to recognize the need to
+develop parallel implementations of PSO.  The methods they have used include
+various synchronous algorithms, asynchronous algorithms, and formulating PSO in
+Google's MapReduce framework.  Parallelizing the evaluation of the objective
+function can also be done in some cases, though that is not an adaption of the
+PSO algorithm and thus is not the focus of this paper.
+
+All of these parallel techniques use additional processors to increase the
+number of particles in the swarm, either by adding individual particles or by
+adding entire new subswarms.  The number of iterations of PSO that the
+algorithms can perform is thus inherently limited by the time it takes to
+evaluate the objective function--additional processors add more particles, not
+more iterations.  However, there are many functions for which performing more
+iterations with fewer particles is a better use of resources than performing
+fewer iterations with more particles.
+
+To solve this problem, we take inspiration from speculative execution
+techniques commonly used in processors.  Modern processors, when faced with a
+branch on which they must wait, guess which way the branch will go and start
+executing.  If the processor guessed right, execution is much farther ahead
+than if it had just idly waited on the branch.  If it guessed wrong, execution
+restarts right where it would have been anyway.  This is called speculative
+execution or branch prediction.
+
+In PSO, the motion of particles depends only on the \emph{positions} of the
+particle and its neighbors and which neighbor's position is best, not the
+\emph{value} of the objective function at those positions.   We do not have to
+wait for a particle's position to be evaluated to know where it might move to
+next, so we can compute the set of all possible next positions and send them to
+be evaluated along with the particle's current position.  Once the current
+position of each particle has been evaluated, we can determine which of the
+speculatively evaluated positions matches the branch actually taken by the
+algorithm.  Because we already evaluated that position, we have performed two
+iterations at once.
+
+We implemented this parallel adaptation of the PSO algorithm and found that in
+many cases it performed better than a traditional parallelization of PSO.  This
+work was my honors thesis and was submitted to BYU for that purpose.  We also
+submitted our work to \emph{The Genetic and Evolutionary Computation
+Conference} (GECCO), one of the most prestigious conferences for PSO-related
+research, and we will find out if it was accepted by March 10, 2010.
+
+This work left us with a lot of open questions.  The most burning question is
+how to make the speculative algorithm more usable.  The algorithm we developed
+for speculative evaluation was somewhat limited in that it required a large
+number of extra processors to perform speculative evaluations.  For example,
+for a swarm of size 50 it required 400 processors.  If you want a swarm of 50
+particles, but only have 200 processors, with the algorithm we developed you
+can not use the extra 150 processors to perform some speculative evaluation;
+you have to have 400, or decrease your swarm size.  A much more desirable trait
+of the algorithm would be to specify a swarm size, then use any additional
+processors, however many there are, to perform what speculative evaluation you
+can.  This would require some adaptation to the algorithm, not requiring that
+particles are at the same iteration at the same time, as there are only enough
+processors for some of the particles to speculate about their future positions.
+
+We plan to pursue this area of research, and are submitting another ORCA grant
+proposal to answer that question.  We would then take the conference paper we
+submitted to GECCO and expand it with the aim of submitting it to
+\emph{Transactions on Evolutionary Computation}, a journal that deals with
+PSO-related research, along with other evolutionary computation topics.
+
+
+\bibliographystyle{plain}
+\bibliography{%
+\bib{wolpert-tec97},%
+\bib{merris-01},%
+\bib{pso/clerc-tec02},%
+\bib{pso/kennedy-icnn95},%
+\bib{pso/bratton-sis07},%
+\bib{pso/largeswarms/perez-emc05},%
+\bib{pso/largeswarms/montes-gecco08.bib},%
+\bib{pso/topology/liang-sis05.bib},%
+\bib{pso/parallel/belal-ijicis04},%
+\bib{pso/parallel/chu-sci06},%
+\bib{pso/parallel/jin-aps05},%
+\bib{pso/parallel/koh-ijnme06},%
+\bib{pso/parallel/mostaghim-report06},%
+\bib{pso/parallel/parsopoulos-aia04},%
+\bib{pso/parallel/schutte-ijnme04},%
+\bib{pso/parallel/venter-wcsmo05},%
+\bib{ga/poli-ai06},%
+\bib{sim-anneal/parallel/witte-tpds91.bib},%
+\bib{pso/topology/kennedy-cec02.bib},%
+\bib{pso/topology/mohais-cec04.bib},%
+\bib{pso/topology/jordan-gecco08.bib},%
+\bib{pso/topology/clerc-oep03.bib},%
+\bib{pso/topology/miranda-ijcir08.bib},%
+\bib{pso/topology/mendes-phd04.bib},%
+\bib{aml/mcnabb-cec07},%
+\bib{aml/mcnabb-cec09}}
+
+\end{document}

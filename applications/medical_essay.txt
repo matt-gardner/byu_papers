@@ -1,0 +1,92 @@
+Machine learning techniques have proven to be incredibly useful for analyzing
+huge amounts of data.  Companies like Google, Amazon and Netflix have made a
+lot of money by coming up with good algorithms and infrastructure to solve
+practical machine learning problems, such as "What are customers who bought
+this item also likely to buy?"  While not one hundred percent accurate, these
+techniques are able to make very good predictions by analyzing the behavior of
+a large number of users of their systems.
+
+While machine learning algorithms have been used in a variety of disciplines,
+their potential for improving our health care and medical knowledge is largely
+untapped.  There are a few very important reasons for this, including the lack
+of a large collection of data and consumer privacy concerns.  However, if
+these barriers could be overcome, our ability to diagnose and effectively
+treat many modern ailments, and recognize new ones, would increase
+dramatically.
+
+The first obstacle that would need to be overcome in using machine learning to
+analyze health data is the lack of a large collection of data.  Many hospitals
+and doctors have a lot of health information about a lot of people, but it is
+not centralized and available to people wanting to analyze it for research
+purposes.  Google tried to solve this problem with the creation of its Google
+Health website, but the adoption of that service was rather small.  Electronic
+health records are also a step in the right direction, but again there is no
+central resource for researchers to access a large collection of electronic
+health records.  In order for machine learning to assist our efforts to
+improve health care, some kind of central repository for health information
+needs to be created.
+
+Such a central repository would have to address privacy concerns.  Having a
+person's entire health history available to the general public, or even to
+contracted researchers, is a serious breach of privacy that could have
+very adverse effects.  To alleviate these concerns, any centralized health
+information repository would have to provide health information to researchers
+only after it has been wiped of any information that can identify specific
+people.  Data such as health history, demographics, symptoms experienced,
+and the results of treatments received can be recorded and disseminated
+without needing to report date and location of birth, name, or social security
+number.  Even leaving those items out might not be enough, as people with bad
+intentions could still try to link the health care data with other publicly
+available data and circumvent the attempt at privacy.  If there is any one
+reason that a centralized source of health care data failed, it would be
+because of a failure to adequately address privacy concerns.  However, I think
+that with the talent that is available, these concerns could be overcome.
+
+Once a central health information repository is established, researchers could
+start having a heyday analyzing it.  There are plenty of machine learning
+algorithms that could be applied to such a data source.  For example, a very
+common machine learning task is that of classification, where the algorithm
+tries to decide which class of things a particular item belongs to.  A spam
+filter is such a classifier, deciding if any particular email is spam or not.
+A classifier could be trained to decide which patients have Alzheimer's
+disease, and the attributes the algorithm finds that are important in making
+that decision could help researchers understand the causes of the disease, or
+at least early warning signs.  Studies have been done before trying to answer
+those questions, even with machine learning algorithms, but none with the
+amount of data that would be available with a large central repository.
+
+There are also many ailments that are not very severe and are hard to
+diagnose.  Gluten intolerance is an example of this--many people who have mild
+gluten intolerance do not realize that it is the gluten in what they eat that
+is causing their problems.  There are certainly still many other health
+problems that elude our understanding because there is not enough data to find
+consistency in their symptoms.  With a large source of health data, many new
+conditions that are not as severe would most likely be discovered, improving
+people's quality of life when treatments are found for those conditions.  It
+is hard to overstate the potential such a data source would have to
+revolutionize our health care industry.  I have mentioned just two of
+countless possible applications of machine learning techniques to improve our
+understanding of human health.
+
+Laying aside the benefits of using machine learning to analyze health data,
+the creation of a central health information repository would still have
+benefits to our society.  Patients who change doctors for whatever reason
+would still have all of the records their former doctors kept, and those
+records would be available to their new doctor upon authorization by the
+patient.  Patients would not have to try to remember every doctor they ever
+saw and what those doctors said when they move to a new area.  If the patient
+had multiple specialists to go to, they would all be able to freely access and
+share information without messy paperwork that has the potential of getting
+lost.  This has started to happen with electronic health records, but a much
+greater benefit could be had from a wider adoption and a centralized resource
+for those records.
+
+In our society there are significant barriers to the creation and use in
+research of a public central health information repository.  Those barriers
+include deciding on who to trust the repository to, private industry or the
+government, and overcoming the privacy concerns that would certainly be raised
+at the creation of such an establishment.  The adoption of electronic health
+records by all hospitals and doctors that are reluctant to accept the change
+is not a trivial matter, either.  But the benefits that could be had from such
+a centralized repository in terms of our ability to understand, diagnose, and
+treat disease are incredible.

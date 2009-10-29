@@ -110,7 +110,7 @@ techniques commonly used in processors.  Modern processors, when faced with a
 branch on which they must wait, guess which way the branch will go and start
 executing.  If the processor guessed right, execution is much farther ahead
 than if it had just idly waited on the branch.  If it guessed wrong, execution
-is right where it would have been anyway.  This is called speculative
+restarts right where it would have been anyway.  This is called speculative
 execution or branch prediction.
 
 The idea of speculative execution can be applied to some types of optimization
@@ -123,18 +123,12 @@ has been done in simulated annealing~\cite{witte-tpds91}.
 
 Because the motion of particles in PSO depends only on the \emph{positions} of
 the particle and its neighbors, not the \emph{value} of the objective function
-at those positions, speculative evaluation is possible.  The relative values of
-the positions of the particle's neighbors do matter, in that the best one is
-used as the neighborhood best position, but it's which position has the highest
-value, not what that value is, that matters.  We then propose a new method of
-parallelizing PSO in which additional processors are used to perform more
-iterations, not add particles to the swarm.
-
-Because we do not have to wait for a particle's position to be evaluated to know
-where it might move to next, we can compute the set of all possible next
-positions and send them to be evaluated along with the particle's current
-position.  Once the current position of each particle has been evaluated, we
-can determine which of the speculatively evaluated positions was correct.  We
+at those positions, speculative evaluation is possible.  We do not have to wait
+for a particle's position to be evaluated to know where it might move to next,
+so we can compute the set of all possible next positions and send them to be
+evaluated along with the particle's current position.  Once the current
+position of each particle has been evaluated, we can determine which of the
+speculatively evaluated positions matches the branch taken by the particle.  We
 have thus evaluated two iterations at once.  This can easily get unwieldy if
 the set of next possible positions for each particle is large, but a wise
 choice of topology limits that set to a reasonable size.
@@ -152,7 +146,8 @@ perform two iterations at once.  In \sec{extra}, we discuss a variant of the
 speculative algorithm which uses all of the speculative evaluations performed
 instead of throwing away all but one for each particle.  We then show in
 \sec{results} a comparison between the original PSO algorithm, our speculative
-algorithm, and its variant.
+algorithm, and its variant.  In \sec{conclusion} and \sec{future} we conclude
+and discuss future work.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -195,11 +190,14 @@ There are many ways of defining the neighbors of a particle.  Different
 neighborhood topologies have varying performance on different kinds of
 functions, as would be expected by the No Free Lunch
 theorem~\cite{wolpert-tec97}.  An in-depth discussion of topologies in PSO is
-beyond the scope of this paper.  We use the Ring topology, where each particle
-is neighbors only with two other particles, and a parallel adaptation of the
-Complete topology~\cite{mcnabb-cec09}, where each particle is neighbors with
-all other particles.  These are the two most commonly used topologies in the
-literature and have been shown to work well in practice~\cite{bratton-sis07}.
+beyond the scope of this paper.  The two most common topologies used in the
+literature are the Ring topology and the Complete
+topology~\cite{bratton-sis07}.  In this paper we use those topologies, as well
+as a parallel adaptation of the Complete topology called Random that has been
+shown to simulate the behavior of Complete with far less
+communication~\cite{mcnabb-cec09}.  Both the Ring and the Random topologies can
+be defined as having $k$ neighbors; we use 2 neighbors for all of our
+experiments.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -451,7 +449,7 @@ synchronizing all of the machines three times.
 
 This second method only requires one round of passing information because
 information about iteration $t$ and $t+1$ are passed at the same time.  Each
-processor reconstructs the from the messages it receives all of the information
+processor reconstructs from the messages it receives all of the information
 that it needs about its neighbors.  Messages are passed directly after
 evaluating each particle and its children, so all messages are of the form of
 $\nonbest{\p}_t$ or $\nonbest{\s}_{t+1}$.  The first iteration needs to be
@@ -511,7 +509,16 @@ motion equations to $\noeval{\n}_{t+2}$.
 
 We have already described how to use a set of messages to obtain $\p_{t+1}$.
 The process is exactly the same to produce each $\n_{t+1}$, requiring the same
-messages, except for the neighbor particles instead of the particle itself.
+messages, except for the neighbor particles instead of the particle itself.  
+\fig{specparticles} shows graphically how $\noeval{\sset}_{t+3}$ is produced.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.6\columnwidth]{messages2.eps}
+  \caption{The messages needed to produce $\noeval{\sset}_{t+3}$. $\p_{t+1}$
+  and $\nset_{t+1}$ are both produced as in \fig{origparticle}.}
+  \label{fig:specparticles}
+\end{figure}
 
 Having obtained both $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$ from the
 messages received, the algorithm then moves to the evaluation phase, and the
@@ -643,9 +650,12 @@ evaluation were not being performed, it is likely that the Complete topology
 would be used.  To be fair in our comparisons, for the standard PSO algorithm
 we compare to both the Random topology with two neighbors and to the Complete
 topology.  All functions have 20 dimensions, and all results shown are averages
-over 20 runs.  For ease of labeling, we call our speculative algorithm SEPSO,
-the variant SEPSO Pick Best, and standard PSO just PSO, with the topology
-following if necessary.
+over 20 runs.  Except where noted, we use swarms of close to 50 particles, as
+that has been recommended as a general-purpose swarm size~\cite{bratton-sis07}.
+When the speculative swarms have 50 particles, regular PSO swarms have 200.
+For ease of labeling, we call our speculative algorithm SEPSO, the variant
+SEPSO Pick Best, and standard PSO just PSO, with the topology following if
+necessary.
 
 First we look at the function Sphere, the simplest of common benchmark
 functions.  Its equation is $f(\Vec{x}) = \sum_{i=1}^D x_i^2$.  The function
@@ -685,10 +695,9 @@ Next we look at the function Griewank, defined by the equation $f(\Vec{x}) =
 \right) + 1$.  It is generally recommended to use the Ring topology when
 optimizing the Griewank function, as Complete is prone to premature convergence
 on a local optima.  We show results in \fig{griewank1} for a swarm size of 50
-particles with SEPSO, which has been recommended as a good standard swarm
-size~\cite{bratton-sis07}.  One can see in the figure that both SEPSO
-algorithms initially outperformed PSO, but got stuck in a local optima and were
-eventually outperformed.  
+particles with SEPSO.  One can see in the figure that both SEPSO algorithms
+initially outperformed PSO, but got stuck in a local optima and were eventually
+outperformed.  
 
 \begin{figure}
   \includegraphics[width=.8\columnwidth]{griewank1.eps}
@@ -715,12 +724,12 @@ standard PSO, finding the global optimum in fewer function evaluations.
   \label{fig:griewank2}
 \end{figure}
 
-Lastly we look at functions that don't show much or any improvement with this
+Lastly we look at functions that do not show much or any improvement with this
 method.  The Ackley function is defined as $f(\Vec{x}) = -20\exp\left\{
 -0.2\sqrt{\frac{1}{D}\sum_{i=1}^Dx_i^2}\right\} - \exp\left\{\frac{1}{D}
 \sum_{i=1}^D\cos(2\pi x_i)\right\}+20+e$. \fig{ackley} shows a comparison of
-our speculative algorithms versus the original PSO with swarm sizes of 200 and
-800, respectively.  There is no significant difference between the performance
+our speculative algorithms versus the original PSO with swarm sizes of 50 and
+200, respectively.  There is no significant difference between the performance
 of SEPSO and PSO Complete, though the performance of SEPSO Pick Best is
 interesting to note.  It quickly converged on a local optimum and compared to
 the other algorithms had dismal performance on this function.
@@ -779,22 +788,18 @@ There are other functions for which there is a point where the algorithm has
 done ``enough'' exploration and consistently finds the global optimum.  Adding
 additional particles to the swarm is akin to increasing its capacity for
 exploration, and it has been shown that for a 20-dimensional Griewank function,
-400 particles is ``enough'' exploration~\cite{mcnabb-cec09}.  In fact, the
-class of functions mentioned above could be considered a special case of these
-functions, where ``enough'' exploration can be achieved with only a very small
-number of particles proportional to the dimensionality of the problem.  For
-these functions, one should use processors to increase the swarm size until
-enough exploration has been reached, then use additional processors to increase
-the number of iterations performed.
+400 particles is ``enough'' exploration~\cite{mcnabb-cec09}.  For these
+functions, one should use processors to increase the swarm size until enough
+exploration has been reached, then use additional processors to increase the
+number of iterations performed.
 
 There are still other functions for which it seems there is never enough
-exploration, such as the Rastrigin function.  There are an infinite number of
-local minima in the Rastrigin function, and it has been shown that up to 4000
-particles there is no point at which ``enough'' exploration has been done.  For
-those functions the correct use of processors depends cannot be easily
-prescribed and depends largely on the desired outcome.  It is likely that the
-best thing to do with those functions is to use all processors to add particles
-to the swarm and do no speculative evaluation.
+exploration, such as the Rastrigin function.  It has been shown that up to 4000
+particles there is no point at which ``enough'' exploration has been
+done~\cite{mcnabb-cec09}.  For those functions the correct use of processors
+cannot be easily prescribed and depends largely on the desired outcome.  It is
+likely that the best thing to do with those functions is to use all processors
+to add particles to the swarm and do no speculative evaluation.
 
 \section{Future Work}
 \label{sec:future}
@@ -809,7 +814,7 @@ potentially be greatly reduced by using statistics for which branch of motion
 particles most often follow.  Only the subset of the most probable next
 locations would then be evaluated.  Using an asynchronous PSO variant would
 also be helpful in this case, allowing particles to be at different iterations
-in case the correct branch was not guessed, and needs to be evaluated
+in case the correct branch was not guessed and needs to be evaluated
 separately.
 
 Another possible advancement would be to reduce communication costs by dropping
@@ -837,8 +842,8 @@ computation in evolutionary algorithms was proposed in~\cite{poli-ai06}.
 Large parallel clusters are often required to successfully optimize practical
 modern problems.  To properly use PSO with such clusters, a balance needs to be
 made between using processors to increase the swarm size and using them to
-increase the speed of the algorithm, or perhaps as yet unconsidered techniques.
-This work is a first step in that direction.
+increase the speed of the algorithm, or for perhaps as yet unconsidered
+techniques.  This work is a first step in that direction.
 
 \bibliographystyle{unsrt}
 \bibliography{%
