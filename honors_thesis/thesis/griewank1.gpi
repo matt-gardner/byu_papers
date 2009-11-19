@@ -1,5 +1,6 @@
 set xlabel "Function Evaluations"
 set ylabel "Best Function Value"
+set xtics 0,10000,50000
 set logscale y 10
 set clip two
 plot [50:50000] [1e-09:500] '-' title "SEPSO" with lines lw 4, '-' title "SEPSO Pick Best" with lines lw 4, '-' title "PSO Ring" with lines lw 4

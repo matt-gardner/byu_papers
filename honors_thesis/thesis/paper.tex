@@ -82,9 +82,9 @@ Particle swarm optimization (PSO) has been found to be a highly robust and
 effective algorithm for solving many types of optimization problems.  For much
 of the algorithm's history, PSO was run serially on a single machine.  However,
 the world's computing power is increasingly coming from large clusters of
-processors.  Even in desktop machines, systems with 4 or 8 cores are common
-place.  In order to efficiently utilize these resources for computationally
-intensive problems, algorithms need to run in parallel.
+processors.  Even in desktop machines, systems with 4 or 8 cores are
+commonplace.  In order to efficiently utilize these resources for
+computationally intensive problems, algorithms need to run in parallel.
 
 Within the last few years, researchers have begun to recognize the need to
 develop parallel implementations of PSO, publishing many papers on the subject.
@@ -100,7 +100,7 @@ All of these parallel techniques use additional processors to increase the
 number of particles in the swarm, either by adding individual particles or by
 adding entire new subswarms.  The number of iterations of PSO that the
 algorithms can perform is thus inherently limited by the time it takes to
-evaluate the objective function--additional processors add more particles, not
+evaluate the objective function---additional processors add more particles, not
 more iterations.  However, there are many functions for which performing more
 iterations with fewer particles is a better use of resources than performing
 fewer iterations with more particles.  
@@ -225,21 +225,22 @@ enumerate and evaluate all possible positions of that particle at the next
 iteration.  The defining components of a particle's motion
 (see~\eqref{eq:velupdate}) are $\pvel_t$, $\ppos_t$, $\pbest$, and $\nbest$.
 For a particle at iteration $t-1$, $\pvel_t$ and $\ppos_t$ are defined by
-Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate}.  The particle already
-knows its personal best $\pbest$ at iteration $t-1$, but it could be updated to
-$\ppos_t$ if its position at iteration $t$ has a better value than its current
-personal best.  Likewise, the particle knows its neighborhood best $\nbest$ at
-iteration $t-1$, though it could be updated by any of its neighbors' positions
-at iteration $t$.
+Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate}.  The only remaining
+components are $\pbest$ and $\nbest$, each of which has only a few
+possibilities.  The particle already knows its personal best $\pbest$ at
+iteration $t-1$, but it could be updated to $\ppos_t$ if its position at
+iteration $t$ has a better value than its current personal best.  Likewise, the
+particle knows its neighborhood best $\nbest$ at iteration $t-1$, though it
+could be updated by any of its neighbors' positions at iteration $t$.
 
 To enumerate all of the possible next positions of a particle, one must simply
 evaluate the motion equations for all possible combinations of personal best
 and neighborhood best updates that a particle could see.  This produces
 $2(n+1)$ speculative positions to be evaluated, where $n$ is the number of
-neighbors the particle has (a particle either updates its personal best or it
-does not, and one of its $n$ neighbors must update its neighborhood best, or
-there is no neighborhood best update--$n+1$ possibilities).  If all of those
-speculative positions are evaluated in parallel along with the original,
+neighbors the particle has, because there are two possibilities for updating a
+particle's personal best (updated and not updated) and $n+1$ possibilities for
+updating its neighborhood best (one of $n$ neighbors, or no update).  If all of
+those speculative positions are evaluated in parallel along with the original,
 non-speculative position of the particle at time $t-1$, then one of the
 speculative positions has to be the correct one, and two iterations have been
 evaluated at once.
@@ -274,9 +275,9 @@ one iteration to another.
 To aid in describing our methodology, we introduce a few terms.  A particle's
 set of \emph{speculative children} is the set of all possible next iteration
 states that a particle could have.  We use $\p_t$ to denote a particle at
-iteration $t$ and $\s_{t+1}$ to denote one of $\p_t$'s speculative children,
-$\sset_{t+1}$.  $\n_t$ is a neighbor of particle $\p_t$.  A set of particles is
-$\pset$, whereas a single particle is simply $\p$.
+iteration $t$ and $\s_{t+1}$ to denote one of $\p_t$'s speculative children.
+$\n_t$ is a neighbor of particle $\p_t$.  A set of particles is $\pset$,
+$\sset$, or $\nset$, whereas a single particle is simply $\p$, $\s$, or $\n$.
 
 We separate each iteration of PSO into several steps.  First there is the
 motion step, where a particle updates its position and velocity.  Then a
@@ -341,7 +342,7 @@ $\noeval{\s}_{t+1}$ was moved assuming that $\p_t$ had updated its personal
 best with its position at time $t$.  Then both $\noeval{\p}_t$ and
 $\noeval{\s}_{t+1}$ were evaluated, with values 1 and 2, respectively.
 $\nonbest{\s}_{t+1}$ would think that its current position was its personal
-best, as the value it found--2--was better than its previous personal best
+best, as the value it found, 2, was better than its previous personal best
 value of 3.  It needs to receive the personal best value from its parent to
 know that its personal best position $\pbest$ is actually the position of
 $\p_t$, not $\s_{t+1}$.
@@ -393,26 +394,18 @@ particle is not held by a central machine that directs the algorithm; instead,
 each processor has the information for the particle or particles that it is in
 charge of and must perform the steps of the algorithm for the particles it
 manages.  Messages such as values and positions for the neighborhood best are
-sent between processors.  There may be (in fact there probably must be) some
-machine that collects information from all of the particles and outputs the
-result of the algorithm, though that machine's importance is much less than in
-centralized algorithms.
+sent between processors.  There may be some machine that collects information
+from all of the particles and outputs the result of the algorithm, though that
+machine's importance is much less than in centralized algorithms.
 
 To perform speculative evaluation in a distributed PSO algorithm, there must be
 some way to have processors evaluate the speculative children of particles,
 without giving the speculative particles the same treatment as actual
-particles.  Perhaps that can be done by assigning each particle a set of
-machines instead of a single machine, and the particle directs its extra
-machines to evaluate its speculative children.  In the MapReduce framework,
-each particle and speculative child has its own Map task, during which the
-particle is evaluated, with the speculative children sending their output back
-to the original particle's Reduce task and any neighbors it has.  The Reduce
-task for each particle gets all of the messages from its neighbors, its
-speculative children, and the speculative neighbors of its speculative
-children, and produces the next particle and children for another Map task.
-
-No matter which framework is used the message passing should be similar, and
-that is what we describe here.
+particles, as the speculative children only live for one iteration.  Perhaps
+that can be done by assigning each particle a set of machines instead of a
+single machine, and the particle directs its extra machines to evaluate its
+speculative children.  No matter the distributed framework used the message
+passing should be similar, and that is what we describe here.
 
 A processor that is controlling a single particle $\p_{t-1}$ must first move
 the particle to $\noeval{\p}_t$ and produce the particle's speculative children
@@ -454,7 +447,7 @@ that it needs about its neighbors.  Messages are passed directly after
 evaluating each particle and its children, so all messages are of the form of
 $\nonbest{\p}_t$ or $\nonbest{\s}_{t+1}$.  The first iteration needs to be
 treated specially, so each particle can produce its initial set of speculative
-children--neighbors need only pass their initial position.  This kind of
+children---neighbors need only pass their initial position.  This kind of
 message passing necessitates the careful use of random seeds, so that when each
 processor computes the motion equations for its neighbors it gets the same
 results as its neighboring processors.
@@ -477,7 +470,7 @@ $\nonbest{\p}_{t+1}$'s neighborhood best.
 
 To produce each neighbor $\nonbest{\n}_{t+1}$, we need the same information for
 the neighboring particle that we needed to produce the original particle,
-$\nonbest{\p}_{t+1}$--we need the original neighbor particle, its speculative
+$\nonbest{\p}_{t+1}$; we need the original neighbor particle, its speculative
 children, and its neighbors.  With that information, the set
 $\nonbest{\nset}_{t+1}$ can be obtained by following the same process used to
 obtain $\nonbest{\p}_{t+1}$.  With $\nonbest{\nset}_{t+1}$ and
@@ -548,8 +541,8 @@ particles share their current value, their personal best value, or their
 neighborhood best value to contribute to their neighbors' neighborhood best?
 
 It has been shown that in dynamic topologies using the $\nbest$ only from
-current neighbors leads to poor performance--$\nbest$ should instead be defined
-as the best position of any of the neighbors the particle has ever
+current neighbors leads to poor performance.  $\nbest$ should instead be
+defined as the best position of any of the neighbors the particle has ever
 had~\cite{mcnabb-cec09}.  The question of which value to share with neighbors
 is an open one.  Giving more information to a particle's neighbors shares
 information more quickly through the swarm.  We choose to share the personal
@@ -566,9 +559,9 @@ algorithms with several rounds of message passing (the first method described
 above), nothing needs to be changed.  However, in the case where processors
 reconstruct information about neighboring particles from messages, those
 messages need to be sent to the correct neighbors.  A particle cannot simply
-send messages to its neighbors' neighbors' neighbors--it needs to send messages
-to its iteration $t$ neighbors' iteration $t+1$ neighbors, and so on.  For
-every neighbor outward information is sent, the iteration also needs to be
+send messages to its neighbors' neighbors' neighbors---it needs to send
+messages to its iteration $t$ neighbors' iteration $t+1$ neighbors, and so on.
+For every neighbor outward information is sent, the iteration also needs to be
 incremented, as information about neighbors' neighbors is used during iteration
 $t+1$, and information about neighbors' neighbors' neighbors is used to
 reconstruct information about iteration $t+2$.  Also, this method of message
@@ -588,9 +581,10 @@ positions of its neighbors at iteration $t$.  That means that its new
 neighborhood best could come not only from its neighbors' positions at
 iteration $t$, but also from their personal best from iteration $t-1$, as
 neighbors' personal bests are what are used to update a particle's neighborhood
-best.  That creates a problem for speculative evaluation--there are potentially
-more than $2(n+1)$ possible next positions, increasing the amount of work that
-must be done to perform the second iteration at the same time as the first.
+best.  That creates a problem for speculative evaluation---there are
+potentially more than $2(n+1)$ possible next positions, increasing the amount
+of work that must be done to perform the second iteration at the same time as
+the first.
 
 This is easily fixed by updating $\noeval{\p}_{t+2}$ with the currently
 available information about $\noeval{\nset}_{t+2}$ before producing
@@ -615,7 +609,7 @@ the child that has the best value.  The methodology is exactly the same as
 above except for the process of choosing which speculative child to accept.
 The branch that PSO would have taken is ignored, but $\p_t$ must still be
 created so it can give the right personal best and neighborhood best values and
-positions to $\p_{t+1}$.  Then only change needed in \alg{centralized} is in
+positions to $\p_{t+1}$.  The only change needed in \alg{centralized} is in
 step 7, where the $\noeval{\s}_{t+1}$ with the highest value is chosen from
 $\noeval{\sset}_{t+1}$ instead of with the matching branch.
 
@@ -663,7 +657,7 @@ has no local optima and is best optimized in terms of function evaluations with
 a small swarm using a Complete topology.  Accordingly, we show results for a
 small Complete swarm in \fig{sphere1}.  In comparing SEPSO with PSO, we can see
 that SEPSO clearly beat PSO with a Random topology.  However, the performance
-between SEPSO and PSO Complete is not as encouraging--the results are
+between SEPSO and PSO Complete is not as encouraging---the results are
 indistinguishable.  But SEPSO Pick Best handily outperforms all other
 algorithms in this problem.
 
@@ -675,11 +669,16 @@ algorithms in this problem.
   \label{fig:sphere1}
 \end{figure}
 
-To further belabor the point that performing speculative evaluation is a much
-better idea with some functions than simply adding particles, in \fig{sphere2}
-we show a graph comparing the performance of SEPSO Pick Best with 13 particles
-and with 50 particles.  The difference between the two in terms of function
-evaluations is staggering.
+To further illustrate the point that performing speculative evaluation is a
+much better idea with some functions than simply adding particles, in
+\fig{sphere2} we show a graph comparing the performance of SEPSO Pick Best with
+13 particles and with 50 particles.  The difference between the two in terms of
+function evaluations is staggering.  However, this result is well known; with
+Sphere and similar functions, the best thing to do is have a small swarm run
+longer.  We show the results here because our method allows the algorithm to
+use spare processors in parallel to perform more iterations at the same time.
+Clearly with these functions the best thing to do is not to add particles to
+the swarm, but to perform speculative evaluation.
 
 \begin{figure}
   \includegraphics[width=.8\columnwidth]{sphere2.eps}
@@ -754,8 +753,8 @@ PSO Complete was largely indistinguishable, as it was with Ackley.
 
 We have described how parallel implementations of particle swarm optimization
 can be modified to allow additional processors to increase the number of
-iterations of the algorithm performed, instead of merely add more particles to
-the swarm.  We have detailed several different implementations of the
+iterations of the algorithm performed, instead of merely adding more particles
+to the swarm.  We have detailed several different implementations of the
 algorithm, depending on the parallel PSO framework being used.  Using this
 algorithm, the original PSO algorithm is exactly reproduced two iterations at a
 time.  This technique requires more function evaluations per iteration than
@@ -826,7 +825,7 @@ neighboring particles are doing.
 Still another possibility is to view the set of possible evaluations as an
 infinite tree.  Each level in the tree is an iteration, and the branches on
 each level represent the possible next positions of the particle.  One need not
-simply evaluate all of one level for each particle--perhaps going two or three
+simply evaluate all of one level for each particle---perhaps going two or three
 iterations ahead on the most likely path would perform better.
 
 We have mentioned that this technique has been previously used to parallelize

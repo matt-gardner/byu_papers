@@ -15,7 +15,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.46+devel"
    version="1.0"
-   sodipodi:docname="messages2.eps"
+   sodipodi:docname="drawing2.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
@@ -172,7 +172,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -265,7 +265,7 @@
            style="font-size:16px"
            id="tspan36-1"
            dy="18.505783 0 0 -33.31041"
-           dx="1.7888381e-08">t+1-n</tspan></tspan></text>
+           dx="1.7888381e-08">t+2-e</tspan></tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.98283225px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow2Lend);display:inline"
        d="m 142.7146,277.33326 53.56625,0.51241"
