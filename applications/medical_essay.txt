@@ -15,7 +15,7 @@ treat many modern ailments, and recognize new ones, would increase
 dramatically.
 
 The first obstacle that would need to be overcome in using machine learning to
-analyze health data is the lack of a large collection of data.  Many hospitals
+analyze health data is the lack of a centralized data source.  Many hospitals
 and doctors have a lot of health information about a lot of people, but it is
 not centralized and available to people wanting to analyze it for research
 purposes.  Google tried to solve this problem with the creation of its Google
@@ -28,19 +28,18 @@ needs to be created.
 
 Such a central repository would have to address privacy concerns.  Having a
 person's entire health history available to the general public, or even to
-contracted researchers, is a serious breach of privacy that could have
-very adverse effects.  To alleviate these concerns, any centralized health
+contracted researchers, is a serious breach of privacy that could have very
+adverse effects.  To alleviate these concerns, any centralized health
 information repository would have to provide health information to researchers
 only after it has been wiped of any information that can identify specific
-people.  Data such as health history, demographics, symptoms experienced,
-and the results of treatments received can be recorded and disseminated
-without needing to report date and location of birth, name, or social security
-number.  Even leaving those items out might not be enough, as people with bad
+people.  Data such as health history, demographics, symptoms experienced, and
+the results of treatments received can be recorded and disseminated without
+needing to report date and location of birth, name, or social security number.
+Even leaving those items out might not be enough, as people with bad
 intentions could still try to link the health care data with other publicly
-available data and circumvent the attempt at privacy.  If there is any one
-reason that a centralized source of health care data failed, it would be
-because of a failure to adequately address privacy concerns.  However, I think
-that with the talent that is available, these concerns could be overcome.
+available data and circumvent the attempt at privacy.  If there were any one
+obstacle that would prevent the creation of a centralized source of health
+care data, it would be the failure to adequately address privacy concerns.
 
 Once a central health information repository is established, researchers could
 start having a heyday analyzing it.  There are plenty of machine learning
@@ -52,41 +51,41 @@ A classifier could be trained to decide which patients have Alzheimer's
 disease, and the attributes the algorithm finds that are important in making
 that decision could help researchers understand the causes of the disease, or
 at least early warning signs.  Studies have been done before trying to answer
-those questions, even with machine learning algorithms, but none with the
+these questions, even with machine learning algorithms, but none with the
 amount of data that would be available with a large central repository.
 
-There are also many ailments that are not very severe and are hard to
+There are also many ailments that are rare or not very severe and are hard to
 diagnose.  Gluten intolerance is an example of this--many people who have mild
 gluten intolerance do not realize that it is the gluten in what they eat that
 is causing their problems.  There are certainly still many other health
 problems that elude our understanding because there is not enough data to find
 consistency in their symptoms.  With a large source of health data, many new
-conditions that are not as severe would most likely be discovered, improving
-people's quality of life when treatments are found for those conditions.  It
-is hard to overstate the potential such a data source would have to
+conditions would most likely be discovered, and more rare conditions would be
+better understood, enabling researchers to study them and devise treatments.
+It is hard to overstate the potential such a data source would have to
 revolutionize our health care industry.  I have mentioned just two of
 countless possible applications of machine learning techniques to improve our
 understanding of human health.
 
-Laying aside the benefits of using machine learning to analyze health data,
-the creation of a central health information repository would still have
-benefits to our society.  Patients who change doctors for whatever reason
-would still have all of the records their former doctors kept, and those
-records would be available to their new doctor upon authorization by the
-patient.  Patients would not have to try to remember every doctor they ever
-saw and what those doctors said when they move to a new area.  If the patient
-had multiple specialists to go to, they would all be able to freely access and
-share information without messy paperwork that has the potential of getting
-lost.  This has started to happen with electronic health records, but a much
-greater benefit could be had from a wider adoption and a centralized resource
-for those records.
+Laying aside the potential advances in medical knowledge that could come from
+using machine learning to analyze health care data, the creation of a central
+health information repository would still have benefits to our society.
+Patients who change doctors would still have all of the records their former
+doctors kept, and those records would be available to their new doctor upon
+authorization by the patient.  Patients would not have to try to remember
+every doctor they ever saw and what those doctors did when they move to a new
+area.  If the patient had multiple specialists, they would all be able to
+freely access and share information without messy paperwork that is liable to
+get lost.  This has started to happen with electronic health records, but a
+much greater benefit could be had from a wider adoption and a centralized
+resource for those records.
 
 In our society there are significant barriers to the creation and use in
-research of a public central health information repository.  Those barriers
-include deciding on who to trust the repository to, private industry or the
-government, and overcoming the privacy concerns that would certainly be raised
-at the creation of such an establishment.  The adoption of electronic health
-records by all hospitals and doctors that are reluctant to accept the change
-is not a trivial matter, either.  But the benefits that could be had from such
-a centralized repository in terms of our ability to understand, diagnose, and
-treat disease are incredible.
+research of a centralized health information repository.  Those barriers
+include deciding who to trust the repository to and overcoming the privacy
+concerns that would certainly be raised at the creation of such an
+establishment.  The adoption of electronic health records by all hospitals and
+doctors that are reluctant to accept the change is not a trivial matter,
+either.  But the benefits that could be obtained from such a centralized
+repository in terms of our ability to understand, diagnose, and treat disease
+are worth the effort to overcome these obstacles.
