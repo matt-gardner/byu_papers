@@ -5,6 +5,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{psfrag}
 
 \IEEEoverridecommandlockouts
 
@@ -40,8 +41,10 @@
 \providecommand{\pset}{\ensuremath{\mathbf{p}}}
 \providecommand{\s}{\ensuremath{s}}
 \providecommand{\sset}{\ensuremath{\mathbf{s}}}
+\providecommand{\nsset}{\ensuremath{\mathbf{ns}}}
 \providecommand{\n}{\ensuremath{n}}
 \providecommand{\nset}{\ensuremath{\mathbf{n}}}
+\providecommand{\nnset}{\ensuremath{\mathbf{nn}}}
 
 \title{\ \\ \LARGE\bf Speculative Evaluation in Particle Swarm Optimization%
 \thanks{Matthew Gardner, Andrew McNabb, and Kevin Seppi are with the Department
@@ -237,13 +240,32 @@ To enumerate all of the possible next positions of a particle, one must simply
 evaluate the motion equations for all possible combinations of personal best
 and neighborhood best updates that a particle could see.  This produces
 $2(n+1)$ speculative positions to be evaluated, where $n$ is the number of
-neighbors the particle has, because there are two possibilities for updating a
-particle's personal best (updated and not updated) and $n+1$ possibilities for
-updating its neighborhood best (one of $n$ neighbors, or no update).  If all of
-those speculative positions are evaluated in parallel along with the original,
-non-speculative position of the particle at time $t-1$, then one of the
-speculative positions has to be the correct one, and two iterations have been
-evaluated at once.
+neighbors the particle has.  If a particle is also its own neighbor, as is most
+often the case, one of the $2(n+1)$ speculative positions can be eliminated, as
+a particle cannot be the source of its $\nbest$ update while not updating its
+$\pbest$.  Table~\ref{tab:evals} lists all possible combinations of updates
+that can be seen by a particle with two neighbors other than itself, which is
+the case in all of the topologies we use.  If all of these speculative
+positions are evaluated in parallel along with the original, non-speculative
+position of the particle at time $t-1$, then one of the speculative positions
+has to be the correct one, and two iterations have been evaluated at once.
+
+\begin{table}
+  \caption{All possible updates for a particle with two neighbors.}
+  \label{tab:evals}
+  \centering
+  \begin{tabular}{c|c}
+	$\pbest$ updated&Source of $\nbest$ update\\
+	\hline
+	No update&No update\\
+	Updated&No update\\
+	No update&Neighbor 1\\
+	No update&Neighbor 2\\
+	Updated&The particle itself\\
+	Updated&Neigbhor 1\\
+	Updated&Neighbor 2\\
+  \end{tabular}
+\end{table}
 
 Because $2(n+1)$ speculative evaluations must be performed for each particle,
 the choice of topology is an important one.  The use of the Complete topology,
@@ -275,9 +297,10 @@ one iteration to another.
 To aid in describing our methodology, we introduce a few terms.  A particle's
 set of \emph{speculative children} is the set of all possible next iteration
 states that a particle could have.  We use $\p_t$ to denote a particle at
-iteration $t$ and $\s_{t+1}$ to denote one of $\p_t$'s speculative children.
-$\n_t$ is a neighbor of particle $\p_t$.  A set of particles is $\pset$,
-$\sset$, or $\nset$, whereas a single particle is simply $\p$, $\s$, or $\n$.
+iteration $t$ and $\s_{t+1}$ to denote one of $\p_t$'s speculative children,
+corresponding to one of the rows in Table~\ref{tab:evals}.  $\n_t$ is a
+neighbor of particle $\p_t$.  A set of particles is $\pset$, $\sset$, or
+$\nset$, whereas a single particle is simply $\p$, $\s$, or $\n$.
 
 We separate each iteration of PSO into several steps.  First there is the
 motion step, where a particle updates its position and velocity.  Then a
@@ -294,6 +317,30 @@ then simply denoted as $\p_t$.
 
 \subsection{Centralized Algorithms}
 
+\begin{algorithm}
+  \caption{Speculative Evaluation in a Centralized PSO}
+  \label{alg:centralized}
+  \begin{algorithmic}[1]
+	\STATE Move all $\p_{t-1}$ to $\noeval{\p}_t$
+	\STATE For each $\noeval{\p}_t$, get its neighbors $\noeval{\nset}_t$ and
+	  generate $\noeval{\sset}_{t+1}$
+	\STATE Evaluate all $\noeval{\p}_t$ and $\noeval{\sset}_{t+1}$ in parallel
+	\STATE Update personal best for each $\noeval{\p}_t$ and
+	  $\noeval{\s}_{t+1}$, creating $\nonbest{\p}_t$ and $\nonbest{\s}_{t+1}$
+	\STATE Update neighborhood best for each $\nonbest{\p}_t$, creating
+	  $\pset_t$
+	\FORALL{$\p_t$}
+	\STATE Pick $\nonbest{\s}_{t+1}$ from $\nonbest{\sset}_{t+1}$ that matches
+	  the branch taken by $\p_t$
+	\STATE Pass along personal and neighborhood best values obtained by $\p_t$,
+	  making $\nonbest{\p}_{t+1}$
+	\ENDFOR
+	\STATE Update neighborhood best for each $\nonbest{\p}_{t+1}$, creating
+	  $\pset_{t+1}$
+	\STATE Repeat
+  \end{algorithmic}
+\end{algorithm}
+
 In a centralized, or Master-Slave, parallel PSO algorithm, one machine, the
 master, keeps track of all necessary information, and all other machines are
 merely used to evaluate the objective function at various positions as directed
@@ -307,11 +354,12 @@ Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate} to obtain the set
 $\noeval{\pset}_t$.  For each particle $\noeval{\p}_t$, the master must get its
 set of neighbors $\noeval{\nset}_t$ and use their positions, along with the
 position of $\noeval{\p}_t$, to enumerate all possible combinations of $\pbest$
-and $\nbest$ that particle $\noeval{\p}_t$ could end up with.  Each of those
-combinations defines a speculative particle, $\s_t$, that can be moved using
-the motion equations to obtain $\noeval{\s}_{t+1}$.  The result is a set of
-particles $\noeval{\pset}_t$, and for each particle a set of speculative
-children $\noeval{\sset}_{t+1}$, which can all be evaluated at once.
+and $\nbest$ that particle $\noeval{\p}_t$ could end up with (as shown in
+Table~\ref{tab:evals}).  Each of those combinations defines a speculative
+particle, $\s_t$, that can be moved using the motion equations to obtain
+$\noeval{\s}_{t+1}$.  The result is a set of particles $\noeval{\pset}_t$, and
+for each particle a set of speculative children $\noeval{\sset}_{t+1}$, which
+can all be evaluated at once.
 
 The master then has the slaves evaluate the particles.  Once all particles,
 speculative and original, have been evaluated and the values reported to the
@@ -362,30 +410,6 @@ itself.
 
 The algorithm is outlined in \alg{centralized}.
 
-\begin{algorithm}
-  \caption{Speculative Evaluation in a Centralized PSO}
-  \label{alg:centralized}
-  \begin{algorithmic}[1]
-	\STATE Move all $\p_{t-1}$ to $\noeval{\p}_t$
-	\STATE For each $\noeval{\p}_t$, get its neighbors $\noeval{\nset}_t$ and
-	  generate $\noeval{\sset}_{t+1}$
-	\STATE Evaluate all $\noeval{\p}_t$ and $\noeval{\sset}_{t+1}$ in parallel
-	\STATE Update personal best for each $\noeval{\p}_t$ and
-	  $\noeval{\s}_{t+1}$, creating $\nonbest{\p}_t$ and $\nonbest{\s}_{t+1}$
-	\STATE Update neighborhood best for each $\nonbest{\p}_t$, creating
-	  $\pset_t$
-	\FORALL{$\p_t$}
-	\STATE Pick $\nonbest{\s}_{t+1}$ from $\nonbest{\sset}_{t+1}$ that matches
-	  the branch taken by $\p_t$
-	\STATE Pass along personal and neighborhood best values obtained by $\p_t$,
-	  making $\nonbest{\p}_{t+1}$
-	\ENDFOR
-	\STATE Update neighborhood best for each $\nonbest{\p}_{t+1}$, creating
-	  $\pset_{t+1}$
-	\STATE Repeat
-  \end{algorithmic}
-\end{algorithm}
-
 \subsection{Distributed Algorithms}
 
 In a distributed parallel PSO algorithm, individual processors not only perform
@@ -416,29 +440,27 @@ passing to get that information.  Particularly, the information that the
 processor needs is the position of each of the particle's neighbors at
 iteration $t$.
 
-This can be accomplished in two ways, either by performing several rounds of
-very simple message passing, or by performing a single round with a lot more
-messages.
+To get that information, a round of message passing is required.  Each particle
+sends its position to its neighbors at iteration $t$, so that all particles can
+generate $\noeval{\sset}_{t+1}$.  After each particle evaluates its position
+and the positions of its speculative children, it passes information about the
+outcome iteration $t$ to its neighbors, so that each particle can receive
+information about its neighborhood best to be updated to $\p_t$.  Once that
+communication is finished, the particle can select the speculative child which
+matched the branch that iteration $t$ actually produced.  Then another round of
+information passing follows, for iteration $t+1$, so that $\nonbest{\p}_{t+1}$
+can be updated to $\p_{t+1}$.  Two iterations have then been completed with
+only one round of evaluations, and the next iteration can start again with the
+first round of message passing.
 
-The first method takes three rounds of passing information, two for iteration
-$t$ and one for iteration $t+1$.  First, each particle must be moved from
-iteration $t-1$ to $\noeval{\p}_t$.  Then a round of message passing is
-required so that each particle knows the position of its neighbors at iteration
-$t$, from which $\noeval{\sset}_{t+1}$ can be generated.  After each particle
-evaluates its position and the positions of its speculative children, it passes
-information about the outcome iteration $t$ to its neighbors, so that each
-particle can receive information about its neighborhood best to be updated to
-$\p_t$.  Once that communication is finished, the particle can select the
-speculative child which matched the branch that iteration $t$ actually
-produced.  Then another round of information passing follows, for iteration
-$t+1$, so that $\nonbest{\p}_{t+1}$ can be updated to $\p_{t+1}$.  Two
-iterations have then been completed with only one round of evaluations, and the
-next iteration can start again with the first round of message passing.
+\subsection{Alternate form of message passing}
 
-Rounds of message passing can be expensive.  Accordingly, we describe a method
-that requires only one round of communication for each pair of iterations.  A
-lot more messages are needed, but that is sometimes more desirable than
-synchronizing all of the machines three times.
+In some distributed frameworks, like the MapReduce framework that we used in
+our experiments, rounds of message passing can be expensive.  The method
+just described uses three rounds of message passing for every two iterations.
+Accordingly, we describe a method that requires only one round of communication
+for each pair of iterations.  A lot more messages are needed, but that is
+sometimes more desirable than synchronizing all of the machines three times.
 
 This second method only requires one round of passing information because
 information about iteration $t$ and $t+1$ are passed at the same time.  Each
@@ -461,36 +483,96 @@ needed to produce $\p_{t+1}$.
 Upon evaluation, $\noeval{\p}_t$ becomes $\nonbest{\p}_t$, needing only to get
 its neighborhood best information from its neighbors.  All of its neighbors,
 then, must send it a message, so that from their updated personal best at
-iteration $t$ the particle becomes $\p_t$.
-
-With $\p_t$ we can select the correct speculative child as described above and
-produce $\nonbest{\p}_{t+1}$.  We then need the set of neighbors to
-$\nonbest{\p}_{t+1}$, $\nonbest{\nset}_{t+1}$, so we can update
-$\nonbest{\p}_{t+1}$'s neighborhood best.
-
-To produce each neighbor $\nonbest{\n}_{t+1}$, we need the same information for
-the neighboring particle that we needed to produce the original particle,
-$\nonbest{\p}_{t+1}$; we need the original neighbor particle, its speculative
-children, and its neighbors.  With that information, the set
-$\nonbest{\nset}_{t+1}$ can be obtained by following the same process used to
-obtain $\nonbest{\p}_{t+1}$.  With $\nonbest{\nset}_{t+1}$ and
-$\nonbest{\p}_{t+1}$, we can produce $\p_{t+1}$.
-
-In order to get $\p_{t+1}$, then, a particle needs to receive messages from its
-neighbors, its neighbors' neighbors, its speculative children, and its
-neighbors' speculative children.  \fig{origparticle} shows graphically how this
-information is used to produce $\p_{t+1}$.  The particle $\p_{t+1}$ can be
-passed to some central machine to track the progress of the algorithm, and it
-can be moved to $\noeval{\p}_{t+2}$ in order to start the next iteration.
+iteration $t$ the particle becomes $\p_t$.  The work done with the messages
+received thus far is just as in regular PSO, and is graphically depicted in 
+\fig{messages1}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{messages.eps}
-  \caption{The messages needed to produce $\p_{t+1}$. $nn$ are the neighbors
-  of $p$'s neighbors, and $ns$ are the speculative children of $n$.  Items
-  without an arrow pointing to them are messages the particle needs to receive.}
-  \label{fig:origparticle}
+  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{pt}[C][C]{$\p_{t}$}
+  \includegraphics[width=.3\columnwidth]{messages1.eps}
+  \caption{The messages needed to produce $\p_{t}$.  Items without an arrow
+  pointing to them are messages the particle needs to receive.}
+  \label{fig:messages1}
 \end{figure}
+
+With $\p_t$ we can select the correct speculative child as described above and
+produce $\nonbest{\p}_{t+1}$.  Again we show the use of messages thus far
+graphically, in \fig{messages2}.  
+
+\begin{figure}
+  \centering
+  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{pt}[C][C]{$\p_{t}$}
+  \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
+  \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
+  \includegraphics[width=.5\columnwidth]{messages2.eps}
+  \caption{The messages needed to produce $\nonbest{\p}_{t+1}$.  Items without
+  an arrow pointing to them are messages the particle needs to receive.}
+  \label{fig:messages2}
+\end{figure}
+
+We then need the set of neighbors to $\nonbest{\p}_{t+1}$,
+$\nonbest{\nset}_{t+1}$, so we can update $\nonbest{\p}_{t+1}$'s neighborhood
+best.  To produce each neighbor $\nonbest{\n}_{t+1}$, we need the same
+information for the neighboring particle that we needed to produce the original
+particle, $\nonbest{\p}_{t+1}$; we need the original neighbor particle, its
+speculative children, and its neighbors.  With that information, the set
+$\nonbest{\nset}_{t+1}$ can be obtained by following the same process used to
+obtain $\nonbest{\p}_{t+1}$.  We graphically show the messages needed to
+produce $\nonbest{\p}_{t+1}$ in \fig{messages3}.  Note that it looks identical
+to \fig{messages2}, just with different sets of particles.
+
+\begin{figure}
+  \centering
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{nnt-n}[C][C]{$\nonbest{\nnset}_{t}$}
+  \psfrag{nt}[C][C]{$\nset_{t}$}
+  \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
+  \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
+  \includegraphics[width=.6\columnwidth]{messages3.eps}
+  \caption{The messages needed to produce $\nonbest{\nset}_{t+1}$.  Items
+  without an arrow pointing to them are messages the particle needs to receive.
+  $\nnset$ is the set of neighbors for each particle $\n$, and $\nsset$ is the
+  set of $\n$'s speculative children.  Note the similarity between this and
+  \fig{messages2}.}
+  \label{fig:messages3}
+\end{figure}
+
+With $\nonbest{\nset}_{t+1}$ and $\nonbest{\p}_{t+1}$, we can produce
+$\p_{t+1}$.  This is shown in \fig{messages4}.  Note that we just combined
+Figures~\ref{fig:messages2}~and~\ref{fig:messages3}, putting them together
+to make $\p_{t+1}$, as all the particle needs is it's neighborhood best to be
+updated.
+
+\begin{figure}
+  \centering
+  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{pt}[C][C]{$\p_{t}$}
+  \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
+  \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{nnt-n}[C][C]{$\nonbest{\nnset}_{t}$}
+  \psfrag{nt}[C][C]{$\nset_{t}$}
+  \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
+  \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
+  \psfrag{pt1}[C][C]{$\p_{t+1}$}
+  \includegraphics[width=.8\columnwidth]{messages4.eps}
+  \caption{The messages needed to produce $\p_{t+1}$.  Items
+  without an arrow pointing to them are messages the particle needs to receive.
+  Note that this is just a combination of \fig{messages2} and \fig{messages3}.}
+  \label{fig:messages4}
+\end{figure}
+
+In order to get $\p_{t+1}$, then, a particle needs to receive messages from its
+neighbors, its neighbors' neighbors, its speculative children, and its
+neighbors' speculative children.  The particle $\p_{t+1}$ can be passed to some
+central machine to track the progress of the algorithm, and it can be moved to
+$\noeval{\p}_{t+2}$ in order to start the next iteration.
 
 The next goal is to produce the set $\noeval{\sset}_{t+3}$.  As described
 above, the necessary components to produce $\noeval{\sset}_{t+3}$ are
@@ -503,14 +585,19 @@ motion equations to $\noeval{\n}_{t+2}$.
 We have already described how to use a set of messages to obtain $\p_{t+1}$.
 The process is exactly the same to produce each $\n_{t+1}$, requiring the same
 messages, except for the neighbor particles instead of the particle itself.  
-\fig{specparticles} shows graphically how $\noeval{\sset}_{t+3}$ is produced.
+\fig{messages5} shows graphically how $\noeval{\sset}_{t+3}$ is produced.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.6\columnwidth]{messages2.eps}
+  \psfrag{pt1}[C][C]{$\p_{t+1}$}
+  \psfrag{nt1}[C][C]{$\nset_{t+1}$}
+  \psfrag{nt2-e}[C][C]{$\noeval{\nset}_{t+2}$}
+  \psfrag{pt2-e}[C][C]{$\noeval{\p}_{t+2}$}
+  \psfrag{st3-e}[C][C]{$\noeval{\sset}_{t+3}$}
+  \includegraphics[width=.5\columnwidth]{messages5.eps}
   \caption{The messages needed to produce $\noeval{\sset}_{t+3}$. $\p_{t+1}$
-  and $\nset_{t+1}$ are both produced as in \fig{origparticle}.}
-  \label{fig:specparticles}
+  and $\nset_{t+1}$ are both produced as in \fig{messages4}.}
+  \label{fig:messages5}
 \end{figure}
 
 Having obtained both $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$ from the
@@ -526,33 +613,14 @@ topology, that looks like more messages than it really is, as many of the
 neighbors' neighbors are duplicates.  With the Random topology, however, the
 list of necessary messages could be rather large.  
 
-The decision between these two methods of performing speculative evaluation in
-a distributed parallel PSO algorithm depends on which is more expensive: 
-individual messages between processors or rounds of communication.
+This may seem like an inordinate amount of work, and in some instances it is.
+However, some parallel frameworks necessitate this type of message passing, so
+we showed how speculative evaluation can be performed in such frameworks.
 
 \subsection{Dynamic Topologies}
 
-The original PSO algorithm was developed with only static topologies in mind. A
-few of the details about the neighborhood best $\nbest$ were left unspecified,
-as they are not issues with static topologies.  However, when neighbors change
-from iteration to iteration a few questions arise.  Is $\nbest$ the best
-position of any of its all-time neighbors, or only its current neighbors?  Do
-particles share their current value, their personal best value, or their
-neighborhood best value to contribute to their neighbors' neighborhood best?
-
-It has been shown that in dynamic topologies using the $\nbest$ only from
-current neighbors leads to poor performance.  $\nbest$ should instead be
-defined as the best position of any of the neighbors the particle has ever
-had~\cite{mcnabb-cec09}.  The question of which value to share with neighbors
-is an open one.  Giving more information to a particle's neighbors shares
-information more quickly through the swarm.  We choose to share the personal
-best value as a good middle ground.  Also, sharing the neighborhood best would
-require more message passing in distributed algorithms, as particles would need
-more information in order to generate their speculative children from their
-neighbors.
-
-Performing speculative evaluation in PSO with a dynamic topology also raises a
-few issues of its own.  First, with neighbors changing each iteration, messages
+Performing speculative evaluation in PSO with a dynamic topology raises a few
+issues of its own.  First, with neighbors changing each iteration, messages
 that processors pass to their neighbors need to be sent to the correct
 neighbors for each iteration.  In centralized algorithms and in distributed
 algorithms with several rounds of message passing (the first method described
@@ -615,7 +683,7 @@ $\noeval{\sset}_{t+1}$ instead of with the matching branch.
 
 This can be thought of as drawing a number of samples from the next iteration
 and accepting the best one.  Speculative particles that move in good directions
-are kept.  Clearly this modification to PSO would produce more exploitation,
+are kept.  It seems this modification to PSO would produce more exploitation,
 decreasing the amount of exploration.  With functions that are less deceptive
 we would expect this method to work well, while performance on more deceptive
 functions would probably be hurt.
@@ -624,129 +692,107 @@ functions would probably be hurt.
 \label{sec:results}
 
 In our experiments we compared our speculative PSO algorithm to the standard
-PSO algorithm.  To have the same number of function evaluations per iteration
-it is necessary to use a smaller swarm size in the speculative algorithm.
-There are $2(n+1)$ speculative evaluations per particle for every two
-iterations, plus one for the original, non-speculative particle.  For each of
-the topologies we used, a particle has three neighbors, including itself.  One
-of the $2(n+1)$ cases can be eliminated, however, as the particle cannot be its
-own neighborhood best update while not also updating its personal best
-(otherwise its personal best would be the neighborhood best, and it would not
-have updated).  So we have $2(n+1)$ total evaluations per particle, giving us
-$8p_s$ evaluations for every two iterations, where $p_s$ is the number of
-particles in the speculative swarm.  A regular swarm uses $2p_r$ evaluations
-per two iterations.  To have the same number of function evaluations per
-iteration, we have that $p_s = \frac{1}{4}p_r$.
+PSO algorithm.  To use the same number of processors for each algorithm,
+speculative evaluation needs a smaller swarm size than standard PSO.  For each
+of the topologies we used, a particle has two neighbors other than itself.  As
+shown in Table~\ref{tab:evals}, this results in $7$ speculative evaluations per
+particle.  With one evaluation needed for the original, non-speculative
+particle, we have $8p_s$ evaluations for every two iterations, where $p_s$ is
+the number of particles in the speculative swarm.  The extra evaluations done
+in speculative evaluation would instead be particles in regular PSO, so we
+compare swarms of size $p_s$ in speculative evaluation with swarms of size
+$8p_s$ in regular PSO.
 
 We use a Random topology in our speculative algorithm, as the Complete topology
 leads to an explosion of speculative evaluations.  However, if speculative
 evaluation were not being performed, it is likely that the Complete topology
-would be used.  To be fair in our comparisons, for the standard PSO algorithm
-we compare to both the Random topology with two neighbors and to the Complete
-topology.  All functions have 20 dimensions, and all results shown are averages
-over 20 runs.  Except where noted, we use swarms of close to 50 particles, as
-that has been recommended as a general-purpose swarm size~\cite{bratton-sis07}.
-When the speculative swarms have 50 particles, regular PSO swarms have 200.
-For ease of labeling, we call our speculative algorithm SEPSO, the variant
-SEPSO Pick Best, and standard PSO just PSO, with the topology following if
-necessary.
+would be used, ignoring the communication cost of Complete over Random.  To be
+fair in our comparisons, for the standard PSO algorithm we compare to both the
+Random topology with two neighbors and to the Complete topology.  All functions
+have 20 dimensions, and all results shown are averages over 20 runs.  We use
+240 processors in our experiments, so speculative algorithms use 30 particles
+and standard PSO uses 240 particles.  For ease of labeling, we call our
+speculative algorithm SEPSO, the variant SEPSO Pick Best, and standard PSO just
+PSO.
 
 First we look at the function Sphere, the simplest of common benchmark
 functions.  Its equation is $f(\Vec{x}) = \sum_{i=1}^D x_i^2$.  The function
 has no local optima and is best optimized in terms of function evaluations with
 a small swarm using a Complete topology.  Accordingly, we show results for a
 small Complete swarm in \fig{sphere1}.  In comparing SEPSO with PSO, we can see
-that SEPSO clearly beat PSO with a Random topology.  However, the performance
-between SEPSO and PSO Complete is not as encouraging---the results are
-indistinguishable.  But SEPSO Pick Best handily outperforms all other
-algorithms in this problem.
+that SEPSO clearly beats PSO with a Random topology.  However, the performance
+between SEPSO and PSO Complete is not as encouraging---PSO Complete performs
+slightly better.  But SEPSO Pick Best handily outperforms all other algorithms
+in this problem.
 
 \begin{figure}
+  \centering
   \includegraphics[width=.8\columnwidth]{sphere1.eps}
-  \caption{Function Sphere with a swarm that performs 104 evaluations per two
-  iterations.  Speculative algorithms have a swarm size of 13, and the original
-  PSO has a swarm size of 52.}
+  \caption{Function Sphere with a swarm that uses 240 processors per round of
+  evaluations.  Speculative algorithms have a swarm of 30 particles and do two
+  iterations per round, while standard PSO algorithms use 240 processors and do
+  one iteration per round.}
   \label{fig:sphere1}
-\end{figure}
-
-To further illustrate the point that performing speculative evaluation is a
-much better idea with some functions than simply adding particles, in
-\fig{sphere2} we show a graph comparing the performance of SEPSO Pick Best with
-13 particles and with 50 particles.  The difference between the two in terms of
-function evaluations is staggering.  However, this result is well known; with
-Sphere and similar functions, the best thing to do is have a small swarm run
-longer.  We show the results here because our method allows the algorithm to
-use spare processors in parallel to perform more iterations at the same time.
-Clearly with these functions the best thing to do is not to add particles to
-the swarm, but to perform speculative evaluation.
-
-\begin{figure}
-  \includegraphics[width=.8\columnwidth]{sphere2.eps}
-  \caption{Function Sphere with SEPSO Pick Best in two different swarm sizes.
-  The difference in performance is incredible and suggests that for this
-  function processors should most certainly be used to increase the number of
-  iterations performed and not add more particles to the swarm.}
-  \label{fig:sphere2}
 \end{figure}
 
 Next we look at the function Griewank, defined by the equation $f(\Vec{x}) =
 \frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D \cos\left(\frac{x_i}{\sqrt{i}}
 \right) + 1$.  It is generally recommended to use the Ring topology when
 optimizing the Griewank function, as Complete is prone to premature convergence
-on a local optima.  We show results in \fig{griewank1} for a swarm size of 50
-particles with SEPSO.  One can see in the figure that both SEPSO algorithms
-initially outperformed PSO, but got stuck in a local optima and were eventually
-outperformed.  
+on a local optima.  We show results in \fig{griewank1} for swarms of size 30
+and 240 using the Ring topology. One can see in the figure that both SEPSO
+algorithms initially outperformed PSO, but got stuck in a local optima and were
+eventually outperformed.  
 
 \begin{figure}
+  \centering
   \includegraphics[width=.8\columnwidth]{griewank1.eps}
-  \caption{Function Griewank with a swarm that performs 400 evaluations per two
-  iterations.  Speculative algorithms have a swarm size of 50, and the original
-  PSO has a swarm size of 200.}
+  \caption{Function Griewank with a swarm that uses 240 processors per round of
+  evaluations.  Speculative algorithms have a swarm of 30 particles and do two
+  iterations per round, while standard PSO algorithms use 240 processors and do
+  one iteration per round.}
   \label{fig:griewank1}
 \end{figure}
 
-It has also been shown that with Griewank, swarms that pass a threshold of size
-consistently find the global optimum.  That size is about 400
-particles~\cite{mcnabb-cec09}.  Thus we also show results for a swarm size of
-400 with SEPSO in \fig{griewank2}.  Once the speculative swarm is of a
-sufficient size to not get caught in the local optima, it clearly outperforms
-standard PSO, finding the global optimum in fewer function evaluations.
+\fig{griewank1} is slightly deceptive, however, as with Griewank some of the
+runs found the global optimum, 0, while some did not.  A more accurate plot for
+this function is one showing what percentage of the runs have found the global
+optimum at each iteration.  \fig{griewank2} shows such a plot.  A swarm of size
+30 performing the PSO algorithm gets stuck a little less than half of the time,
+while 240 particles provides enough exploration to find the global optimum
+every time.  Surprisingly, using the SEPSO Pick Best algorithm with 30
+particles greatly improves the chance of success with Griewank, while also
+finding the global optimum in far fewer rounds of evaluations than standard
+PSO.
 
 \begin{figure}
+  \centering
   \includegraphics[width=.8\columnwidth]{griewank2.eps}
-  \caption{Function Griewank with a swarm that performs 3200 evaluations per
-  two iterations.  Speculative algorithms have a swarm size of 400, and the
-  original PSO has a swarm size of 1600.  The local optima with the lowest
-  function value is close to $10^{-6}$.  Thus both algorithms consistently find
-  the global optimum without getting stuck.}
+  \caption{Function Griewank with a swarm that uses 240 processors per round of
+  evaluations.  Instead of showing average function value, we show the
+  percentage of runs that found the global optimum at each iteration.}
   \label{fig:griewank2}
 \end{figure}
 
-Lastly we look at functions that do not show much or any improvement with this
-method.  The Ackley function is defined as $f(\Vec{x}) = -20\exp\left\{
--0.2\sqrt{\frac{1}{D}\sum_{i=1}^Dx_i^2}\right\} - \exp\left\{\frac{1}{D}
-\sum_{i=1}^D\cos(2\pi x_i)\right\}+20+e$. \fig{ackley} shows a comparison of
-our speculative algorithms versus the original PSO with swarm sizes of 50 and
-200, respectively.  There is no significant difference between the performance
-of SEPSO and PSO Complete, though the performance of SEPSO Pick Best is
-interesting to note.  It quickly converged on a local optimum and compared to
-the other algorithms had dismal performance on this function.
-
-We also ran experiments with the function Rastrigin, $f(\Vec{x}) = \sum_{i=1}^D
-\left(x_i^2 - 10\cos\left(2\pi x_i\right) + 10\right)$,  though space does not
-permit us to present a graph of our results.  However, performance of SEPSO and
-PSO Complete was largely indistinguishable, as it was with Ackley.
+Lastly we look at a function that does not show much or any improvement with
+this method.  The function Rastrigin is defined as $f(\Vec{x}) = \sum_{i=1}^D
+\left(x_i^2 - 10\cos\left(2\pi x_i\right) + 10\right)$.  It has been shown that
+with Rastrigin, the more particles there are in the swarm, the lower function
+value it finds, up to at least 4000 particles~\cite{mcnabb-cec09}.  Smaller
+swarms get caught in local optima.  Because our speculative algorithms have a
+significantly smaller swarm size, they get stuck at higher values while the
+larger swarms performing regular PSO continue to improve the best value found.
+\fig{rastrigin} shows the results graphically.
 
 \begin{figure}
-  \includegraphics[width=.8\columnwidth]{ackley.eps}
-  \caption{Function Ackley with a swarm that performs 400 evaluations per
-  two iterations.  Speculative algorithms have a swarm size of 50, and the
-  original PSO has a swarm size of 200.  Note the particularly horrible
-  performance of SEPSO Pick Best.}
-  \label{fig:ackley}
+  \centering
+  \includegraphics[width=.8\columnwidth]{rastrigin.eps}
+  \caption{Function Rastrigin with a swarm that uses 240 processors per round
+  of evaluations.  Speculative algorithms have a swarm of 30 particles and do
+  two iterations per round, while standard PSO algorithms use 240 processors
+  and do one iteration per round.}
+  \label{fig:rastrigin}
 \end{figure}
-
 
 \section{Conclusions}
 \label{sec:conclusion}
@@ -755,14 +801,14 @@ We have described how parallel implementations of particle swarm optimization
 can be modified to allow additional processors to increase the number of
 iterations of the algorithm performed, instead of merely adding more particles
 to the swarm.  We have detailed several different implementations of the
-algorithm, depending on the parallel PSO framework being used.  Using this
-algorithm, the original PSO algorithm is exactly reproduced two iterations at a
-time.  This technique requires more function evaluations per iteration than
-regular PSO, but for a number of functions still performs better.
+algorithm, depending on the parallel PSO framework being used.  Using our
+modifications, the original PSO algorithm is exactly reproduced two iterations
+at a time.  This technique requires more function evaluations per iteration
+than regular PSO, but for some functions still performs better when run in a
+parallel environment.
 
 We have also described a method for making use of extra speculative evaluations
-that performs incredibly well on some functions and incredibly poorly on other
-functions.
+that performs incredibly well on some functions.
 
 Though space has limited our presentation of results to a very small sample of
 the interesting and relevant applications of our technique, we believe the
@@ -786,11 +832,12 @@ evaluations are used.
 There are other functions for which there is a point where the algorithm has
 done ``enough'' exploration and consistently finds the global optimum.  Adding
 additional particles to the swarm is akin to increasing its capacity for
-exploration, and it has been shown that for a 20-dimensional Griewank function,
-400 particles is ``enough'' exploration~\cite{mcnabb-cec09}.  For these
-functions, one should use processors to increase the swarm size until enough
-exploration has been reached, then use additional processors to increase the
-number of iterations performed.
+exploration.  We have seen that for a 20-dimensional Griewank function, a
+number of particles greater than 30 but less than 240 has ``enough''
+exploration and finds the optimal value every time.  For these functions, one
+should use processors to increase the swarm size until enough exploration has
+been reached, then use additional processors to increase the number of
+iterations performed.
 
 There are still other functions for which it seems there is never enough
 exploration, such as the Rastrigin function.  It has been shown that up to 4000
