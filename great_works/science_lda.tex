@@ -1,0 +1,107 @@
+\documentclass[onecolumn, 12pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{setspace}
+\doublespacing
+
+\title{}
+\author{Matthew Gardner}
+\date{}
+
+\begin{document}
+
+\textbf{Physical Science Response}
+
+\begin{tabular}{ll}
+  Name:&Matthew Gardner \\
+  Work:&Computer Science Colloquium---Latent Dirichlet Allocation \\
+  Speaker:&Charles Elkan \\
+  Date:&October 1, 2009 \\
+\end{tabular}
+
+\section*{Historical Context}
+
+Though still largely in its infancy, the field of natural language processing
+in computer science has flowered in recent years.  Natural language processing
+is using a computer to understand, analyze, or otherwise process natural spoken
+or written language.  Companies like Google use natural language processing
+when trying to understand a search query or when trying to decide whether any
+particular email is spam or not.  Machine translation systems also fall under
+the heading of natural language processing.  As little as 10 years ago,
+attempts to build search engines or machine translation systems were faltering
+at best.  Today, the ability of computers to analyze large collections of
+documents and perform important tasks with the results of the analysis is very
+impressive.  However, a lot of work still needs to be done before we can claim
+that computers completely understand natural language.
+
+\section*{In-Depth Analysis}
+
+There are some common tasks that are often done with large collections of
+documents.  The first is called classification.  When performing
+classification, each document has some kind of label, such as ``spam'' or ``not
+spam'' if we are dealing with emails.  The task of classification is to use the
+labeled data, often called ``training data,'' to learn some way of
+distinguishing between the various labels.  With this method, often a
+statistical model, the computer can then decide what label to give to a new
+document that was not part of the training documents and does not have a label.
+In this way, Google can analyze a lot of emails that have been labeled as being
+spam and figure out common characteristics, and use those characteristics to
+implement a spam filter.
+
+A slightly more complicated task is that of clustering.  The clustering task
+is very similar to the classification task, except it is done without labels.
+The computer analyzes all of the documents and groups them into some number of
+``clusters,'' where each cluster represents what would have been a label in the
+classification task.  Thus without any information except that contained in the
+documents themselves, the computer can decide which documents are similar to
+each other and which are different.  For example, a researcher could take a
+large collection of news articles on different topics and use this method to 
+determine which articles talk about the same or similar themes.
+
+A limitation of clustering is that it assumes that each document fundamentally
+is about one topic, and tries to figure out which topic each document belongs
+to.  What about documents that are about more than one topic, such as faith and
+repentance?  If there is a lot of overlap between topics that the documents
+talk about, the performance of clustering methods degrades rather quickly.  To
+get around this issue, a technique called Latent Dirichlet Allocation, or LDA,
+was introduced in 2002.  LDA breaks the assumption that each document comes
+from a single topic and instead assumes that each word in each document comes
+from a particular topic, allowing documents to contain many topics.  Performing
+LDA on a collection of documents will produce a set of topics that contain
+similar words and information about how often each document uses words from
+each topic.  A good example again is a collection of news articles.  Suppose
+the articles talked about Iraq, Vietnam, Health Care, the President of the
+United States, and Congress.  Likely, there would be a topic containing words
+used in politics, one with words used when talking about war, one about
+doctors, and so on.  Each of the articles would have some proportion of words
+from each topic, and someone looking for articles that talked about both
+politics and health care would have an easy time finding them.
+
+Natural language processing has shown to be very useful when trying to analyze
+and perform tasks with large collections of documents.  LDA is the most
+advanced and most recently developed of these techniques, and it is still being
+improved.  This lecture talked about one particular issue with LDA and how it 
+can be addressed.  The problem was that of ``burstiness'' in natural languages,
+the fact that if a rare word is used once in a document, the probability of
+seeing it again is very high.  Charles Elkan solved the problem by using a
+different probability distribution when training his LDA model.  He showed
+results that seemed to be promising.
+
+\section*{Personal Reflection}
+
+I first learned about LDA in one of my computer science classes.  This lecture
+introduced me to some techniques that I hadn't considered before, and I quite
+enjoyed the lecture.  I did a project for a class using LDA where I used it to
+analyze the set of talks from LDS General Conferences from 1900 to the present.
+The results I saw were fascinating---there was a topic about tithing, one about
+welfare, one about Relief Society, one about Sunday School, and many more.  And
+the proportions of those topics in the talks over time that LDA found matched
+very well with real-world events.  For example, the tithing topic spiked in
+1900, when Lorenzo Snow was president of the church and focused heavily on
+paying a full tithe, and has since leveled off.  The Relief Society topic was
+almost non-existent in the talks until the 1970s, when women started speaking
+in General Conference.  I gained an appreciation for the technique through the
+experiments I did, and I'm planning on doing graduate work in natural language
+processing because of how much I enjoyed using LDA and other algorithms.
+
+\end{document}
