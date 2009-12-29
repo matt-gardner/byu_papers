@@ -20,7 +20,7 @@ ring_points = []
 for i in xrange(1, ITERATIONS):
     evaluations = i * SWARMSIZE
     sepso_points.append((evaluations, sepso_data.average(i*2)))
-    pickbest_points.append((evaluations, pickbest_data.average(i*2)))
+    #pickbest_points.append((evaluations, pickbest_data.average(i*2)))
     ring_points.append((evaluations, ring_data.average(i)))
 
 plot = Plot()
@@ -33,7 +33,7 @@ plot.xlabel = 'Function Evaluations'
 plot.ylabel = 'Best Function Value'
 
 plot.append(Points(sepso_points, title='SEPSO', style='lines'))
-plot.append(Points(pickbest_points, title='SEPSO Pick Best', style='lines'))
+#plot.append(Points(pickbest_points, title='SEPSO Pick Best', style='lines'))
 plot.append(Points(ring_points, title='PSO Ring', style='lines'))
 
 plot.show()
