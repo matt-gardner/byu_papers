@@ -251,7 +251,7 @@ position of the particle at time $t-1$, then one of the speculative positions
 has to be the correct one, and two iterations have been evaluated at once.
 
 \begin{table}
-  \caption{All possible updates for a particle with two neighbors.}
+  \caption{All possible updates for a particle with two neighbors}
   \label{tab:evals}
   \centering
   \begin{tabular}{c|c}
@@ -279,8 +279,9 @@ described in~\cite{mcnabb-cec09}, which has been shown to effectively simulate
 the Complete topology.  In that topology, 2 neighbors are chosen at random from
 the swarm for each particle at each iteration.  Because a particle is also
 always its own neighbor, $n$ is $3$ in that case.  In~\sec{results} we report
-the results for using both the Ring topology (where $n$ again is $3$) and the
-Random topology on a number of common benchmark functions.
+the results for performing speculative evaluation using both the Ring topology
+(where $n$ again is $3$) and the Random topology on a number of common
+benchmark functions.
 
 It is not trivial in some parallel architectures to determine which speculative
 position was the correct next position of each particle.  First we discuss the
@@ -367,7 +368,8 @@ master, the master sorts out which speculative child of each particle was the
 correct one.
 
 This is done by first updating each particle $\noeval{\p}_t$ to
-$\nonbest{\p}_t$ by associating the value determined by the slave to the
+$\nonbest{\p}_t$ and each speculative particle $\noeval{\s}_{t+1}$ to
+$\nonbest{\s}_{t+1}$ by associating the value determined by the slave to the
 particle it came from, and updating that particle's personal best if the value
 reported is better than its previous personal best value.  Then each
 $\nonbest{\p}_t$ must be updated to $\p_t$ by updating its neighborhood best
@@ -376,21 +378,21 @@ simply the original PSO algorithm.
 
 Then, with the set $\pset_t$, the branch that was actually taken by each
 particle can be determined, and the correct speculative child can be chosen.
-The branches depended entirely on whether or not the personal best of $p_t$ was
+The branches depend entirely on whether or not the personal best of $p_t$ was
 updated and which particle, if any, updated the particle's neighborhood best.
 Both of those items are now known, and the child that matches the branch is
 selected.
 
 The parent $\p_t$ must pass its personal best value to the child, as the child
 knows only the position that it guessed, not the function value at that
-position.  It is possible that both $\p_t$ and $\s_{t+1}$ updated their
-personal bests, but $\p_t$'s value was better.  For example, suppose that
-$\p_{t-1}$ has a personal best value of 3.  $\noeval{\p}_t$ was created, and
-$\noeval{\s}_{t+1}$ was moved assuming that $\p_t$ had updated its personal
+position.  It is possible that both $\p_t$ and $\s_{t+1}$ update their
+personal bests, but $\p_t$'s value is better.  For example, suppose that
+$\p_{t-1}$ has a personal best value of 3.  $\noeval{\p}_t$ is created, and
+$\noeval{\s}_{t+1}$ is moved assuming that $\p_t$ has updated its personal
 best with its position at time $t$.  Then both $\noeval{\p}_t$ and
-$\noeval{\s}_{t+1}$ were evaluated, with values 1 and 2, respectively.
-$\nonbest{\s}_{t+1}$ would think that its current position was its personal
-best, as the value it found, 2, was better than its previous personal best
+$\noeval{\s}_{t+1}$ are evaluated, with values 1 and 2, respectively.
+$\nonbest{\s}_{t+1}$ would think that its current position is its personal
+best, as the value it found, 2, is better than its previous personal best
 value of 3.  It needs to receive the personal best value from its parent to
 know that its personal best position $\pbest$ is actually the position of
 $\p_t$, not $\s_{t+1}$.
@@ -416,10 +418,10 @@ In a distributed parallel PSO algorithm, individual processors not only perform
 evaluations of particles, but also their movement.  The information for each
 particle is not held by a central machine that directs the algorithm; instead,
 each processor has the information for the particle or particles that it is in
-charge of and must perform the steps of the algorithm for the particles it
-manages.  Messages such as values and positions for the neighborhood best are
-sent between processors.  There may be some machine that collects information
-from all of the particles and outputs the result of the algorithm, though that
+charge of and must perform the steps of the algorithm for those particles.
+Messages such as values and positions for the neighborhood best are sent
+between processors.  There may be some machine that collects information from
+all of the particles and outputs the result of the algorithm, though that
 machine's importance is much less than in centralized algorithms.
 
 To perform speculative evaluation in a distributed PSO algorithm, there must be
@@ -444,14 +446,14 @@ To get that information, a round of message passing is required.  Each particle
 sends its position to its neighbors at iteration $t$, so that all particles can
 generate $\noeval{\sset}_{t+1}$.  After each particle evaluates its position
 and the positions of its speculative children, it passes information about the
-outcome iteration $t$ to its neighbors, so that each particle can receive
-information about its neighborhood best to be updated to $\p_t$.  Once that
-communication is finished, the particle can select the speculative child which
-matched the branch that iteration $t$ actually produced.  Then another round of
-information passing follows, for iteration $t+1$, so that $\nonbest{\p}_{t+1}$
-can be updated to $\p_{t+1}$.  Two iterations have then been completed with
-only one round of evaluations, and the next iteration can start again with the
-first round of message passing.
+outcome of iteration $t$ to its neighbors, so that neighboring particles can
+update their neighborhood bests to move from $\nonbest{\p}_t$ to $\p_t$.  Once
+that communication is finished, the particle can select the speculative child
+which matched the branch that iteration $t$ actually produced.  Then another
+round of information passing follows, for iteration $t+1$, so that
+$\nonbest{\p}_{t+1}$ can be updated to $\p_{t+1}$.  Two iterations have then
+been completed with only one round of evaluations, and the next iteration can
+start again with the first round of message passing.
 
 \subsection{Alternate form of message passing}
 
@@ -463,7 +465,7 @@ for each pair of iterations.  A lot more messages are needed, but that is
 sometimes more desirable than synchronizing all of the machines three times.
 
 This second method only requires one round of passing information because
-information about iteration $t$ and $t+1$ are passed at the same time.  Each
+information about iterations $t$ and $t+1$ is passed at the same time.  Each
 processor reconstructs from the messages it receives all of the information
 that it needs about its neighbors.  Messages are passed directly after
 evaluating each particle and its children, so all messages are of the form of
@@ -523,8 +525,8 @@ particle, $\nonbest{\p}_{t+1}$; we need the original neighbor particle, its
 speculative children, and its neighbors.  With that information, the set
 $\nonbest{\nset}_{t+1}$ can be obtained by following the same process used to
 obtain $\nonbest{\p}_{t+1}$.  We graphically show the messages needed to
-produce $\nonbest{\p}_{t+1}$ in \fig{messages3}.  Note that it looks identical
-to \fig{messages2}, just with different sets of particles.
+produce $\nonbest{\nset}_{t+1}$ in \fig{messages3}.  Note that it looks
+identical to \fig{messages2}, just with different sets of particles.
 
 \begin{figure}
   \centering
@@ -615,7 +617,8 @@ list of necessary messages could be rather large.
 
 This may seem like an inordinate amount of work, and in some instances it is.
 However, some parallel frameworks necessitate this type of message passing, so
-we showed how speculative evaluation can be performed in such frameworks.
+we have described how speculative evaluation can be performed in such
+frameworks.
 
 \subsection{Dynamic Topologies}
 
@@ -678,7 +681,7 @@ above except for the process of choosing which speculative child to accept.
 The branch that PSO would have taken is ignored, but $\p_t$ must still be
 created so it can give the right personal best and neighborhood best values and
 positions to $\p_{t+1}$.  The only change needed in \alg{centralized} is in
-step 7, where the $\noeval{\s}_{t+1}$ with the highest value is chosen from
+step 7, where the $\noeval{\s}_{t+1}$ with the best value is chosen from
 $\noeval{\sset}_{t+1}$ instead of with the matching branch.
 
 This can be thought of as drawing a number of samples from the next iteration
@@ -742,7 +745,7 @@ optimizing the Griewank function, as Complete is prone to premature convergence
 on a local optima.  We show results in \fig{griewank1} for swarms of size 30
 and 240 using the Ring topology. One can see in the figure that both SEPSO
 algorithms initially outperformed PSO, but got stuck in a local optima and were
-eventually outperformed.  
+eventually outperformed themselves.  
 
 \begin{figure}
   \centering
@@ -770,7 +773,7 @@ PSO.
   \includegraphics[width=.8\columnwidth]{griewank2.eps}
   \caption{Function Griewank with a swarm that uses 240 processors per round of
   evaluations.  Instead of showing average function value, we show the
-  percentage of runs that found the global optimum at each iteration.}
+  percentage of runs that have found the global optimum by each iteration.}
   \label{fig:griewank2}
 \end{figure}
 
@@ -858,10 +861,9 @@ example, our technique required speculatively evaluating every possible next
 position of each particle.  The number of speculative evaluations could
 potentially be greatly reduced by using statistics for which branch of motion
 particles most often follow.  Only the subset of the most probable next
-locations would then be evaluated.  Using an asynchronous PSO variant would
-also be helpful in this case, allowing particles to be at different iterations
-in case the correct branch was not guessed and needs to be evaluated
-separately.
+locations would then be evaluated.  Using an asynchronous PSO variant may also
+be helpful in this case, allowing particles to be at different iterations in
+case the correct branch was not guessed and needs to be evaluated separately.
 
 Another possible advancement would be to reduce communication costs by dropping
 some of the inter-processor messages in distributed frameworks.  The PSO
