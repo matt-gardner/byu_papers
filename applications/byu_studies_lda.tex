@@ -1,0 +1,44 @@
+\documentclass[onecolumn, 12pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{cite}
+
+\title{Using Natural Language Processing Techniques\\To Automatically Analyze
+General Conference Talks}
+\author{Matthew Gardner and Eric Ringger}
+\date{}
+
+\begin{document}
+\maketitle
+
+In natural language processing, topic identification is the problem of finding
+the underlying semantic meaning in a set of documents.  More practically, it is
+the problem of finding what topics are discussed in a corpus and in what
+proportion each document contains each of those topics.  
+
+Latent Dirichlet allocation (LDA) is a statistical model that is commonly used
+to perform automatic topic identification.  It was first proposed in 2002 and
+has been used with a number of different corpora since then~\cite{blei-jmlr03}.
+In this paper we present the results of using LDA to analyze talks from the
+past 100 years of LDS General Conferences.  We found our results to be
+intriguing, correlating quite well in a number of instances with real-world
+events.  The topics that were found by the algorithm included tithing, the
+Sabbath day, Relief Society, the welfare program, and many more.  In looking at
+the distribution of these topics over time we find some interesting patterns.
+The tithing topic had its highest proportion in General Conference around the
+year 1900, when President Lorenzo Snow made tithing a big focus.  The Relief
+Society topic was almost completely absent until the 1970s, when women started
+speaking in Conference.  The welfare topic had high points around the late
+1930s and early 1940s (during the Great Depression) and in the 1970s, when a
+separate welfare session was held for a few years.
+
+This project has already been completed.  It is the first attempt of which we
+are aware at using latent Dirichlet allocation or similar techniques to try to
+extract meaning from General Conference talks.  We believe the results can be
+used in a variety of ways, including for automatically discovering connections
+between talks.
+
+\bibliographystyle{plain}
+\bibliography{/aml/home/mjg82/bib/nlp/lda/blei-jmlr03}
+
+\end{document}
