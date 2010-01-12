@@ -106,7 +106,7 @@
 \newcommand{\DeanTitle}[1]{\gdef\@DeanTitle{#1}}
 
 % The name of the honors dean
-\newcommand{\HonorsDean}[1]{\gdef\@HonorsDean{#1}}
+\newcommand{\HonorsRep}[1]{\gdef\@HonorsRep{#1}}
 
 % Set default values for fields
   \Year{1905}
@@ -127,7 +127,7 @@
   \DepRepTitle{Chair}
   \Dean{Dean Name}
   \DeanTitle{Associate Dean}
-  \HonorsDean{Honors Dean Name}
+  \HonorsRep{Honors Dean Name}
   \UgradCoord{Department Ugrad Coordinator }
   
 % ---------------------------- options ------------------------------
@@ -182,10 +182,7 @@
   \renewcommand{\makepreliminarypages}{
     \preliminarymargins
     \honorstitlepage 
-    \copyrightpage 
-    \seniorapprovalpage 
     \abstractpage 
-    \acknowledgmentspage 
     \fixmargins
     \renewcommand{\clearemptydoublepage}{\cle@remptydoublep@ge}
   }
@@ -271,6 +268,10 @@
 \ProcessOptions\relax 
 \LoadClass[letterpaper,12pt]{book}
 
+\renewcommand{\thechapter}{}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
 % The afterpage package is required to make single sided formal pages 
 % in a double sided environment
 \RequirePackage{afterpage}
@@ -313,7 +314,7 @@
 \renewcommand{\tableofcontents}{
   \clearemptydoublepage
   \providecommand\phantomsection{} \phantomsection
-  \addcontentsline{toc}{chapter}{Table of Contents}
+  \addcontentsline{toc}{section}{Table of Contents}
   \TEMPtableofcontents
 }
  
@@ -322,7 +323,7 @@
 \let\TEMPlistoffigures\listoffigures
 \renewcommand{\listoffigures}{
   \providecommand\phantomsection{} \phantomsection
-  \addcontentsline{toc}{chapter}{List of Figures}
+  \addcontentsline{toc}{section}{List of Figures}
   \TEMPlistoffigures
 }
 
@@ -330,7 +331,7 @@
 \let\TEMPbibliography\bibliography
 \renewcommand{\bibliography}{
   \providecommand\phantomsection{} \phantomsection
-  \addcontentsline{toc}{chapter}{Bibliography}
+  \addcontentsline{toc}{section}{Bibliography}
   \TEMPbibliography
 }
 
@@ -354,7 +355,7 @@
     \vskip0.667in
     \@degree \\
     \vfill
-    Department of Physics and Astronomy\\[\baselineskip]
+    Department of Computer Science\\[\baselineskip]
     Brigham Young University\\[\baselineskip]
     \@Month~\@Year \\[\baselineskip]
     \end{center}
@@ -365,6 +366,7 @@
 \newcommand{\honorstitlepage}{
     \thispagestyle{empty}
     \begin{center}
+    \addcontentsline{toc}{section}{Title Page}
     \providecommand\pdfbookmark[3][]{} \pdfbookmark[0]{Title Page}{bm:Title}    
     \vspace*{0.375in}
     \@TitleTop\\[\baselineskip]
@@ -375,7 +377,7 @@
     \vfill
     Submitted to Brigham Young University in partial fulfillment\\[\baselineskip]
     of graduation requirements for University Honors\\[2\baselineskip]
-    Department of Physics and Astronomy\\[\baselineskip]
+    Department of Computer Science\\[\baselineskip]
     \@Month~\@Year
     \vfill
     \end{center}
@@ -384,7 +386,7 @@
         Signature: \hrulefill}
     \hfill
     \parbox[t]{2.75in}{
-        Honors Dean: \@HonorsDean \\[.5\baselineskip]
+        Honors Representative: \@HonorsRep \\[.5\baselineskip]
         Signature: \hrulefill}
     \clearemptydoublepage
   }
@@ -503,8 +505,8 @@
     \datebox\hfill\signaturebox{\@Advisor\\Chair, Graduate Committee}
     \vskip 0pt plus 2fill
     \noindent Accepted for the Department\par\hfill%
-    \signaturebox{\@DepRep, \@DepRepTitle\\Department of Physics and
-    Astronomy }{} \vfill \noindent Accepted for the College\par\hfill
+    \signaturebox{\@DepRep, \@DepRepTitle\\Department of Computer Science
+    }{} \vfill \noindent Accepted for the College\par\hfill
     \signaturebox{\@Dean, \@DeanTitle \\
     College of Physical and Mathematical Sciences}
     \clearemptydoublepage
@@ -513,7 +515,7 @@
 % ========================= Abstract ===================================
 
 \newcommand{\abstractpage}{
-    \thispagestyle{empty}
+    \thispagestyle{plain}
     \begin{abstractenv}
     \begin{center}
     \providecommand\pdfbookmark[3][]{} \pdfbookmark[0]{Abstract}{bm:Abstract}    
@@ -522,12 +524,13 @@
     \@TitleTop\\[\baselineskip]
     \@TitleBottom\\[3\baselineskip]
     \@Author\\[\baselineskip]
-    Department of Physics and Astronomy\\[\baselineskip]
+    Department of Computer Science\\[\baselineskip]
     \@degree\\[3\baselineskip]
     \end{center}   
     \renewcommand{\baselinestretch}{1.66}\small\normalsize
     \@Abstract
     
+    \addcontentsline{toc}{section}{Abstract}
     \end{abstractenv}
     \clearemptydoublepage
   }
