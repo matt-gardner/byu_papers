@@ -10,3 +10,5 @@ makefile
 *.dvi
 *.fls
 *.ps
+*.temp
+*.out
