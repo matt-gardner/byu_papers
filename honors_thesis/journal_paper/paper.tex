@@ -72,9 +72,8 @@ iterations of PSO at once.
 
 We also propose another way of making use of these speculative particles,
 keeping the best position found instead of the position that PSO actually would
-have taken.  We show results that for a number of functions, speculative
-evaluation can have dramatic improvements over adding additional particles to
-the swarm.
+have taken.  We show that for a number of functions, speculative evaluation
+gives dramatic improvements over adding additional particles to the swarm.
 
 \end{abstract}
 
@@ -94,10 +93,10 @@ develop parallel implementations of PSO, publishing many papers on the subject.
 The methods they have used include various synchronous algorithms
 \cite{belal-ijicis04,chu-sci06,jin-aps05,parsopoulos-aia04,schutte-ijnme04},
 asynchronous algorithms \cite{koh-ijnme06,mostaghim-report06,venter-wcsmo05},
-and formulating PSO in Google's MapReduce framework \cite{mcnabb-cec07}.
+and algorithms based on Google's MapReduce framework \cite{mcnabb-cec07}.
 Parallelizing the evaluation of the objective function can also be done in some
-cases, though that is not an adaption of the PSO algorithm and thus is not the
-focus of this paper.
+cases, though that is not an adaption of the PSO algorithm itself and thus is
+not the focus of this paper.
 
 All of these parallel techniques use additional processors to increase the
 number of particles in the swarm, either by adding individual particles or by
@@ -110,11 +109,11 @@ fewer iterations with more particles.
 
 To solve this problem, we take inspiration from speculative execution
 techniques commonly used in processors.  Modern processors, when faced with a
-branch on which they must wait, guess which way the branch will go and start
-executing.  If the processor guessed right, execution is much farther ahead
-than if it had just idly waited on the branch.  If it guessed wrong, execution
-restarts right where it would have been anyway.  This is called speculative
-execution or branch prediction.
+branch on which they must wait (e.g. a memory cache miss), guess which way the
+branch will go and start executing.  If the processor guessed right, execution
+is much farther ahead than if it had just idly waited on the branch.  If it
+guessed wrong, execution restarts right where it would have been anyway.  This
+is called speculative execution or branch prediction.
 
 The idea of speculative execution can be applied to some types of optimization
 algorithms.  When the next sampling position of the algorithm does not depend
@@ -124,17 +123,17 @@ position.  This could not be done in gradient methods, for instance, where the
 step size for sampling depends on the gradient at the current position, but it
 has been done in simulated annealing~\cite{witte-tpds91}.
 
-Because the motion of particles in PSO depends only on the \emph{positions} of
-the particle and its neighbors, not the \emph{value} of the objective function
-at those positions, speculative evaluation is possible.  We do not have to wait
-for a particle's position to be evaluated to know where it might move to next,
-so we can compute the set of all possible next positions and send them to be
-evaluated along with the particle's current position.  Once the current
-position of each particle has been evaluated, we can determine which of the
-speculatively evaluated positions matches the branch taken by the particle.  We
-have thus evaluated two iterations at once.  This can easily get unwieldy if
-the set of next possible positions for each particle is large, but a wise
-choice of topology limits that set to a reasonable size.
+Speculative evaluation is possible in PSO because the motion of particles
+depends only on the \emph{positions} of the particle and its best neighbor, not
+the \emph{value} of the objective function at those positions.  We do not have
+to wait for a particle's function evaluation to complete in order to know where
+it might move to next, so we can compute the set of all possible next positions
+and send them to be evaluated along with the particle's current position.  Once
+the current position of each particle has been evaluated, we can determine
+which of the speculatively evaluated positions matches the branch taken by the
+particle.  We have thus evaluated two iterations at once.  This can easily get
+unwieldy if the set of next possible positions for each particle is large, but
+a wise choice of topology limits that set to a reasonable size.
 
 The original PSO can be reproduced exactly, two iterations at a time, using
 this technique.  However, if we relax the requirements of the algorithm, no
@@ -156,8 +155,8 @@ Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
 Eberhart~\cite{kennedy-icnn95}.  The algorithm is used to intelligently search
 a multi-dimensional space by mimicking the swarming and flocking behavior of
 birds and other animals. It is a social algorithm that depends on interaction
-between particles to quickly and consistently find the optimal solution to some
-objective function.
+between particles to quickly and consistently find the optimal solution to a
+given objective function.
 
 The motion of particles through the search space has three components: an
 inertial component that gives particles momentum as they move, a cognitive
@@ -240,43 +239,52 @@ $2(n+1)$ speculative positions to be evaluated, where $n$ is the number of
 neighbors the particle has.  If a particle is also its own neighbor, as is most
 often the case, one of the $2(n+1)$ speculative positions can be eliminated, as
 a particle cannot be the source of its $\nbest$ update while not updating its
-$\pbest$.  Table~\ref{tab:evals} lists all possible combinations of updates
-that can be seen by a particle with two neighbors other than itself, which is
-the case in all of the topologies we use.  If all of these speculative
-positions are evaluated in parallel along with the original, non-speculative
-position of the particle at time $t-1$, then one of the speculative positions
-has to be the correct one, and two iterations have been evaluated at once.
+$\pbest$.  Thus we have $2(n+1)-1$ evaluations.  Table~\ref{tab:evals} lists
+all possible combinations of updates that can be seen by a particle with two
+neighbors other than itself, which is the case in all of the topologies we use.
+If all of these speculative positions are evaluated in parallel along with the
+original, non-speculative position of the particle at time $t-1$, then one of
+the speculative positions has to be the correct one, and two iterations have
+been evaluated at once.
 
 \begin{table}
   \caption{All possible updates for a particle with two neighbors}
   \label{tab:evals}
   \centering
-  \begin{tabular}{c|c}
+  \begin{tabular}{cc}
 	$\pbest$ updated&Source of $\nbest$ update\\
 	\hline
+	\hline
 	No update&No update\\
-	Updated&No update\\
+	\hline
 	No update&Neighbor 1\\
+	\hline
 	No update&Neighbor 2\\
-	Updated&The particle itself\\
-	Updated&Neigbhor 1\\
+	\hline
+	Updated&No update\\
+	\hline
+	Updated&Neighbor 1\\
+	\hline
 	Updated&Neighbor 2\\
+	\hline
+	Updated&The particle itself\\
+	\hline
   \end{tabular}
 \end{table}
 
-Because $2(n+1)$ speculative evaluations must be performed for each particle,
+Because $2(n+1)-1$ speculative evaluations must be performed for each particle,
 the choice of topology is an important one.  The use of the Complete topology,
-where every particle is a neighbor to every other particle, would require on
-the order of $p^2$ speculative evaluations per iteration, where $p$ is the
-swarm size.  Clearly it is much more desirable to have a sparse topology, where
-$O(np)$ is much smaller than $O(p^2)$.  However, some functions are better
-optimized with the Complete topology and the quick spread of information it
-entails than with sparse topologies.  Accordingly, we use the Random topology
-described in~\cite{mcnabb-cec09}, which has been shown to effectively simulate
-the Complete topology.  In that topology, 2 neighbors are chosen at random from
-the swarm for each particle at each iteration.  Because a particle is also
-always its own neighbor, $n$ is $3$ in that case.  In~\sec{results} we report
-the results for performing speculative evaluation using both the Ring topology
+where every particle is a neighbor to every other particle, would require
+$O(p^2)$ speculative evaluations per iteration, where $p$ is the swarm size.
+Clearly it is much more desirable to have a sparse topology, where $O(np)$ is
+much smaller than $O(p^2)$.  However, some functions are better optimized with
+the Complete topology and the quick spread of information it entails than with
+sparse topologies.  Accordingly, we use the Random topology described
+in~\cite{mcnabb-cec09}, which has been shown to effectively simulate the
+Complete topology.  In that topology, 2 neighbors are chosen at random from the
+swarm for each particle at each iteration.  Because a particle is also always
+its own neighbor, $n$ is $3$ in that case.  In~\sec{results} we report the
+results for performing speculative evaluation using both the Ring topology
 (where $n$ again is $3$) and the Random topology on a number of common
 benchmark functions.
 
@@ -297,8 +305,8 @@ set of \emph{speculative children} is the set of all possible next iteration
 states that a particle could have.  We use $\p_t$ to denote a particle at
 iteration $t$ and $\s_{t+1}$ to denote one of $\p_t$'s speculative children,
 corresponding to one of the rows in Table~\ref{tab:evals}.  $\n_t$ is a
-neighbor of particle $\p_t$.  A set of particles is $\pset$, $\sset$, or
-$\nset$, whereas a single particle is simply $\p$, $\s$, or $\n$.
+neighbor of particle $\p_t$.  Sets of particles are given by $\pset$, $\sset$,
+or $\nset$, whereas single particles are simply $\p$, $\s$, or $\n$.
 
 We separate each iteration of PSO into several steps.  First there is the
 motion step, where a particle updates its position and velocity.  Then a
@@ -344,7 +352,8 @@ master, keeps track of all necessary information, and all other machines are
 merely used to evaluate the objective function at various positions as directed
 by the master~\cite{belal-ijicis04}.  To perform speculative evaluation in such
 a scheme, the master generates the positions to evaluate speculatively and
-decides which one to accept for each particle.
+decides which one to accept for each particle.  The outline of the procedure is
+given in \alg{centralized}.
 
 Given a set of particles at iteration $t-1$ (perhaps which have just been
 initialized), the master must move each particle using
@@ -371,14 +380,15 @@ particle it came from, and updating that particle's personal best if the value
 reported is better than its previous personal best value.  Then each
 $\nonbest{\p}_t$ must be updated to $\p_t$ by updating its neighborhood best
 position and value with information about each of its neighbors.  This is
-simply the original PSO algorithm.
+simply the original PSO algorithm, and corresponds to steps 1--5 in
+\alg{centralized}.
 
 Then, with the set $\pset_t$, the branch that was actually taken by each
 particle can be determined, and the correct speculative child can be chosen.
 The branches depend entirely on whether or not the personal best of $p_t$ was
 updated and which particle, if any, updated the particle's neighborhood best.
 Both of those items are now known, and the child that matches the branch is
-selected.
+selected (step 7 in \alg{centralized}).
 
 The parent $\p_t$ must pass its personal best value to the child, as the child
 knows only the position that it guessed, not the function value at that
@@ -396,7 +406,7 @@ $\p_t$, not $\s_{t+1}$.
 
 The parent also needs to pass the value of the neighborhood best that the child
 guessed.  The child only knows the position and needs the value in order to
-make future comparisons between neighborhood best positions.
+make future comparisons between neighborhood best positions (step 8).
 
 Upon picking the correct branch for each particle and updating the children's
 personal best and neighborhood best value (from iteration $t$), the result is
@@ -404,10 +414,8 @@ the set $\nonbest{\pset}_{t+1}$, as the particles are now no longer
 speculative.  What remains is to update the neighborhood best of those
 particles from their neighbors (from iteration $t+1$), as above, to obtain
 $\pset_{t+1}$.  That set of particles can subsequently be used to produce the
-sets $\noeval{\pset}_{t+2}$ and $\noeval{\sset}_{t+3}$, and the process repeats
-itself.
-
-The algorithm is outlined in \alg{centralized}.
+sets $\noeval{\pset}_{t+2}$ and $\noeval{\sset}_{t+3}$ (steps 1 and 2 in
+\alg{centralized}), and the process repeats itself.
 
 \subsection{Distributed Algorithms}
 
@@ -417,18 +425,19 @@ particle is not held by a central machine that directs the algorithm; instead,
 each processor has the information for the particle or particles that it is in
 charge of and must perform the steps of the algorithm for those particles.
 Messages such as values and positions for the neighborhood best are sent
-between processors.  There may be some machine that collects information from
-all of the particles and outputs the result of the algorithm, though that
+between processors.  There may still be some machine that collects information
+from all of the particles and outputs the result of the algorithm, though that
 machine's importance is much less than in centralized algorithms.
 
 To perform speculative evaluation in a distributed PSO algorithm, there must be
 some way to have processors evaluate the speculative children of particles,
 without giving the speculative particles the same treatment as actual
-particles, as the speculative children only live for one iteration.  Perhaps
-that can be done by assigning each particle a set of machines instead of a
+particles, as the speculative children only live for one iteration.  One way
+that can be done is by assigning each particle a set of machines instead of a
 single machine, and the particle directs its extra machines to evaluate its
-speculative children.  No matter the distributed framework used the message
-passing should be similar, and that is what we describe here.
+speculative children.  However the distributed framework functions, the same
+information needs to be passed between particles, and we describe here the
+messages each particle needs to receive to perform speculative evaluation.
 
 A processor that is controlling a single particle $\p_{t-1}$ must first move
 the particle to $\noeval{\p}_t$ and produce the particle's speculative children
@@ -455,11 +464,13 @@ start again with the first round of message passing.
 \subsection{Alternate form of message passing}
 
 In some distributed frameworks, like the MapReduce framework that we used in
-our experiments, rounds of message passing can be expensive.  The method
-just described uses three rounds of message passing for every two iterations.
-Accordingly, we describe a method that requires only one round of communication
-for each pair of iterations.  A lot more messages are needed, but that is
-sometimes more desirable than synchronizing all of the machines three times.
+our experiments, rounds of message passing can be expensive.  The method just
+described uses three rounds of message passing for every two iterations
+(corresponding to steps 2, 5 and 10 in \alg{centralized}).  Accordingly, we
+describe a method that requires only one round of communication for each pair
+of iterations, which happens at step 5 of \alg{centralized}.  Many more
+messages are needed, but that is sometimes more desirable than synchronizing
+all of the machines three times.
 
 This second method only requires one round of passing information because
 information about iterations $t$ and $t+1$ is passed at the same time.  Each
@@ -544,7 +555,7 @@ identical to \fig{messages2}, just with different sets of particles.
 With $\nonbest{\nset}_{t+1}$ and $\nonbest{\p}_{t+1}$, we can produce
 $\p_{t+1}$.  This is shown in \fig{messages4}.  Note that we just combined
 Figures~\ref{fig:messages2}~and~\ref{fig:messages3}, putting them together
-to make $\p_{t+1}$, as all the particle needs is it's neighborhood best to be
+to make $\p_{t+1}$, as all the particle needs is its neighborhood best to be
 updated.
 
 \begin{figure}
@@ -612,10 +623,10 @@ topology, that looks like more messages than it really is, as many of the
 neighbors' neighbors are duplicates.  With the Random topology, however, the
 list of necessary messages could be rather large.  
 
-This may seem like an inordinate amount of work, and in some instances it is.
-However, some parallel frameworks necessitate this type of message passing, so
-we have described how speculative evaluation can be performed in such
-frameworks.
+This may seem like an inordinate amount of work, and with some distributed PSO
+frameworks it is.  However, other parallel frameworks necessitate this type of
+message passing, so we have described how speculative evaluation can be
+performed in those circumstances.
 
 \subsection{Dynamic Topologies}
 
@@ -650,7 +661,7 @@ neighborhood best could come not only from its neighbors' positions at
 iteration $t$, but also from their personal best from iteration $t-1$, as
 neighbors' personal bests are what are used to update a particle's neighborhood
 best.  That creates a problem for speculative evaluation---there are
-potentially more than $2(n+1)$ possible next positions, increasing the amount
+potentially more than $2(n+1)-1$ possible next positions, increasing the amount
 of work that must be done to perform the second iteration at the same time as
 the first.
 
@@ -659,15 +670,24 @@ available information about $\noeval{\nset}_{t+2}$ before producing
 $\noeval{\sset}_{t+3}$.  If a particle $\noeval{\p}_{t+2}$ updates its 
 neighborhood best with the personal bests of $\noeval{\nset}_{t+2}$ before
 calculating the next possible positions for $\noeval{\sset}_{t+3}$, there are
-still only $2(n+1)$ possible next positions, and the problem is avoided.
+still only $2(n+1)-1$ possible next positions, and the problem is avoided.
 
 \subsection{Comparison with Standard PSO}
 
 We ran experiments to compare our speculative PSO algorithm to the standard
-PSO algorithm.  To use the same number of processors for each algorithm,
-speculative evaluation needs a smaller swarm size than standard PSO.  For each
-of the topologies we used, a particle has two neighbors other than itself.  As
-shown in Table~\ref{tab:evals}, this results in $7$ speculative evaluations per
+PSO algorithm.  At each iteration of the algorithms, we use one processor to
+perform one function evaluation for one particle, be it speculative or
+non-speculative.  The speculative algorithm actually performs two iterations of
+PSO at each ``iteration,'' so we instead call each ``iteration'' a round of
+evaluations.  For benchmark functions with very fast evaluations this may not
+be the best use of parallelism in PSO.  But for many real-world applications,
+the objective function takes on the order of minutes or more to evaluate; in
+such cases our assumption is perfectly reasonable.
+
+To use the same number of processors for each algorithm, speculative evaluation
+needs a smaller swarm size than standard PSO.  For each of the topologies we
+used, a particle has two neighbors other than itself.  As shown in
+Table~\ref{tab:evals}, this results in $7$ speculative evaluations per
 particle.  With one evaluation needed for the original, non-speculative
 particle, we have $8p_s$ evaluations for every two iterations, where $p_s$ is
 the number of particles in the speculative swarm.  The extra evaluations done
@@ -675,19 +695,19 @@ in speculative evaluation would instead be particles in regular PSO, so we
 compare swarms of size $p_s$ in speculative evaluation with swarms of size
 $8p_s$ in regular PSO.
 
-We use a Random topology in our speculative algorithm, as the Complete topology
-leads to an explosion of speculative evaluations.  If speculative evaluation
-were not being performed, it is possible that the Complete topology would be
-used.  However, the Complete topology also requires a very large amount of
-interprocessor communication in parallel PSO, so it is still quite possible
-that Random would be used even with standard PSO.  But, to be fair in our
-comparisons, we compare to the standard PSO algorithm using both the Random
-topology with two neighbors and the Complete topology.  All functions have 20
-dimensions, and all results shown are averages over 20 runs.  We use 240
-processors in our experiments, so our speculative algorithm uses 30 particles
-and standard PSO uses 240 particles.  For ease of labeling, we call our
-speculative algorithm SEPSO and standard PSO just PSO, with the topology
-following.
+Where the Complete topology would normally be used, we use a Random topology in
+our speculative algorithm, as Complete leads to an explosion of speculative
+evaluations.  If speculative evaluation were not being performed, it is
+possible that the Complete topology would be used.  However, the Complete
+topology also requires a very large amount of interprocessor communication in
+parallel PSO, so it is still quite possible that Random would be used even with
+standard PSO.  But, to be fair in our comparisons, we compare to the standard
+PSO algorithm using both the Random topology with two neighbors and the
+Complete topology.  All functions have 20 dimensions, and all results shown are
+averages over 20 runs.  We use 240 processors in our experiments, so our
+speculative algorithm uses 30 particles and standard PSO uses 240 particles.
+For ease of labeling, we call our speculative algorithm SEPSO and standard PSO
+just PSO, with the topology following.
 
 First we look at the function Sphere, the simplest of common benchmark
 functions.  Its equation is $f(\Vec{x}) = \sum_{i=1}^D x_i^2$.  The function
@@ -784,7 +804,7 @@ both?
 
 \subsection{Pick the Best Child}
 
-In performing speculative evaluation as we have described it, $2(n+1)$
+In performing speculative evaluation as we have described it, $2(n+1)-1$
 speculative evaluations are done per particle, while all but one of them are
 completely ignored.  We can try to make use of those evaluations instead of
 throwing them away.  
@@ -812,7 +832,7 @@ Because the problem facing speculative evaluation is having too many possible
 evaluations to perform, a natural step to take is to eliminate some of the
 evaluations.  If we could reliably predict which branch were going to be taken,
 we could limit ourselves to one speculative evaluation per particle instead of
-$2(n+1)$.  While we cannot with certainty predict the correct branch every
+$2(n+1)-1$.  While we cannot with certainty predict the correct branch every
 time, we can look at the statistics of the behavior of particles in general and
 perhaps come up with a good guess, reducing the number of necessary speculative
 evaluations.
@@ -905,13 +925,17 @@ neighbors.  It also turns out that the neighbor that last updated the
 neighborhood best is the most likely to update it next time, so keeping track
 of that information could be fruitful in trying to predict that branch.
 
-The statistics for the Complete topology are less promising (as there are 240
-neighbors that branch four splits into, instead of two), though we do not use
-that topology with speculative evaluation anyway.
+The statistics for the Complete topology are less promising, as there are 240
+neighbors that branch four splits into, instead of two.  Pruning does, however,
+allow for the possibility of using the Complete topology in speculative
+evaluation while avoiding the explosion in the number of evaluations it would
+otherwise entail.  Though pruning makes its use possible, we still found the
+communication costs in our parallel environment prohibitive, so we do not
+present any results for the Complete topology here.
 
-Because there are a few branches with very high probabilities, we can have hope
-that cutting out some of the evaluations that have low probability will lead to
-an increase in overall performance.
+With the other topologies, however, there are a few branches with very high
+probabilities, so we can have hope that cutting out some of the evaluations
+that have low probability will lead to an increase in overall performance.
 
 \subsubsection{What if we guessed wrong?}
 
@@ -937,8 +961,72 @@ better than keeping the particle back an iteration.
 
 \subsection{More than one iteration ahead}
 
+We need not simply produce speculative children for the next iteration.  We can
+view all possible speculative evaluations for a particle as an infinite tree
+with branching factor $2(n+1)-1$.  As we have already seen that doing one full
+level of the tree produces too many extra evaluations to be profitable, it is
+incredibly unlikely that doing two full iterations would produce decent
+results.  But, if the idea of speculating more than one iteration ahead is
+combined with wisely pruning the possible evaluations based on branch
+statistics, we can use just a few extra evaluations to go two or three
+iterations ahead on the most likely branches.
+
+The question of which branches to take in this infinite tree is an intriguing
+one that we can only begin to explore here.  If the branch corresponding to
+stagnation has a 75\% chance of being taken, as in the Random topology with
+most functions, we could speculate three iterations ahead on that branch and
+still have a 42\% chance of predicting correctly.  However, intuition would say
+that perhaps it is better to hope that the particle is productive instead of
+stagnant, so a branch where the particle updates its personal best might be
+more fruitful to try.  In our experiments we try just one of the countless
+possibilities, but that one turns out to work extremely well.  More work is
+needed to compare the different branching possibilities on various functions.
+
 \subsection{Tokens}
 
+One issue remains.  What if we really want a swarm of 50 particles, but we have
+230 processors to use?  The methods we have thus far presented do the same
+thing for every particle, and thus would require some multiple of 50
+processors---we would have 30 extra processors with nothing to do.  It might
+very well be the best idea to simply adjust the swarm size slightly, but we
+present another method that allows particles to behave differently, some doing
+more evaluations than others.
+
+If we use the concept of tokens commonly used in multirobot stuff (see, for
+example, \dots), we can specify a number of tokens available for particles to
+use, where each token corresponds to a speculative evaluation.  Whichever
+method is used to which evaluations to do, they are prioritized so that
+particles with only one or two tokens perform the most valuable speculative
+evaluations.  Particles that perform well keep their tokens, particles that
+perform poorly send one token (if they have one) to another random particle in
+the swarm.
+
+We choose to define ``perform poorly'' as a failure to update the personal best
+when the original particle's position is evaluated.  Clearly there are other
+possible methods of deciding when to give up tokens, but many of the methods
+that sound the best are difficult in distributed environments, like giving
+tokens to that particles that most recently found the globally best positions.
+The use of a central machine to decide which particles get tokens would help to
+facilitate such methods.
+
+There are thus two distinct uses for tokens.  First, they could be used to try
+to evenly spread extra evaluations due to an incapatible number of particles
+and processors.  In cursory experimentation, we found that when only going one
+iteration ahead keeping the number of evaluations per particle as even as
+possible worked much better than trying to prioritize particles and let some
+guess correctly more often because they have more tokens. (horrible explanation\dots)
+
+The other, more compelling reason to use tokens is when speculating many
+iterations ahead.  Particles that are going in good directions, as evidenced by
+relatively frequent updates to the particle's personal best, keep their tokens
+and are able to speculate up to three or four iterations.  Particles that
+aren't doing as well lose their tokens and probably contribute to the
+exploration of the algorithm, for which speculative evaluation doesn't help
+much.
+
+As in the previous section, we can only offer a very preliminary exploration of
+the possibilities of using tokens to improve the allocation of speculative
+evaluations to particles.
 
 \section{Results}
 \label{sec:results}
