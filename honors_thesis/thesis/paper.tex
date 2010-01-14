@@ -1,4 +1,4 @@
-\documentclass[letterpaper]{sig-alt-release2}
+\documentclass[oneside,honors]{honors}
 
 \usepackage{cite}
 \usepackage{graphicx}
@@ -6,6 +6,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{psfrag}
+\pagestyle{plain}
 
 
 % AML bibliography references
@@ -45,21 +46,15 @@
 \providecommand{\nset}{\ensuremath{\mathbf{n}}}
 \providecommand{\nnset}{\ensuremath{\mathbf{nn}}}
 
-\title{\ \\ \LARGE\bf Speculative Evaluation in Particle Swarm Optimization%
-\thanks{Matthew Gardner, Andrew McNabb, and Kevin Seppi are with the Department
-of Computer Science, Brigham Young University, 3361 TMCB, Provo, UT 84602
-(phone: 801-422-8717; email: \{mjg82,a,k\}@cs.byu.edu).}%
-}
+\TitleTop{Speculative Evaluation in}
+\TitleBottom{Particle Swarm Optimization}
+\Year{2010}
+\Month{April}
+\degree{Bachelor of Science}
 
-\date{}
-
-\author{Matthew Gardner, Andrew McNabb, and Kevin Seppi}
-
-\begin{document}
-\maketitle
-
-\begin{abstract}
-
+\Author{Matthew Gardner}
+\Advisor{Kevin Seppi}
+\Abstract{
 Particle swarm optimization (PSO) has previously been parallelized only by 
 adding more particles to the swarm or by parallelizing the evaluation of the
 objective function.  However, some functions are better optimized with more
@@ -73,8 +68,25 @@ We also propose another way of making use of these speculative particles,
 keeping the best position found instead of the position that PSO actually would
 have taken.  We show that for a number of functions, speculative evaluation
 gives dramatic improvements over adding additional particles to the swarm.
+}
 
-\end{abstract}
+
+\begin{document}
+\frontmatter
+\makepreliminarypages
+
+\doublespace
+\tableofcontents
+\clearemptydoublepage
+
+\singlespace
+\listoffigures
+\clearemptydoublepage
+
+\doublespace
+
+\mainmatter
+
 
 \section{Introduction}
 \label{sec:intro}
@@ -847,7 +859,7 @@ increasing the swarm size provides relatively little benefit.  At that point,
 additional processors should be used to speed up the algorithm instead of add
 additional particles.
 
-There are some functions for which almost no exploration needs to be done;
+There are some functions for which very little exploration needs to be done;
 Sphere is an example of such a function, as would be a function where the
 general area of the optimal point is known, but the exact point needs to be
 found.  For such functions the best use of processors is to have a small swarm
