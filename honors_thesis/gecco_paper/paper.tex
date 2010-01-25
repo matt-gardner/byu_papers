@@ -46,14 +46,15 @@
 \providecommand{\nnset}{\ensuremath{\mathbf{nn}}}
 
 \title{\ \\ \LARGE\bf Speculative Evaluation in Particle Swarm Optimization%
-\thanks{Matthew Gardner, Andrew McNabb, and Kevin Seppi are with the Department
-of Computer Science, Brigham Young University, 3361 TMCB, Provo, UT 84602
-(phone: 801-422-8717; email: \{mjg82,a,k\}@cs.byu.edu).}%
+%\thanks{Matthew Gardner, Andrew McNabb, and Kevin Seppi are with the Department
+%of Computer Science, Brigham Young University, 3361 TMCB, Provo, UT 84602
+%(phone: 801-422-8717; email: \{mjg82,a,k\}@cs.byu.edu).}%
 }
 
 \date{}
 
-\author{Matthew Gardner, Andrew McNabb, and Kevin Seppi}
+%\author{Matthew Gardner, Andrew McNabb, and Kevin Seppi}
+\author{Author names omitted for review}
 
 \begin{document}
 \maketitle
@@ -75,6 +76,13 @@ have taken.  We show that for a number of functions, speculative evaluation
 gives dramatic improvements over adding additional particles to the swarm.
 
 \end{abstract}
+
+\category{G.1.6}{Numerical Analysis}{Optimization}
+
+\terms{Algorithms}
+
+\keywords{Particle swarm optimization; speculative evaluation; parallel
+optimization}
 
 \section{Introduction}
 \label{sec:intro}
@@ -506,8 +514,8 @@ received thus far is just as in regular PSO, and is graphically depicted in
   \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
   \psfrag{pt}[C][C]{$\p_{t}$}
   \includegraphics[width=.3\columnwidth]{messages1.eps}
-  \caption{The messages needed to produce $\p_{t}$.  Items without an arrow
-  pointing to them are messages the particle needs to receive.}
+  \caption{The production of $\p_{t}$ from the original particle
+  $\nonbest{\p}_{t}$ and the messages $\nonbest{\nset}_{t}$.}
   \label{fig:messages1}
 \end{figure}
 
@@ -523,8 +531,9 @@ graphically, in \fig{messages2}.
   \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
   \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
   \includegraphics[width=.5\columnwidth]{messages2.eps}
-  \caption{The messages needed to produce $\nonbest{\p}_{t+1}$.  Items without
-  an arrow pointing to them are messages the particle needs to receive.}
+  \caption{The production of $\nonbest{\p}_{t+1}$ from the original particle 
+  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$ and
+  $\nonbest{\sset}_{t+1}$, and intermediate particles.}
   \label{fig:messages2}
 \end{figure}
 
@@ -547,11 +556,11 @@ identical to \fig{messages2}, just with different sets of particles.
   \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
   \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
   \includegraphics[width=.6\columnwidth]{messages3.eps}
-  \caption{The messages needed to produce $\nonbest{\nset}_{t+1}$.  Items
-  without an arrow pointing to them are messages the particle needs to receive.
-  $\nnset$ is the set of neighbors for each particle $\n$, and $\nsset$ is the
-  set of $\n$'s speculative children.  Note the similarity between this and
-  \fig{messages2}.}
+  \caption{The production of each $\nonbest{\n}_{t+1}$ from the original
+  particle $\nonbest{\n}_{t}$, messages $\nonbest{\nnset}_{t}$ and
+  $\nonbest{\nsset}_{t+1}$, and intermediate particles.  $\nnset$ is the set of
+  neighbors for each particle $\n$, and $\nsset$ is the set of $\n$'s
+  speculative children.  Note the similarity between this and \fig{messages2}.}
   \label{fig:messages3}
 \end{figure}
 
@@ -575,9 +584,11 @@ updated.
   \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
   \psfrag{pt1}[C][C]{$\p_{t+1}$}
   \includegraphics[width=.8\columnwidth]{messages4.eps}
-  \caption{The messages needed to produce $\p_{t+1}$.  Items
-  without an arrow pointing to them are messages the particle needs to receive.
-  Note that this is just a combination of \fig{messages2} and \fig{messages3}.}
+  \caption{The production of $\p_{t+1}$ from the original particle 
+  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$, $\nonbest{\sset}_{t+1}$,
+  $\nonbest{\nnset}_{t}$, and $\nonbest{\nsset}_{t+1}$, and intermediate
+  particles.  Note that this is just a combination of \fig{messages2} and
+  \fig{messages3}.}
   \label{fig:messages4}
 \end{figure}
 
@@ -608,8 +619,9 @@ messages, except for the neighbor particles instead of the particle itself.
   \psfrag{pt2-e}[C][C]{$\noeval{\p}_{t+2}$}
   \psfrag{st3-e}[C][C]{$\noeval{\sset}_{t+3}$}
   \includegraphics[width=.5\columnwidth]{messages5.eps}
-  \caption{The messages needed to produce $\noeval{\sset}_{t+3}$. $\p_{t+1}$
-  and $\nset_{t+1}$ are both produced as in \fig{messages4}.}
+  \caption{The production of $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$
+  from $\p_{t+1}$ and $\n_{t+1}$, each of which are produced as in
+  \fig{messages4}.}
   \label{fig:messages5}
 \end{figure}
 
@@ -764,38 +776,39 @@ Next we look at the function Griewank, defined by the equation $f(\Vec{x}) =
 \frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D \cos\left(\frac{x_i}{\sqrt{i}}
 \right) + 1$.  It is generally recommended to use the Ring topology when
 optimizing the Griewank function, as Complete is prone to premature convergence
-on a local optima.  We show results in \fig{griewank1} for swarms of size 30
-and 240 using the Ring topology. One can see in the figure that both SEPSO
-algorithms initially outperformed PSO, but got stuck in a local optima and were
-eventually outperformed themselves.  
+on a local optimum.  Griewank has a global optimum with a value of 0, and
+sometimes the swarm finds the optimum and sometimes it doesn't.  Instead of
+showing average function value at each iteration, a more accurate plot for
+Griewank shows the percent of runs that have found the global optimum by each
+iteration.  We show results in \fig{griewank1} for swarms of size 30 and 240
+using the Ring topology.  One can see in the figure that both SEPSO algorithms
+find the optimum faster than the original PSO.  However, because the swarm size
+is so small, SEPSO gets stuck a little less than half of the time.
+Surpisingly, SEPSO Pick Best improves the chance of success with Griewank,
+while also finding the optimum faster.
 
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank1.eps}
   \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations.  Speculative algorithms have a swarm of 30 particles and do two
-  iterations per round, while standard PSO algorithms use 240 processors and do
-  one iteration per round.}
+  evaluations, showing percent successful by each iteration instead of average
+  function value.}
   \label{fig:griewank1}
 \end{figure}
 
-\fig{griewank1} is slightly deceptive, however, as with Griewank some of the
-runs found the global optimum, 0, while some did not.  A more accurate plot for
-this function is one showing what percentage of the runs have found the global
-optimum at each iteration.  \fig{griewank2} shows such a plot.  A swarm of size
-30 performing the PSO algorithm gets stuck a little less than half of the time,
-while 240 particles provides enough exploration to find the global optimum
-every time.  Surprisingly, using the SEPSO Pick Best algorithm with 30
-particles greatly improves the chance of success with Griewank, while also
-finding the global optimum in far fewer rounds of evaluations than standard
-PSO.
+Because our speculative algorithm got stuck with such a small swarm size, we
+ran a set of experiments on Griewank with 800 processors, giving swarms of size
+100 and 800 instead of 30 and 240.  \fig{griewank2} shows the results.
+\fig{griewank2} is very similar to \fig{griewank1}, except the speculative
+algorithms find the global optimum essentially 100\% of the time.  Thus with a
+few more processors, our algorithms find the optimum two to three times faster
+than the original PSO without a significant loss of accuracy.
 
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank2.eps}
-  \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations.  Instead of showing average function value, we show the
-  percentage of runs that have found the global optimum by each iteration.}
+  \caption{Function Griewank with a swarm that uses 800 processors per round of
+  evaluations.}
   \label{fig:griewank2}
 \end{figure}
 
@@ -813,9 +826,7 @@ larger swarms performing regular PSO continue to improve the best value found.
   \centering
   \includegraphics[width=.8\columnwidth]{rastrigin.eps}
   \caption{Function Rastrigin with a swarm that uses 240 processors per round
-  of evaluations.  Speculative algorithms have a swarm of 30 particles and do
-  two iterations per round, while standard PSO algorithms use 240 processors
-  and do one iteration per round.}
+  of evaluations.}
   \label{fig:rastrigin}
 \end{figure}
 
@@ -847,19 +858,16 @@ increasing the swarm size provides relatively little benefit.  At that point,
 additional processors should be used to speed up the algorithm instead of add
 additional particles.
 
-There are some functions for which almost no exploration needs to be done;
-Sphere is an example of such a function, as would be a function where the
-general area of the optimal point is known, but the exact point needs to be
-found.  For such functions the best use of processors is to have a small swarm
-performing speculative evaluation with our second method, where all speculative
-evaluations are used.
+There are some functions for which very little exploration needs to be done;
+Sphere is an example of such a function.  For such functions the best use of
+processors is to have a small swarm performing speculative evaluation with our
+second method, where all speculative evaluations are used.
 
 There are other functions for which there is a point where the algorithm has
 done ``enough'' exploration and consistently finds the global optimum.  Adding
 additional particles to the swarm is akin to increasing its capacity for
-exploration.  We have seen that for a 20-dimensional Griewank function, a
-number of particles greater than 30 but less than 240 has ``enough''
-exploration and finds the optimal value every time.  For these functions, one
+exploration.  We have seen that for a 20-dimensional Griewank function, 30
+particles is not ``enough'' exploration, but 100 is.  For these functions, one
 should use processors to increase the swarm size until enough exploration has
 been reached, then use additional processors to increase the number of
 iterations performed.
@@ -868,9 +876,10 @@ There are still other functions for which it seems there is never enough
 exploration, such as the Rastrigin function.  It has been shown that up to 4000
 particles there is no point at which ``enough'' exploration has been
 done~\cite{mcnabb-cec09}.  For those functions the correct use of processors
-cannot be easily prescribed and depends largely on the desired outcome.  It is
-likely that the best thing to do with those functions is to use all processors
-to add particles to the swarm and do no speculative evaluation.
+cannot be easily prescribed and depends largely on the desired outcome and how
+many processors are available.  It is likely that the best thing to do with
+those functions is to use all processors to add particles to the swarm and do
+no speculative evaluation.
 
 \section{Future Work}
 \label{sec:future}

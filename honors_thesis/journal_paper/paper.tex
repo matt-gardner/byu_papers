@@ -503,8 +503,8 @@ received thus far is just as in regular PSO, and is graphically depicted in
   \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
   \psfrag{pt}[C][C]{$\p_{t}$}
   \includegraphics[width=.3\columnwidth]{messages1.eps}
-  \caption{The messages needed to produce $\p_{t}$.  Items without an arrow
-  pointing to them are messages the particle needs to receive.}
+  \caption{The production of $\p_{t}$ from the original particle
+  $\nonbest{\p}_{t}$ and the messages $\nonbest{\nset}_{t}$.}
   \label{fig:messages1}
 \end{figure}
 
@@ -520,8 +520,9 @@ graphically, in \fig{messages2}.
   \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
   \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
   \includegraphics[width=.5\columnwidth]{messages2.eps}
-  \caption{The messages needed to produce $\nonbest{\p}_{t+1}$.  Items without
-  an arrow pointing to them are messages the particle needs to receive.}
+  \caption{The production of $\nonbest{\p}_{t+1}$ from the original particle 
+  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$ and
+  $\nonbest{\sset}_{t+1}$, and intermediate particles.}
   \label{fig:messages2}
 \end{figure}
 
@@ -544,11 +545,11 @@ identical to \fig{messages2}, just with different sets of particles.
   \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
   \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
   \includegraphics[width=.6\columnwidth]{messages3.eps}
-  \caption{The messages needed to produce $\nonbest{\nset}_{t+1}$.  Items
-  without an arrow pointing to them are messages the particle needs to receive.
-  $\nnset$ is the set of neighbors for each particle $\n$, and $\nsset$ is the
-  set of $\n$'s speculative children.  Note the similarity between this and
-  \fig{messages2}.}
+  \caption{The production of each $\nonbest{\n}_{t+1}$ from the original
+  particle $\nonbest{\n}_{t}$, messages $\nonbest{\nnset}_{t}$ and
+  $\nonbest{\nsset}_{t+1}$, and intermediate particles.  $\nnset$ is the set of
+  neighbors for each particle $\n$, and $\nsset$ is the set of $\n$'s
+  speculative children.  Note the similarity between this and \fig{messages2}.}
   \label{fig:messages3}
 \end{figure}
 
@@ -572,9 +573,11 @@ updated.
   \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
   \psfrag{pt1}[C][C]{$\p_{t+1}$}
   \includegraphics[width=.8\columnwidth]{messages4.eps}
-  \caption{The messages needed to produce $\p_{t+1}$.  Items
-  without an arrow pointing to them are messages the particle needs to receive.
-  Note that this is just a combination of \fig{messages2} and \fig{messages3}.}
+  \caption{The production of $\p_{t+1}$ from the original particle 
+  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$, $\nonbest{\sset}_{t+1}$,
+  $\nonbest{\nnset}_{t}$, and $\nonbest{\nsset}_{t+1}$, and intermediate
+  particles.  Note that this is just a combination of \fig{messages2} and
+  \fig{messages3}.}
   \label{fig:messages4}
 \end{figure}
 
@@ -605,8 +608,9 @@ messages, except for the neighbor particles instead of the particle itself.
   \psfrag{pt2-e}[C][C]{$\noeval{\p}_{t+2}$}
   \psfrag{st3-e}[C][C]{$\noeval{\sset}_{t+3}$}
   \includegraphics[width=.5\columnwidth]{messages5.eps}
-  \caption{The messages needed to produce $\noeval{\sset}_{t+3}$. $\p_{t+1}$
-  and $\nset_{t+1}$ are both produced as in \fig{messages4}.}
+  \caption{The production of $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$
+  from $\p_{t+1}$ and $\n_{t+1}$, each of which are produced as in
+  \fig{messages4}.}
   \label{fig:messages5}
 \end{figure}
 
@@ -644,7 +648,9 @@ For every neighbor outward information is sent, the iteration also needs to be
 incremented, as information about neighbors' neighbors is used during iteration
 $t+1$, and information about neighbors' neighbors' neighbors is used to
 reconstruct information about iteration $t+2$.  Also, this method of message
-passing again requires the use of random seeds if the topology is random.
+passing again requires the use of random seeds if the topology is random, so
+that each processor computes the same neighbors for a particle as all other
+processors.
 
 Also, an issue common to all methods of performing speculative evaluation is
 that of getting available information from neighbors before generating
