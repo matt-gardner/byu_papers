@@ -4,37 +4,36 @@ going on.  I had interpreted like this many times in the last year, but this
 time got me thinking.  What if you could get a computer do this, and do it
 well?  I knew then that I had to change my major.
 
-My major had been physics.  My father got a PhD in physics from Stanford.  His
-father got a PhD in physics from Harvard, and his dissertation, measuring the
-spin of the electron, won a Nobel Prize.  His professor received the prize, of
-course, but my grandfather was a physics professor for many years.  His father
-was the founder of modern soil physics.  My mother's father was on the
-Manhattan project.  Suffice it to say, I grew up incredibly interested in
-physics, determined to get a PhD and go on to win a Nobel Prize some day.  
+My major had been physics.  My father got a PhD in physics from Stanford.
+His father got a PhD in physics from Harvard, and his dissertation, measuring
+the spin of the electron, won a Nobel Prize.  His professor received the prize,
+but my grandfather was a physics professor for many years.  My mother's father
+was on the Manhattan project.  Suffice it to say, I grew up incredibly
+interested in physics, determined to get a PhD and go on to win a Nobel Prize
+some day.
 
-Reality struck me around the time I started college, and I realized how very
-unlikely it was that I would actually get a Nobel Prize.  I still wanted to
-pursue my education in physics, and hopefully make some significant
+Reality struck me around the time I started college, and I realized how
+very unlikely it was that I would actually get a Nobel Prize.  I still wanted
+to pursue my education in physics, and hopefully make some significant
 contribution to the field, but my delusions of grandeur had subsided slightly.
 
-As I went about my goal of a degree in physics, a few classes I took kindled
-my interest in another field: computer science.  I enjoyed learning how to
-program a computer, but the field didn't supplant my intention to study
-physics until my experience with Spanish interpreting.  I realized that the
-problems I could solve with computer science were a lot more interesting to me
-than physics.
+As I went about my goal of a degree in physics, a few classes I took
+kindled my interest in another field: computer science.  I enjoyed learning how
+to program a computer, but the field didn't supplant my love of physics until
+my experience with Spanish interpreting.  I realized that the problems I could
+solve with computer science were a lot more interesting to me than physics.
 
-With a newfound fascination for computers, I started looking into artificial
-intelligence, machine learning, and natural language processing.  I found that
-Dr. Kevin Seppi, a professor whose class I was in, was the head of the Applied
-Machine Learning (AML) lab at BYU, and the research he was doing piqued my
-interest.  I began working for Dr. Seppi as a research assistant in December
-of 2007.  My educational experience and my preparation for graduate school
-since then has largely been shaped by my work with Dr. Seppi.
+With a newfound fascination for computers, I started looking into machine
+learning and natural language processing.  I found that Dr. Kevin Seppi, a
+professor whose class I was in, was the head of the Applied Machine Learning
+(AML) lab at BYU, and the research he was doing piqued my interest.  I began
+working for Dr. Seppi as a research assistant in December of 2007.  My
+educational experience and my preparation for graduate school since then has
+largely been shaped by my work with Dr. Seppi.
 
-My first project in the AML lab was simply running experiments, using particle
-swarm optimization (PSO) to help Dr. Campbell, a physics professor at BYU,
-solve a crystallography problem.  Dr. Campbell had a model for what was
+My first project in the AML lab was simply running experiments, using
+particle swarm optimization (PSO) to help Dr. Campbell, a physics professor at
+BYU, solve a crystallography problem.  Dr. Campbell had a model for what was
 happening inside of a certain class of crystals, and he wanted to fit the
 parameters of his model to the data he had collected.  Evaluating the
 difference between his model's output and his data for each of tens of
@@ -44,18 +43,18 @@ experience both in how PSO works in general and in its use in a parallel
 environment.  Early on I gave a presentation on how PSO can be used to solve
 crystallography problems at BYU's Spring Research Conference.  Eventually I
 discovered that the algorithm wasn't converging well because there were
-correlated parameters in Dr. Campbell's model.  After that discovery we
-quickly solved the problem.  Dr. Campbell's work is still ongoing, though he
-plans to submit his work to the journal Science soon.
+correlated parameters in Dr. Campbell's model.  After that discovery we quickly
+solved the problem.  Dr. Campbell's work is still ongoing, though he plans to
+submit his work to the journal Science soon.
 
-My initial work with PSO led me to a number of different projects.  Using PSO
-in parallel led to some interesting research into communication among
+My initial work with PSO led me to a number of different projects.  Using
+PSO in parallel led to some interesting research into communication among
 particles in the swarm.  When running PSO in parallel, each processor controls
 a single particle, and communication between particles in the algorithm
-translates to inter-processor communication in the implementation.  A lot of
+translates to inter-processor communication in the code.  A lot of
 communication in the swarm, which is often desirable to quickly converge on a
-good point, can be very time consuming.  To mitigate this problem, we devised
-a randomized topology that approximates the effects of highly communicative
+good point, can be very time consuming.  To mitigate this problem, we devised a
+randomized topology that approximates the effects of highly communicative
 swarms with a much smaller communication cost.  This work, along with some
 other results drawn from our experiments with large, parallel particle swarms,
 was accepted at the Congress on Evolutionary Computation in 2009, one of two
@@ -71,22 +70,21 @@ make it my honors thesis.  I developed an algorithm I called "speculative
 evaluation in PSO" that evaluates all of the possible next positions of each
 particle in parallel and picks the one that matches the actual behavior of the
 particles, accomplishing the goal of performing two iterations at a time.  In
-addition to submitting my work to BYU as my honors thesis, the paper
-describing my new algorithm is currently under review for the Genetic and
-Evolutionary Computation Conference, the other of the top two conferences for
-PSO research.  
+addition to submitting my work to BYU as my honors thesis, the paper describing
+my new algorithm is currently under review for the Genetic and Evolutionary
+Computation Conference, the other of the two top conferences for PSO research.
 
 After completing my honors thesis, I was still interested in seeing what
 further improvements could be made to speculative evaluation in PSO.  For the
-past few months, I have been implementing my new ideas and running
-experiments, and within the next month I will be submitting a paper detailing
-my original algorithm and my improvements to Transactions on Evolutionary
-Computation, a top journal for PSO and related research.
+past few months, I have been implementing my new ideas and running experiments,
+and within the next month I will be submitting a paper detailing my original
+algorithm and my improvements to Transactions on Evolutionary Computation, a
+top journal for PSO and related research.
 
-Along with particle swarm optimization, through my research I have also gained
-an interest in natural language processing (NLP).  I took a course in text
-mining that fascinated me, and that led me to work more closely with the head
-of the NLP lab at BYU, Dr. Ringger.  Dr. Ringger taught me about latent
+Along with particle swarm optimization, through my research I have also
+gained an interest in natural language processing (NLP).  I took a course in
+text mining that fascinated me, and that led me to work more closely with the
+head of the NLP lab at BYU, Dr. Ringger.  Dr. Ringger taught me about latent
 Dirichlet allocation, an algorithm used to discover latent topics in large
 collections of documents.  I used latent Dirichlet allocation to analyze a
 collection of about 8000 religious sermons given over the past 100 years.  I
@@ -96,9 +94,9 @@ times, validating the algorithm and providing insight into the sermons
 themselves.  That work has been accepted as a poster to the 50th Annual BYU
 Studies Symposium, and I will be presenting it there next month.
 
-My research experience as an undergraduate has solidified my desire to pursue
-a graduate degree.  I love solving new problems, and the problems that can be
-solved with computer science are incredible to me.  I plan to leave PSO
-research for my masters degree and focus on more traditional machine learning
-and natural language processing problems, maybe one day being able to solve
-the problem that originally sparked my interest--machine interpretation.
+My research experience as an undergraduate has solidified my desire to
+pursue a graduate degree.  I love solving new problems, and the problems that
+can be solved with computer science are incredible to me.
+
+
+
