@@ -73,7 +73,7 @@ particle in parallel and picks the one that matches the actual behavior of the
 particles, accomplishing the goal of performing two iterations at a time.  In
 addition to submitting my work to BYU as my honors thesis, the paper
 describing my new algorithm is currently under review for the Genetic and
-Evolutionary Computation Conference, the other of the two top conferences for
+Evolutionary Computation Conference, the other of the top two conferences for
 PSO research.  
 
 After completing my honors thesis, I was still interested in seeing what
