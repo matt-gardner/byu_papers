@@ -1,8 +1,4 @@
-\documentclass[portrait,final]{baposter}
-%\documentclass[a4shrink,portrait,final]{baposter}
-% Usa a4shrink for an a4 sized paper.
-
-\tracingstats=2
+\documentclass[landscape,final]{baposter}
 
 \usepackage{times}
 \usepackage{calc}
@@ -76,44 +72,41 @@
 %%%---------------------------------------------------------------------------
 %%% Format it to your taste with the options
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Define some colors
+\typeout{Poster Starts}
+\background{
+  \begin{tikzpicture}[remember picture,overlay]%
+    \draw (current page.north west)+(-2em,-0em) node[anchor=north west] {\hspace{-2em}\includegraphics[height=1.1\textheight]{silhouettes_background}};
+  \end{tikzpicture}%
+}
 \definecolor{silver}{cmyk}{0,0,0,0.3}
 \definecolor{yellow}{cmyk}{0,0,0.9,0.0}
+\definecolor{blue}{cmyk}{0.9,0,0,0.0}
 \definecolor{reddishyellow}{cmyk}{0,0.22,1.0,0.0}
+\definecolor{reddishblue}{cmyk}{1,0.22,0,0.0}
 \definecolor{black}{cmyk}{0,0,0.0,1.0}
 \definecolor{darkYellow}{cmyk}{0,0,1.0,0.5}
 \definecolor{darkSilver}{cmyk}{0,0,0,0.1}
 
 \definecolor{lightyellow}{cmyk}{0,0,0.3,0.0}
 \definecolor{lighteryellow}{cmyk}{0,0,0.1,0.0}
-\definecolor{lighteryellow}{cmyk}{0,0,0.1,0.0}
 \definecolor{lightestyellow}{cmyk}{0,0,0.05,0.0}
-
-%%
-\typeout{Poster Starts}
-\background{
-  \begin{tikzpicture}[remember picture,overlay]%
-    \draw (current page.north west)+(-2em,2em) node[anchor=north west] {\includegraphics[height=1.1\textheight]{silhouettes_background}};
-  \end{tikzpicture}%
-}
-
-\newlength{\leftimgwidth}
-\begin{poster}%
-  % Poster Options
-  {
+\definecolor{lightblue}{cmyk}{.3,0,0,0.0}
+\definecolor{lighterblue}{cmyk}{.1,0,0,0.0}
+\definecolor{lightestblue}{cmyk}{.05,0,0,0.0}
+\begin{poster}{
   % Show grid to help with alignment
   grid=no,
   % Column spacing
   colspacing=1em,
   % Color style
-  bgColorOne=lighteryellow,
-  bgColorTwo=lightestyellow,
-  borderColor=reddishyellow,
-  headerColorOne=yellow,
-  headerColorTwo=reddishyellow,
+  bgColorOne=lighterblue,
+  bgColorTwo=lightestblue,
+  borderColor=reddishblue,
+  headerColorOne=blue,
+  headerColorTwo=reddishblue,
   headerFontColor=black,
-  boxColorOne=lightyellow,
-  boxColorTwo=lighteryellow,
+  boxColorOne=lightblue,
+  boxColorTwo=lighterblue,
   % Format of textbox
   textborder=roundedleft,
   % Format of text header
@@ -129,30 +122,31 @@
   linewidth=2pt
   }
   % Eye Catcher
-  {\includegraphics[width=10em]{D1077}} % No eye catcher for this poster. (eyecatcher=no above). If an eye catcher is present, the title is centered between eye-catcher and logo.
+  {} % No eye catcher for this poster. If an eye catcher is present, the title is centered between eye-catcher and logo.
   % Title
   {\sf %Sans Serif
   %\bf% Serif
-  Expression Invariant Face Recognition with a 3DMM}
+  Automatic Topic Discovery in 100 Years of General Conference Talks}
   % Authors
   {\sf %Sans Serif
   % Serif
-  \vspace{1em}\{Brian.Amberg, Reinhard.Knothe, Thomas.Vetter\}@unibas.ch
+  Matthew Gardner
+  (mjg82@byu.edu)
+  and
+  Eric Ringger
+  (ringger@cs.byu.edu)
   }
   % University logo
-  {% The makebox allows the title to flow into the logo, this is a hack because of the L shaped logo.
-    \makebox[8em][r]{%
-      \begin{minipage}{16em}
-        \hfill
-        \includegraphics[height=2em]{msrlogo}
-        \includegraphics[height=7.0em]{logo}
-      \end{minipage}
-    }
+  {{\begin{minipage}{16em}
+    \hfill
+    \includegraphics[height=5.5em]{logo}
+  \end{minipage}}
   }
 
   \tikzstyle{light shaded}=[top color=baposterBGtwo!30!white,bottom color=baposterBGone!30!white,shading=axis,shading angle=30]
 
   % Width of left inset image
+     \newlength{\leftimgwidth}
      \setlength{\leftimgwidth}{0.78em+8.0em}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,96 +167,84 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   \headerbox{Contribution}{name=contribution,column=0,row=0}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   {}We introduce a method for expression invariant face recognition. A
-   generative 3D Morphable Model (3DMM) is used to separate identity and
-   expression components. The expression removal results in increased
-   recognition performance, even on difficult datasets, without a decrease in
-   performance on expression-less datasets.
-
-   It is applicable to any kind of input data, and was evaluated here on
-   textureless range scans.
-  \vspace{0.3em}
+   {}We use state of the art natural language processing techniques to gain new
+   insights from 100 years of General Conference Talks.  Using computers to
+   sift through a corpus that would be overwhelmingly large to process
+   manually, we can discover relationships between talks and trends over time
+   that help us to better appreciate the trove of knowledge in these inspired
+   discourses.
  }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Model}{name=model,column=0,below=contribution}{
+  \headerbox{Methodology}{name=methodology,column=0,below=contribution}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    The Model was learnt from 275 subjects. We used one neutral expression scan
-    per identity and 150 expression scans of a subset of the subjects. 
+	Document clustering is the task of determining which documents are similar
+	to each other in any given corpus.  The fundamental assumption made by
+	clustering techniques is that there are several topics used in the corpus,
+	and each document is generated by a single (unknown) topic.  Given a
+	clustering model and a set of documents, statistical methods can be used to
+	determine the best clustering of documents for that corpus.
 
-    The identity model is a linear model build from the neutral scans.
-    \begin{align}
-      \VEC f&=\VEC\mu + \MAT M_n\VEC\alpha_n\qquad.
-    \end{align}
-    For each of the 150 expression scans, we calculated an expression vector as
-    the difference between the expression scan and the corresponding neutral
-    scan of that subject.  This data is already mode-centered, if we regard the
-    neutral expression as the natural mode of expression data. From these offset
-    vectors an additional expression matrix $\MAT M_e$ was calculated, such that the complete linear Model is
-    \begin{align}
-      \VEC f&=\VEC\mu + \MAT M_n\VEC\alpha_n + \MAT M_e\VEC\alpha_e
-    \end{align}
-    The assumption here is, that the face and expression space are linearly
-    independent, such that each face is represented by a unique set of
-    coefficients.  
-  \vspace{0.3em}
-  }
+	When documents frequently cover multiple topics, however, the performance
+	of document clustering methods degenerates.  This is often the case with
+	religious discourse, as talks frequently combine faith and repentance, or
+	faith and tithing, making the talks seem similar in regards to their use of
+	words describing faith, but different in the other topics they cover.  To
+	solve this problem, Latent Dirichlet Allocation (LDA) was proposed.  LDA
+	breaks the assumption of document clustering that each document is
+	generated from a single topic, and instead assumes that each word in each
+	document comes from a particular topic.  Thus documents can have multiple
+	topics, creating a better model for many corpora of interest today.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Fitting}{name=fitting,column=0,below=model}{
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    A Robust Nonrigid ICP method was used to fit the model to the data.
-    Robustness was achieved by iteratively reweighting the correspondences and
-    using hard compatability test for the closest points.
+	LDA can be used both to discover the topics that are spoken of throughout a
+	corpus and to determine which documents in the corpus use which topics most
+	frequently.  When documents have dates and authors associated with them,
+	other interesting attributes of the corpus, such as the relative
+	proportions of topics over time, can also be deduced.  We used LDA to
+	automatically discover topics found in General Conference talks from
+	1900--2005.  We obtained the talks from the internet site
+	www.ldslibrary.org.  There is some noise in the data because of parsing
+	error, but overall the quality is high.
 
-    Fitting was initialized by a simple nose detector and proceeded fully
-    automatic.
-  \vspace{0.3em}
-  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Distance Measure}{name=measure,column=0,below=fitting}{
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   The Mahalanobis angle between the identity coefficients $\VEC{\alpha_{n}}$
-   was used for classification.
-  \vspace{0.3em}
   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   \headerbox{Expression Neutralization}{name=results neutralization,column=1,row=0}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \begin{tikzpicture}[x=0.3333\linewidth,y=-0.42\linewidth]
-    \path [use as bounding box] (-0.5,-0.5) rectangle(2.5,1.7);
-    \path
-    (0,0) node{\includegraphics[width=0.42\linewidth]{D1077}}
-    (1,0) node{\includegraphics[width=0.47\linewidth]{D1077_fit_expression}}
-    (2,0) node{\includegraphics[width=0.47\linewidth]{D1077_fit}}
-
-    (0,1) node{\includegraphics[width=0.42\linewidth]{D1360}}
-    (1,1) node{\includegraphics[width=0.47\linewidth]{D1360_fit_expression}}
-    (2,1) node{\includegraphics[width=0.47\linewidth]{D1360_fit}}
-
-    (0,1.6) node {\smaller a) Target}
-    (1,1.6) node {\smaller b) Fit}
-    (2,1.6) node {\smaller c) Normalized};
-  \end{tikzpicture}
-  \vspace{0.5em}
-
+  \begin{tabular}{@{}c@{ }c@{ }c@{ }c@{}@{ }@{ }c@{ }c@{ }c@{ }c@{ }}
+    \includegraphics[height=0.42\linewidth]{16_1_tgt}&
+    \includegraphics[height=0.42\linewidth]{16_1_expression}&
+    \includegraphics[height=0.42\linewidth]{16_1_neutral}\\[-0.8em]
+    \smaller a) Target & \smaller b) Fit & \smaller c) Normalized\\[0.8em]
+    \includegraphics[height=0.42\linewidth]{16_6_tgt}&
+    \includegraphics[height=0.42\linewidth]{16_6_expression}&
+    \includegraphics[height=0.42\linewidth]{16_6_neutral}\\[-0.8em]
+    \smaller a) Target & \smaller b) Fit & \smaller c) Normalized
+  \end{tabular}
   Expression normalisation for two scans of the same individual.  
   The robust fitting gives a good estimate (b) of the true face surface given
   the noisy measurement (a). It fills in holes and removes artifacts using
   prior knowledge from the face model. The pose and expression normalized faces
   (c) are used for face recognition.
-  \vspace{0.5em}
   }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Funding}{name=funding,column=1,span=2,above=bottom}{
+  \headerbox{Robustness}{name=robustness,column=1,below=results neutralization,span=1,above=bottom}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \smaller 
-  \hspace{1em}This work was supported in part by Microsoft Research through the European PhD Scholarship Programme.
+  \begin{tabular}{@{}c@{ }c@{ }c@{ }c@{}}
+    \includegraphics[height=0.42\linewidth]{56_4_tgt}&
+    \includegraphics[height=0.42\linewidth]{23_2_tgt}&
+    \includegraphics[height=0.42\linewidth]{5_6_tgt}\\[-0.8em]
+                       & \smaller a) Targets & \\[0.8em]
+    \includegraphics[height=0.42\linewidth]{56_4_expression}&
+    \includegraphics[height=0.42\linewidth]{23_2_expression}& 
+    \includegraphics[height=0.42\linewidth]{5_6_expression}\\[-0.8em]
+                    & \smaller b) Fits & 
+  \end{tabular}
+  The reconstruction (b) is robust against scans (a) with artifacts, noise, and
+  holes.
   }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Results}{name=results,column=1,span=2,below=results neutralization,above=funding}{
+  \headerbox{Results}{name=results,column=2,span=2,row=0}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       \begin{multicols}{2}
         The method was evaluated on the GavabDB expression dataset which
@@ -273,8 +255,8 @@
       \end{multicols}\vspace{-1em}
       \mbox{\hspace{0.3\linewidth}\rule{0.4\linewidth}{1pt}\hspace{0.3\linewidth}}\\
       \begin{tabular}{cc}
-        \hspace{-0.5em}\scalebox{0.735}{\input{shrec_mncg}} &
-        \hspace{0.5em}\scalebox{0.735}{\input{und_mncg}}
+        \hspace{0.5em}\scalebox{0.74}{\input{shrec_MNCG}} &
+        \hspace{0.5em}\scalebox{0.74}{\input{und_MNCG}}
       \end{tabular}\\
 %      \begin{multicols}{2}
         {Expression neutralization improves results on the expression dataset
@@ -286,8 +268,8 @@
 %      \end{multicols}\vspace{-1em}
       \\\mbox{\hspace{0.3\linewidth}\rule{0.4\linewidth}{1pt}\hspace{0.3\linewidth}}\\
       \begin{tabular}{cc}
-        \hspace{-0.5em}\scalebox{0.735}{\input{shrec_pr}} &
-        \hspace{0.5em}\scalebox{0.735}{\input{und_pr}}
+        \hspace{0.5em}\scalebox{0.74}{\input{shrec_PR}} &
+        \hspace{0.5em}\scalebox{0.74}{\input{und_PR}}
       \end{tabular}\\
 %      \begin{multicols}{2}
         {Plotted are precision and recall for different retrieval depths. The lower
@@ -296,44 +278,32 @@
 %      \end{multicols}\vspace{-1em}
       \\\mbox{\hspace{0.3\linewidth}\rule{0.4\linewidth}{1pt}\hspace{0.3\linewidth}}\\
       \begin{tabular}{cc}
-        \hspace{-0.5em}\scalebox{0.735}{\input{shrec_far_frr}} &
-        \hspace{0.5em}\scalebox{0.735}{\input{und_far_frr}}
+        \hspace{0.5em}\scalebox{0.74}{\input{shrec_FARFRR}} &
+        \hspace{0.5em}\scalebox{0.74}{\input{und_FARFRR}}
       \end{tabular}\\
 %      \begin{multicols}{2}
         {Impostor detection is reliable, as the minimum distance to a match
         is smaller than the minimum distance to a nonmatch. }
 %      \end{multicols}
-  \\
-  \vspace{0.5em}
-  }
+\\
+  }%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Robustness}{name=robustness,column=2,row=0,above=results,span=1}{
+  \headerbox{Open Questions}{name=questions,column=2,span=1,above=bottom,below=results}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \begin{tikzpicture}[x=0.3333\linewidth,y=-0.42\linewidth]
-    \path [use as bounding box] (-0.5,-0.5) rectangle(2.5,1.7);
-    \path
-    (0,0) node{\includegraphics[width=0.42\linewidth]{D1160}}
-    (1,0) node{\includegraphics[width=0.42\linewidth]{D1425}}
-    (2,0) node{\includegraphics[width=0.42\linewidth]{D1205}}
-
-    (0,1) node{\includegraphics[width=0.28\linewidth]{D1160_fit_expression}}
-    (1,1) node{\includegraphics[width=0.28\linewidth]{D1425_fit_expression}}
-    (2,1) node{\includegraphics[width=0.28\linewidth]{D1205_fit_expression}}
-
-    (1,0.5) node {\smaller a) Target}
-    (1,1.6) node {\smaller b) Robust Reconstruction};
-  \end{tikzpicture}
-  \vspace{0.5em}
-
-  The reconstruction (b) is robust against scans (a) with artifacts, noise, and
-  holes.
-  
-  This is achieved by a robust iteratively reweighted ICP algorithm and outlier
-  rejection based on angle comparisions between corresponding points.
-  }
-
+    While the expression and identity space are linearly independent, there is
+    some expression left in the identity model. This is because a ``neutral''
+    face is interpreted differently by the subjects. We investigate the
+    possibilty to build an identity/expression separated model without using
+    the data labelling, based on a measure of independence.
+  }%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{References}{name=references,column=0,above=bottom}{
+  \headerbox{Funding}{name=funding,column=3,span=1,above=bottom}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \smaller 
+  This work was supported in part by Microsoft Research through the European PhD Scholarship Programme.
+  }%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{References}{name=references,column=3,above=funding,below=results}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \smaller
     \vspace{-0.4em}
@@ -344,22 +314,13 @@
       \bibitem{amberg07:nonrigid}
         B.~Amberg, S.~Romdhani, T. Vetter.
         \newblock {O}ptimal {S}tep {N}onrigid {ICP} {A}lgorithms for {S}urface {R}egistration
-        \newblock In {\em Computer Vision and Pattern Recognition 2007}
+        \newblock In {\em CVPR 2007}
       \bibitem{amberg08:recognition}
         B.~Amberg, R.~Knothe, T. Vetter.
         \newblock Expression Invariant Face Recognition with a 3D Morphable Model
-        \newblock In {\em Automated Face and Gesture Recognition 2008}
+        \newblock In {\em AFGR 2008}
       \end{thebibliography}
-  }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Open Questions}{name=questions,column=0,span=1,below=measure,above=references}{
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    While the expression and identity space are linearly independent, there is
-    some expression left in the identity model. This is because a ``neutral''
-    face is interpreted differently by the subjects.
-
-    We investigate learning ``pure'' separated models from our the available ``impure'' data.
-  }
-
+  }%
 \end{poster}%
+%
 \end{document}

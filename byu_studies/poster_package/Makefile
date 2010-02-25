@@ -1,5 +1,4 @@
-#BASENAME=poster
-BASENAME=poster_landscape
+BASENAME=poster
 
 $(BASENAME).pdf: $(BASENAME).tex 
 	pdflatex $(BASENAME)
