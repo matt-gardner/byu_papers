@@ -1,0 +1,276 @@
+\documentclass{beamer}
+\usepackage{beamerthemeshadow}
+\beamertemplatetransparentcovereddynamic
+\usepackage{graphicx}
+
+\author{Matthew Gardner}
+\title{Analysing General Conference Talks \\ with Latent Dirichlet Allocation}
+\date{April 10, 2009}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{The Problem}
+
+
+\begin{frame}
+  \frametitle{The Problem}
+  \begin{itemize}
+	\item Large collections of documents; intractable to go through them
+	  manually
+	  \pause
+	\item But we want to know what kinds of things the documents talk about
+	  \pause
+	\item What was talked about when, and how did the things talked about
+	  change over time?
+	  \pause
+	\item What did a particular person talk about, and how does it relate to
+	  what everyone else said?
+  \end{itemize}
+\end{frame}
+
+\section{The Solution}
+
+\begin{frame}
+  \frametitle{The Solution---LDA}
+  \begin{itemize}
+	\item Find latent topics in a data set
+	  \begin{align*} 
+		w_i|z_i,\phi^{(z_i)} &\sim \mathrm{Categorical}(\phi^{(z_i)}) \\
+		\phi &\sim \mathrm{Dirichlet}(\beta) \\
+		z_i|\theta^{(d_i)} &\sim \mathrm{Categorical}(\theta^{(d_i)}) \\ 
+		\theta &\sim \mathrm{Dirichlet}(\alpha) 
+	  \end{align*}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Train the LDA model with Gibbs Sampling}
+  \begin{itemize}
+	\item For one sample:
+	  \begin{itemize}
+		\item For each token:
+		\item Create a distribution $p(z_i=j|\mathbf{z}_{-i},\mathbf{w})$
+		  according to:
+		  \[p(z_i = j|\mathbf{z}_{-i},\mathbf{w}) \propto 
+		  \frac{n_{-i,j}^{(w_i)}+\beta}{n_{-i,j}^{(\cdot)}+W\beta}
+		  \frac{n_{-i,j}^{(d_i)}+\alpha}{n_{-i,\cdot}^{(d_i)}+T\alpha}\]
+		\item Draw from the distribution and reassign $z_i$, being sure to 
+		  keep good track of your counts.
+	  \end{itemize}
+	\item Do this for a number of samples as a burn in period, then take however
+	  many samples you want, with a lag in between.
+  \end{itemize}
+\end{frame}
+
+\section{Our Experiments}
+
+\begin{frame}
+  \frametitle{General Conference Talks}
+  \begin{itemize}
+	\item We ran LDA on LDS General Conference talks from 1900-2005
+	  \pause
+	  \begin{itemize}
+		\item The talks were somewhat noisy due to parsing error---we got them
+		  off of the internet
+	  \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Results}
+
+\subsection{Topic-Word distributions}
+
+\begin{frame}
+  \frametitle{Topic-Word distributions}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Topic-Word distributions}
+  \begin{tabular}{|c|c|c|}
+	Topic 1: Good and Evil &\ \ \ \ \ \ \ \ \ \ \ \ \ \ &Topic 7: Government \\
+	evil&&government \\
+	against&&united \\
+	satan&&liberty \\
+	good&&nation \\
+	sin&&states \\
+	devil&&country \\
+	must&&freedom \\
+	power&&land \\
+	destroy&&free \\
+	god&&men \\
+	righteousness&&constitution \\
+	temptation&&people \\
+	away&&america \\
+  \end{tabular}
+\end{frame}
+\begin{frame}
+  \frametitle{Topic-Word distributions}
+  \begin{tabular}{|c|c|c|}
+	Topic 8: Questions &\ \ \ \ \ \ \ \ \ \ \ &Topic 22: Character \\
+	?&&true \\
+	how&&honest \\
+	why&&good \\
+	question&&integrity \\
+	then&&virture \\
+	answer&&character \\
+	did&&honesty \\
+	asked&&without \\
+	ask&&one \\
+	yes&&men \\
+	where&&honor \\
+	many&&respect \\
+	could&&god \\
+  \end{tabular}
+\end{frame}
+\begin{frame}
+  \frametitle{Topic-Word distributions}
+  \begin{tabular}{|c|c|c|}
+	Topic 26: Numbers &\ \ \ \ \ \ \ \ \ \ \ &Topic 28: Numbers \\
+	see&&years \\
+	d&&one \\
+	c&&two \\
+	1&&hundred \\
+	2&&five \\
+	3&&three \\
+	s&&thousand \\
+	ne&&twenty \\
+	4&&ago \\
+	5&&four \\
+	alma&&year \\
+	6&&six \\
+	7&&over \\
+  \end{tabular}
+\end{frame}
+\begin{frame}
+  \frametitle{Topic-Word distributions}
+  \begin{tabular}{|c|c|c|}
+	Topic 33: Welfare &\ \ \ \ \ \ \ \ \ \ \ &Topic 19: Tithing \\
+	welfare&&tithing \\
+	poor&&pay \\
+	church&&money \\
+	fast&&debt \\
+	help&&means \\
+	services&&out \\
+	program&&people \\
+	plan&&one \\
+	care&&paid \\
+	needs&&poor \\
+	food&&tithes \\
+	need&&get \\
+	family&&more \\
+  \end{tabular}
+\end{frame}
+\begin{frame}
+  \frametitle{Topic-Word distributions}
+  \begin{tabular}{|c|c|c|}
+	Topic 37: Families &\ \ \ \ \ \ \ \ \ \ \ &Topic 52: Women \\
+	children&&women \\
+	home&&society \\
+	family&&relief \\
+	parents&&sisters \\
+	teach&&hinckley \\
+	child&&each \\
+	families&&b \\
+	homes&&gordon \\
+	love&&lives \\
+	mother&&service \\
+	taught&&sister \\
+	fathers&&forward \\
+	responsibility&&strength \\
+  \end{tabular}
+\end{frame}
+
+\subsection{Topic-Speaker distributions}
+
+\begin{frame}
+  \frametitle{Topic-Speaker distributions}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Topic-Speaker distributions}
+  \begin{tabular}{|c|c|c|}
+	Topic 52: Women &\ \ \ \ \ \ \ \ \ \ \ &Topic 52 Speakers \\
+	women&&Sister Barbara B. Smith \\
+	society&&Mary Ellen W. Smoot \\
+	relief&&Mary Ellen Smoot \\
+	sisters&&Elaine L. Jack \\
+	hinckley&&Marian R. Boyer \\
+	each&&Virginia U. Jensen \\
+	b&&Wayne M. Hancock \\
+	gordon&&Shirley W. Thomas \\
+	lives&&Bonnie D. Parkin \\
+	service&&Kathleen H. Hughes \\
+	sister&&Sheri L. Dew \\
+	forward&&Richard H. Winkel \\
+	strength&&Aileen H. Clyde \\
+  \end{tabular}
+\end{frame}
+\begin{frame}
+  \frametitle{Topic-Speaker distributions}
+  \begin{tabular}{|c|c|c|}
+	Topic 61&&Topic 61 Speakers \\
+	school&&Second Assistant Karl G. Maeser \\
+	sunday&&First Assistant Superintendent George Reynolds \\
+	schools&&E. C. Phillips \\
+	education&&Josiah H. Burrows \\
+	children&&First Assistant General Superintendent George Goddard\\
+	teachers&&Supt. Joseph J. Jackson of the Alpine Stake\\
+	class&&L. John Nuttall \\
+	teacher&&Deseret Sunday School Union \\
+	students&&Supt. John D. Peters \\
+	training&&Supt. Joseph J. Jackson \\
+	university&&General Superintendent George Q. Cannon \\
+	religion&&Apostle Heber J. Grant \\
+	some&&Joseph W. Summerhays \\
+  \end{tabular}
+\end{frame}
+
+
+\subsection{Topics over time}
+
+\begin{frame}
+  \frametitle{Topics over time}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Topics over time}
+  \begin{figure}
+	\includegraphics[width=.8\textwidth]{topic1.eps}
+  \end{figure}
+\end{frame}
+\begin{frame}
+  \frametitle{Topics over time}
+  \begin{figure}
+	\includegraphics[width=.8\textwidth]{topic19.eps}
+  \end{figure}
+\end{frame}
+\begin{frame}
+  \frametitle{Topics over time}
+  \begin{figure}
+	\includegraphics[width=.8\textwidth]{topic33.eps}
+  \end{figure}
+\end{frame}
+\begin{frame}
+  \frametitle{Topics over time}
+  \begin{figure}
+	\includegraphics[width=.8\textwidth]{topic37.eps}
+  \end{figure}
+\end{frame}
+\begin{frame}
+  \frametitle{Topics over time}
+  \begin{figure}
+	\includegraphics[width=.8\textwidth]{topic52.eps}
+  \end{figure}
+\end{frame}
+\begin{frame}
+  \frametitle{Topics over time}
+  \begin{figure}
+	\includegraphics[width=.8\textwidth]{topic56.eps}
+  \end{figure}
+\end{frame}
+
+\end{document}

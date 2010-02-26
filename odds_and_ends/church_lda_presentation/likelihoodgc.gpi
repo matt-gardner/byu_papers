@@ -1,0 +1,13 @@
+set title "Likelihood of data given number of topics"
+set xlabel "Number of topics"
+set ylabel "Log likelihood"
+set clip two
+plot '-' notitle with lines lw 4
+10 -54723161.0536
+20 -54295582.3102
+30 -54031931.5289
+40 -53867378.4602
+50 -53736942.2627
+100 -53332073.5755
+e
+
