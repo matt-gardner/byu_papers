@@ -1,0 +1,274 @@
+\documentclass[landscape,final]{baposter}
+
+\usepackage{times}
+\usepackage{calc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{relsize}
+\usepackage{multirow}
+\usepackage{bm}
+
+\usepackage{graphicx}
+\usepackage{multicol}
+
+\usepackage{pgfbaselayers}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\usepackage{helvet}
+%\usepackage{bookman}
+\usepackage{palatino}
+
+\newcommand{\captionfont}{\footnotesize}
+
+\selectcolormodel{cmyk}
+
+\graphicspath{{images/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Some math symbols used in the text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Format 
+\newcommand{\Matrix}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\Vector}[1]{\Matrix{#1}}
+\newcommand*{\SET}[1]  {\ensuremath{\mathcal{#1}}}
+\newcommand*{\MAT}[1]  {\ensuremath{\mathbf{#1}}}
+\newcommand*{\VEC}[1]  {\ensuremath{\bm{#1}}}
+\newcommand*{\CONST}[1]{\ensuremath{\mathit{#1}}}
+\newcommand*{\norm}[1]{\mathopen\| #1 \mathclose\|}% use instead of $\|x\|$
+\newcommand*{\abs}[1]{\mathopen| #1 \mathclose|}% use instead of $\|x\|$
+\newcommand*{\absLR}[1]{\left| #1 \right|}% use instead of $\|x\|$
+
+\def\norm#1{\mathopen\| #1 \mathclose\|}% use instead of $\|x\|$
+\newcommand{\normLR}[1]{\left\| #1 \right\|}% use instead of $\|x\|$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multicol Settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\columnsep}{0.7em}
+\setlength{\columnseprule}{0mm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Save space in lists. Use this after the opening of the list
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\compresslist}{%
+\setlength{\itemsep}{1pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Begin of Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Here starts the poster
+%%%---------------------------------------------------------------------------
+%%% Format it to your taste with the options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\typeout{Poster Starts}
+\definecolor{blue}{cmyk}{0.9,0,0,0.0}
+\definecolor{reddishblue}{cmyk}{1,0.22,0,0.0}
+\definecolor{black}{cmyk}{0,0,0.0,1.0}
+
+\definecolor{lightblue}{cmyk}{.3,0,0,0.0}
+\definecolor{lighterblue}{cmyk}{.2,0,0,0.0}
+\definecolor{lightestblue}{cmyk}{.1,0,0,0.0}
+\begin{poster}{
+  % Show grid to help with alignment
+  grid=no,
+  % Column spacing
+  colspacing=1em,
+  % Color style
+  bgColorOne=lighterblue,
+  bgColorTwo=lightestblue,
+  borderColor=reddishblue,
+  headerColorOne=blue,
+  headerColorTwo=reddishblue,
+  headerFontColor=black,
+  boxColorOne=lightblue,
+  boxColorTwo=lighterblue,
+  % Format of textbox
+  textborder=roundedleft,
+  % Format of text header
+  eyecatcher=no,
+  headerborder=open,
+  headerheight=0.08\textheight,
+  headershape=roundedright,
+  headershade=plain,
+  headerfont=\Large\textsf, %Sans Serif
+  boxshade=plain,
+  background=shade-tb,
+  %background=plain,
+  linewidth=2pt
+  }
+  % Eye Catcher
+  {} % No eye catcher for this poster. If an eye catcher is present, the title is centered between eye-catcher and logo.
+  % Title
+  {\sf %Sans Serif
+  %\bf% Serif
+  Automatic Topic Discovery in 100 Years of General Conference Talks}
+  % Authors
+  {\sf %Sans Serif
+  % Serif
+  Matthew Gardner
+  (mjg82@byu.edu)
+  and
+  Eric Ringger
+  (ringger@cs.byu.edu)
+  }
+  % University logo
+  {{\begin{minipage}{16em}
+    \hfill
+    %\includegraphics[height=5.5em]{logo}
+  \end{minipage}}
+  }
+
+  \tikzstyle{light shaded}=[top color=baposterBGtwo!30!white,bottom color=baposterBGone!30!white,shading=axis,shading angle=30]
+
+  % Width of left inset image
+     \newlength{\leftimgwidth}
+     \setlength{\leftimgwidth}{0.78em+8.0em}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Now define the boxes that make up the poster
+%%%---------------------------------------------------------------------------
+%%% Each box has a name and can be placed absolutely or relatively.
+%%% The only inconvenience is that you can only specify a relative position 
+%%% towards an already declared box. So if you have a box attached to the 
+%%% bottom, one to the top and a third one which should be in between, you 
+%%% have to specify the top and bottom boxes before you specify the middle 
+%%% box.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %
+    % A coloured circle useful as a bullet with an adjustably strong filling
+    \newcommand{\colouredcircle}[1]{%
+      \tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em); \draw[draw=black,fill=baposterBGone!80!black!#1!white,line width=0.03em] (0,0) circle(0.18em);}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Contribution}{name=contribution,column=0,row=0}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   {}
+   
+   We use state of the art natural language processing techniques to gain new
+   insights from 100 years of General Conference Talks.  Using computers to
+   sift through a corpus that would be overwhelmingly large to process
+   manually, we can discover relationships between talks and trends over time
+   that help us to better appreciate the trove of knowledge in these inspired
+   discourses.
+
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Background and Methodology}
+  {name=methodology,column=0,below=contribution}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	Document clustering is the task of determining which documents are similar
+	to each other in any given corpus.  The fundamental assumption made by
+	clustering techniques is that there are several topics used in the corpus,
+	and each document is generated by a single (unknown) topic.  Given a
+	clustering model and a set of documents, statistical methods can be used to
+	determine the best clustering of documents for that corpus.
+
+	When documents frequently cover multiple topics, however, the performance
+	of document clustering methods degenerates.  This is often the case with
+	religious discourse, as talks frequently combine faith and repentance, or
+	faith and tithing, making the talks seem similar in regards to their use of
+	words describing faith, but different in the other topics they cover.  To
+	solve this problem, Latent Dirichlet Allocation (LDA) was proposed.  LDA
+	breaks the assumption of document clustering that each document is
+	generated from a single topic, and instead assumes that each word in each
+	document comes from a particular topic.  Thus documents can have multiple
+	topics, creating a better model for many corpora of interest today.
+
+	LDA can be used both to discover the topics that are spoken of throughout a
+	corpus and to determine which documents in the corpus use which topics most
+	frequently.  When documents have dates and authors associated with them,
+	other interesting attributes of the corpus, such as the relative
+	proportions of topics over time, can also be deduced.  We used LDA to
+	automatically discover topics found in General Conference talks from
+	1900--2005.  We obtained the talks from the internet site
+	www.ldslibrary.org.  There is some noise in the data because of parsing
+	error, but overall the quality is high.
+
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Results}
+  {name=results word distributions,column=1,span=2,row=0}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	The main result of using LDA is a list of which words are most likely to be
+	used in each topic.  In the algorithm, the topics just have numbers; the
+	computer merely looks for statistical relationship between words.  The
+	labels are thus our own.  We present here a few of the topics we found.
+
+	\small
+	\begin{center}
+	  \begin{tabular}{ccccc}
+		Topic 19: Tithing&Topic 33: Welfare&Topic 52: Women&Topic 37: Families
+		&Topic 7: Government\\
+		\hline
+		tithing&welfare&women&children&government \\
+		pay&poor&society&home&united \\
+		money&church&relief&family&liberty \\
+		debt&fast&sisters&parents&nation \\
+		means&help&hinckley&teach&states \\
+		out&services&each&child&country \\
+		people&program&b&families&freedom \\
+		one&plan&gordon&homes&land \\
+		paid&care&lives&love&free \\
+		poor&needs&service&mother&men \\
+		tithes&food&sister&taught&constitution \\
+		get&need&forward&fathers&people \\
+		more&family&strength&responsibility&america \\
+	  \end{tabular}
+	\end{center}
+
+	\normalsize
+	\mbox{\hspace{0.3\linewidth}\rule{0.4\linewidth}{1pt}\hspace{0.3\linewidth}}\\
+	Because each talk has a date associated with it, we can use LDA to analyze
+	the distribution of these topics over time, seeing at when certain topics
+	were most discussed.  In doing this, we see clear correlations with
+	real-world occurrences.
+
+	\begin{center}
+	  \includegraphics[height=.34\linewidth]{topic19.eps}
+	  \includegraphics[height=.34\linewidth]{topic33.eps}
+
+	  \includegraphics[height=.34\linewidth]{topic52.eps}
+	  \includegraphics[height=.34\linewidth]{topic56.eps}
+	\end{center}
+
+  }%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Future Work}{name=future work,column=3,span=1}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	We have used natural language processing techniques on a novel data
+	source---LDS General Conference talks.  However, our exploration of the
+	results has been quite preliminary.  Our research lays the groundwork for a
+	more thorough analysis of religious discourse in the LDS Church.  These
+	techniques allow us to quickly answer questions such as, ``Which topics are
+	constant over time, and which come and go?'' and ``Which years had the
+	highest diversity of topics, and which were more narrow-focused?''
+
+	We also have only considered General Conference talks.  A fruitful avenue
+	of future work would be to compare the results of our techniques on many
+	different corpora of LDS religious and scholarly texts, such as the Journal
+	of Discourses, the Book of Mormon, the Doctrine and Covenants, the
+	collected works of Hugh Nibley, or the past 50 years of BYU Studies.  Such
+	analysis could broaden our understanding of and appreciation for our
+	textual history.
+
+  }%
+
+\end{poster}%
+%
+\end{document}
