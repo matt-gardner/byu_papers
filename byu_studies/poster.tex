@@ -29,23 +29,6 @@
 \graphicspath{{images/}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Some math symbols used in the text
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Format 
-\newcommand{\Matrix}[1]{\begin{bmatrix} #1 \end{bmatrix}}
-\newcommand{\Vector}[1]{\Matrix{#1}}
-\newcommand*{\SET}[1]  {\ensuremath{\mathcal{#1}}}
-\newcommand*{\MAT}[1]  {\ensuremath{\mathbf{#1}}}
-\newcommand*{\VEC}[1]  {\ensuremath{\bm{#1}}}
-\newcommand*{\CONST}[1]{\ensuremath{\mathit{#1}}}
-\newcommand*{\norm}[1]{\mathopen\| #1 \mathclose\|}% use instead of $\|x\|$
-\newcommand*{\abs}[1]{\mathopen| #1 \mathclose|}% use instead of $\|x\|$
-\newcommand*{\absLR}[1]{\left| #1 \right|}% use instead of $\|x\|$
-
-\def\norm#1{\mathopen\| #1 \mathclose\|}% use instead of $\|x\|$
-\newcommand{\normLR}[1]{\left\| #1 \right\|}% use instead of $\|x\|$
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Multicol Settings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setlength{\columnsep}{0.7em}
@@ -98,7 +81,7 @@
   % Format of textbox
   textborder=roundedleft,
   % Format of text header
-  eyecatcher=no,
+  eyecatcher=yes,
   headerborder=open,
   headerheight=0.08\textheight,
   headershape=roundedright,
@@ -110,7 +93,10 @@
   linewidth=2pt
   }
   % Eye Catcher
-  {} % No eye catcher for this poster. If an eye catcher is present, the title is centered between eye-catcher and logo.
+  {{\begin{minipage}{7em}
+    \includegraphics[height=5em]{amllogo.eps}
+  \end{minipage}}
+  }
   % Title
   {\sf %Sans Serif
   %\bf% Serif
@@ -125,9 +111,9 @@
   (ringger@cs.byu.edu)
   }
   % University logo
-  {{\begin{minipage}{16em}
+  {{\begin{minipage}{7em}
     \hfill
-    \includegraphics[height=5.5em]{byunlp.eps}
+    \includegraphics[height=5em]{byunlp.eps}
   \end{minipage}}
   }
 
@@ -187,17 +173,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	\begin{centering}
-	  \psfrag{b}[C][C]{\huge$\beta$}
-	  \psfrag{a}[C][C]{\huge$\alpha$}
-	  \psfrag{t}[C][C]{\huge$\theta$}
-	  \psfrag{f}[C][C]{\huge$\phi$}
-	  \psfrag{w}[C][C]{\huge$w$}
-	  \psfrag{z}[C][C]{\huge$z$}
-	  \psfrag{N}[C][C]{\Large$N$}
-	  \psfrag{M}[C][C]{\Large$M$}
-	  \psfrag{K}[C][C]{\Large$K$}
-	  \includegraphics[height=.82\linewidth]{lda_model.eps}
+	  \psfrag{b}[C][C]{\Large$\beta$}
+	  \psfrag{a}[C][C]{\Large$\alpha$}
+	  \psfrag{t}[C][C]{\Large$\theta$}
+	  \psfrag{f}[C][C]{\Large$\phi$}
+	  \psfrag{w}[C][C]{\Large$w$}
+	  \psfrag{z}[C][C]{\Large$z$}
+	  \psfrag{N}[C][C]{\large$N$}
+	  \psfrag{M}[C][C]{\large$M$}
+	  \psfrag{K}[C][C]{\large$K$}
+	  \includegraphics[height=.485\linewidth]{lda_model.eps}
 	  \begin{align*} 
+		M &= \mathrm{Number\ of\ documents} \\
+		N &= \mathrm{Number\ of\ words\ in\ a\ document} \\
+		K &= \mathrm{Number\ of\ topics} \\
+		w &= \mathrm{Word\ in\ a\ document} \\
+		z &= \mathrm{Topic\ corresponding\ to\ word\ } w \\
 		w_i|z_i,\phi^{(z_i)} &\sim \mathrm{Categorical}(\phi^{(z_i)}) \\
 		\phi &\sim \mathrm{Dirichlet}(\beta) \\
 		z_i|\theta^{(d_i)} &\sim \mathrm{Categorical}(\theta^{(d_i)}) \\ 
@@ -208,75 +199,115 @@
   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Results}
-  {name=results word distributions,column=1,span=2,row=0}{
+  \headerbox{Results: Topic--Word Distributions}
+  {name=words,column=1,span=2,row=0}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	The main result of using LDA is a list of which words are most likely to be
 	used in each topic.  In the algorithm, the topics just have numbers; the
-	computer merely looks for statistical relationship between words.  The
-	labels are thus our own.  We present here a few of the topics we found.
+	computer merely looks for statistical relationships between words.  Even
+	so, the topics are easily distinguishable.  We present here a few of the
+	topics we found.
 
-	\small
 	\begin{center}
-	  \begin{tabular}{ccccc}
-		Topic 19: Tithing&Topic 33: Welfare&Topic 52: Women&Topic 37: Families
-		&Topic 7: Government\\
+	  \begin{tabular}{cccccccc}
+		Topic 19&Topic 33&Topic 52&Topic 37&Topic 7&Topic 26&Topic 28&Topic 22\\
 		\hline
-		tithing&welfare&women&children&government \\
-		pay&poor&society&home&united \\
-		money&church&relief&family&liberty \\
-		debt&fast&sisters&parents&nation \\
-		means&help&hinckley&teach&states \\
-		out&services&each&child&country \\
-		people&program&b&families&freedom \\
-		one&plan&gordon&homes&land \\
-		paid&care&lives&love&free \\
-		poor&needs&service&mother&men \\
-		tithes&food&sister&taught&constitution \\
-		get&need&forward&fathers&people \\
-		more&family&strength&responsibility&america \\
+		tithing&welfare&women&children&government&see&years&true \\
+		pay&poor&society&home&united&d&one&honest \\
+		money&church&relief&family&liberty&c&two&good \\
+		debt&fast&sisters&parents&nation&1&hundred&integrity \\
+		means&help&hinckley&teach&states&2&five&virtue \\
+		out&services&each&child&country&3&three&character \\
+		people&program&b&families&freedom&s&thousand&honesty \\
+		one&plan&gordon&homes&land&ne&twenty&without \\
+		paid&care&lives&love&free&4&ago&one \\
+		poor&needs&service&mother&men&5&four&men \\
+		tithes&food&sister&taught&constitution&alma&year&honor \\
+		get&need&forward&fathers&people&6&six&respect \\
+		more&family&strength&responsibility&america&7&over&god \\
 	  \end{tabular}
 	\end{center}
 
-	\normalsize
-	\mbox{\hspace{0.3\linewidth}\rule{0.4\linewidth}{1pt}\hspace{0.3\linewidth}}\\
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Results: Topics over Time}
+  {name=results topics over time,column=1,span=2,below=words}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 	Because each talk has a date associated with it, we can use LDA to analyze
-	the distribution of these topics over time, seeing at when certain topics
-	were most discussed.  In doing this, we see clear correlations with
+	the distribution of these topics over time, seeing at what points certain
+	topics were most discussed.  In doing this, we see clear correlations with
 	real-world occurrences.
 
 	\begin{center}
-	  \includegraphics[height=.34\linewidth]{topic19.eps}
-	  \includegraphics[height=.34\linewidth]{topic33.eps}
+	  \includegraphics[height=.305\linewidth]{topic19.eps}
+	  \includegraphics[height=.305\linewidth]{topic33.eps}
 
-	  \includegraphics[height=.34\linewidth]{topic52.eps}
-	  \includegraphics[height=.34\linewidth]{topic56.eps}
+	  \includegraphics[height=.305\linewidth]{topic52.eps}
+	  \includegraphics[height=.305\linewidth]{topic56.eps}
 	\end{center}
 
-  }%
+  }
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \headerbox{Future Work}{name=future work,column=3,span=1}{
+  \headerbox{Results: Topics by Speaker}
+  {name=speaker,column=3,span=1}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	Because each talk has a speaker, we can look at topics to see who was most
+	likely to use them in their talks.  Again we see here that our automatic
+	analysis is validated by real-world occurrences.
+
+	\begin{center}
+	  \begin{tabular}{cc}
+		Relief Society Topic&Sunday School Topic\\
+		\hline
+		Sister Barbara B. Smith&Karl G. Maeser \\
+		Mary Ellen W. Smoot&George Reynolds \\
+		Mary Ellen Smoot&E. C. Phillips \\
+		Elaine L. Jack&Josiah H. Burrows \\
+		Marian R. Boyer&George Goddard \\
+		Virginia U. Jensen&Joseph J. Jackson\\
+		Wayne M. Hancock&L. John Nuttall \\
+		Shirley W. Thomas&Sunday School Union \\
+		Bonnie D. Parkin&John D. Peters \\
+		Kathleen H. Hughes&Joseph Jackson \\
+		Sheri L. Dew&George Q. Cannon \\
+		Richard H. Winkel&Heber J. Grant \\
+		Aileen H. Clyde&Joseph Summerhays \\
+	  \end{tabular}
+	\end{center}
+
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Future Work}{name=future work,column=3,span=1,below=speaker}{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	We have used natural language processing techniques on a novel data
 	source---LDS General Conference talks.  However, our exploration of the
-	results has been quite preliminary.  Our research lays the groundwork for a
-	more thorough analysis of religious discourse in the LDS Church.  These
-	techniques allow us to quickly answer questions such as, ``Which topics are
-	constant over time, and which come and go?'' and ``Which years had the
-	highest diversity of topics, and which were more narrow-focused?''
+	results has been quite preliminary.  Future areas of research could 
+	include:
+	\begin{itemize}
+	  \item A more thorough analysis of religious discourse in the LDS Church,
+		answering questions such as ``Which topics are constant over time, and
+		which come and go?''
+	  \item Explore other religious and scholarly LDS texts, including the
+		Journal of Discourses, the Book of Mormon, the Doctrine and Covenants,
+		the collected works of Hugh Nibley, or the past 50 years of BYU
+		Studies.
+	  \item Not only explore other data sets in isolation, but compare them;
+		see how the past 100 years of General Conference differs from the
+		previous 100 years in the Journal of Discourses.
+	  \item The use of other natural language processing techniques to analyze
+		the data.  Possibilities include Topical N-grams, an extension of LDA
+		that returns strings of words in the topic instead of isolated words.
+	\end{itemize}
 
-	We also have only considered General Conference talks.  A fruitful avenue
-	of future work would be to compare the results of our techniques on many
-	different corpora of LDS religious and scholarly texts, such as the Journal
-	of Discourses, the Book of Mormon, the Doctrine and Covenants, the
-	collected works of Hugh Nibley, or the past 50 years of BYU Studies.  Such
-	analysis could broaden our understanding of and appreciation for our
-	textual history.
+  }
 
-  }%
+\end{poster}
 
-\end{poster}%
-%
 \end{document}
