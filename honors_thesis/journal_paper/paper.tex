@@ -21,20 +21,40 @@
 \renewcommand{\algorithmicforall}{\textbf{for each}}
 
 %% PSO Stuff
-\DeclareMathOperator{\URand}{U}
 \DeclareMathOperator*{\argmin}{arg\;min}
 \DeclareMathOperator*{\argmax}{arg\;max}
 \DeclareMathOperator*{\arginf}{arg\;inf}
 \DeclareMathOperator*{\argsup}{arg\;sup}
+\providecommand{\pers}{\ensuremath{c}}
+\providecommand{\neigh}{\ensuremath{s}}
+\providecommand{\nURand}{\ensuremath{U^\neigh}}
+\providecommand{\pURand}{\ensuremath{U^\pers}}
 \providecommand{\ppos}{\ensuremath{\Vec{x}}}
 \providecommand{\pvel}{\ensuremath{\Vec{v}}}
-\providecommand{\nbest}{\ensuremath{\Vec{b}_N}}
-\providecommand{\pbest}{\ensuremath{\Vec{b}_P}}
+\providecommand{\nbest}{\ensuremath{\Vec{x}^{\neigh*}}}
+\providecommand{\pbest}{\ensuremath{\Vec{x}^{\pers*}}}
 \providecommand{\constriction}{\ensuremath{\chi}}
-\providecommand{\coeff}{\ensuremath{\phi}}
+\providecommand{\ncoeff}{\ensuremath{\phi^s}}
+\providecommand{\pcoeff}{\ensuremath{\phi^P}}
 \providecommand{\obs}{\ensuremath{\Vec{\xi}}}
+\providecommand{\ofunc}{\ensuremath{f}}
+\providecommand{\swarm}{\ensuremath{swarm}}
 
 %SpecExPSO Stuff
+\providecommand{\indic}{\ensuremath{I}}
+\providecommand{\specvel}{\ensuremath{V}}
+\providecommand{\specpos}{\ensuremath{X}}
+\providecommand{\ln}{\ensuremath{ln}}
+\providecommand{\rn}{\ensuremath{rn}}
+\providecommand{\caseset}{\ensuremath{\mathcal{C}}}
+\providecommand{\casedef}{\ensuremath{(\pbest:\nbest)}}
+\providecommand{\casexn}{\ensuremath{(x:\neigh*)}}
+\providecommand{\casexx}{\ensuremath{(x:x)}}
+\providecommand{\casexl}{\ensuremath{(x:\ln)}}
+\providecommand{\casexr}{\ensuremath{(x:\rn)}}
+\providecommand{\casepn}{\ensuremath{(\pers*:\neigh*)}}
+\providecommand{\casepl}{\ensuremath{(\pers*:\ln)}}
+\providecommand{\casepr}{\ensuremath{(\pers*:\rn)}}
 \providecommand{\noeval}[1]{\ensuremath{#1^{-e}}}
 \providecommand{\nonbest}[1]{\ensuremath{#1^{-n}}}
 \providecommand{\p}{\ensuremath{p}}
@@ -84,8 +104,10 @@ Particle swarm optimization (PSO) has been found to be a highly robust and
 effective algorithm for solving many types of optimization problems.  For much
 of the algorithm's history, PSO was run serially on a single machine.  However,
 the world's computing power is increasingly coming from large clusters of
-processors.  Even in desktop machines, systems with 4 or 8 cores are
-commonplace.  In order to efficiently utilize these resources for
+processors.  i
+%Even in desktop machines, systems with 4 or 8 cores are
+%commonplace.  
+In order to efficiently utilize these resources for
 computationally intensive problems, algorithms need to run in parallel.
 
 Within the last few years, researchers have begun to recognize the need to
@@ -98,14 +120,37 @@ Parallelizing the evaluation of the objective function can also be done in some
 cases, though that is not an adaption of the PSO algorithm itself and thus is
 not the focus of this paper.
 
-All of these parallel techniques use additional processors to increase the
+The purpose of this paper is to consider pso parallelization strategies for
+clusters of thousands of processors and functions for which a single
+evaluation will take on the order of hours.
+Our purpose is to explore the question ``since pso is often run with
+a swarm of size of 100, what would one do if 500 or a few thousand processors were available?''
+
+Previous parallel techniques use additional processors to increase the
 number of particles in the swarm, either by adding individual particles or by
-adding entire new subswarms.  The number of iterations of PSO that the
+adding entire new sub-swarms but in all cases increasing the number of particles.  The number of iterations of PSO that the
 algorithms can perform is thus inherently limited by the time it takes to
 evaluate the objective function---additional processors add more particles, not
-more iterations.  However, there are many functions for which performing more
+more iterations.
+for many functions there comes a point of diminishing returns with respect to adding particles.
+>>>>>>>>> TODO WARNING WARNING MADE UP NUMBERS GET REAL ONES!! <<<<<<<<<<<<<<
+For the well-know benchmark function Sphere and as shown in Figure XXXXa increasing the swarm size from 20 to 120 has a significant effect on the 
+speed of convergence. In this case, the swam goes below $1*10^5$ in x iteration with 20 particles, but 
+achieves this same value in  y iterations with a swarms size of 120, the additional 100 particles.
+However consider the change going from 2000 particles to 2100 particles. Here the additional 100 particles
+reduce the number of iterations to achieve $1*10^5$ from x iterations to y.
+Other benchmark function behave similarly. ans shown in fig xxxxb for ?? and xxxxc ?? (in all case 20 dimensions, average of 50 runs).
+Certainly these benchmark functions do not prove that this will be the case for all functions,
+but it does provide some evidence that for at least some functions, adding additional particles does not seem to have much benefit
+after some point, some time earlier fig xx some time later. This phenomena has been commented on by others
+in the form of recommended swarms sizes for various types of functions cite standard swarm paper.
+\begin{quote}
+Skip this??
+
+However, there are many functions for which performing more
 iterations with fewer particles is a better use of resources than performing
 fewer iterations with more particles.  
+\end{quote}
 
 To solve this problem, we take inspiration from speculative execution
 techniques commonly used in processors.  Modern processors, when faced with a
@@ -123,6 +168,9 @@ position.  This could not be done in gradient methods, for instance, where the
 step size for sampling depends on the gradient at the current position, but it
 has been done in simulated annealing~\cite{witte-tpds91}.
 
+\begin{quote}
+Skip this??
+
 Speculative evaluation is possible in PSO because the motion of particles
 depends only on the \emph{positions} of the particle and its best neighbor, not
 the \emph{value} of the objective function at those positions.  We do not have
@@ -134,6 +182,9 @@ which of the speculatively evaluated positions matches the branch taken by the
 particle.  We have thus evaluated two iterations at once.  This can easily get
 unwieldy if the set of next possible positions for each particle is large, but
 a wise choice of topology limits that set to a reasonable size.
+
+But the following does need some intro
+\end{quote}
 
 The original PSO can be reproduced exactly, two iterations at a time, using
 this technique.  However, if we relax the requirements of the algorithm, no
@@ -165,25 +216,28 @@ attracted back to that place, and a social component by which particles are
 attracted to the best solution that any of their neighbors have found.
 
 At each iteration of the algorithm, the position $\ppos_t$ and velocity
-$\pvel_t$ of each particle are updated as follows:
+$\pvel_t$ of each particle $i$ are updated as follows:
 \begin{align}
 \label{eq:velupdate}
-	\pvel_{t+1} &=
+	\pvel_{i,t+1} &=
 		\constriction \left[ \pvel_t +
-			\coeff_1\URand()\otimes(\pbest - \ppos_t) +
-			\coeff_2\URand()\otimes(\nbest - \ppos_t)
+			\pcoeff\pURand_{i,t}\otimes(\pbest_{i,t} - \ppos_{i,t}) +
+			\ncoeff\nURand_{i,t}\otimes(\nbest_{i,t} - \ppos_{i,t})
 		\right] \\
 \label{eq:posupdate}
-	\ppos_{t+1} &= \ppos_t + \pvel_{t+1}
+	\ppos_{i,t+1} &= \ppos_{i,t} + \pvel_{i,t+1}
 \end{align}
-where \( \URand() \) is a vector of random numbers drawn from a uniform
+where \( \nURand_{i,t} \) and \( \nURand_{i,t} \) are vectors of i.i.d. random numbers drawn from a uniform
 distribution, the \( \otimes \) operator is an element-wise vector
 multiplication, $\pbest$ (called personal best) is the best position the
 current particle has seen, and $\nbest$ (called neighborhood best) is the best
-position the neighbors of the current particle have seen.  \( \coeff_1 \), \(
-\coeff_2 \), and \( \constriction \) are parameters with prescribed values
+position the neighbors of the current particle have seen.  \( \ncoeff \), \(
+\pcoeff \), and \( \constriction \) are parameters with prescribed values
 required to ensure convergence (2.05, 2.05, and .73,
-respectively)~\cite{clerc-tec02}.
+respectively)~\cite{clerc-tec02}. Note also that we have made the particle identifier $i$
+and the time step $t$ or $t+1$ explicit in the subscript and moved other qualifiers,
+such as the personal $P$ and personal best $P*$ qualifiers to the superscript position.
+Superscripts can be miss read as exponents, but they are qualifiers throughout this paper.
 
 There are many ways of defining the neighbors of a particle.  Different
 neighborhood topologies have varying performance on different kinds of
@@ -192,11 +246,12 @@ theorem~\cite{wolpert-tec97}.  An in-depth discussion of topologies in PSO is
 beyond the scope of this paper.  The two most common topologies used in the
 literature are the Ring topology and the Complete
 topology~\cite{bratton-sis07}.  In this paper we use those topologies, as well
-as a parallel adaptation of the Complete topology called Random that has been
+as a parallel surrogate for the Complete topology called Random that has been
 shown to simulate the behavior of Complete with far less
 communication~\cite{mcnabb-cec09}.  Both the Ring and the Random topologies can
 be defined as having $n$ neighbors; we use 2 neighbors for all of our
 experiments.
+%TODO except as noted??
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -215,7 +270,172 @@ what a particle's next position will be from its current position, we can
 evaluate both in parallel and perform two iterations of PSO at once.  Lacking
 a good way to guess a particle's next position, we can at least enumerate all
 possible next positions of the particle, evaluate all of them at once, and one
-of them will be right.
+of them would have been computed by normal PSO.
+
+We do this as described here.
+
+First consider formula for the \emph{next} iteration of PSO, which is identical to 
+Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate} except the time subscripts are incremented.
+As noted above and for simplicity in this explanation, we restrict our discussion here to
+the case of a Ring topology with two neighbors which we will call the
+``right neighbor'' and ``left neighbor'' neighbors identified for each
+particle $i$ as $\rn(i)$ and $\ln(i)$ respectively.
+
+Next note that the computation of $\pbest$ and $\nbest$ is not seen in
+the update equations~\eqref{eq:velupdate} and \eqref{eq:posupdate}, so
+we will make this mathematically explicit.
+This update is usually implemented as a pair of independent ``if``-statements, but that is
+a bit awkward for our purpose here so we instead use a set of indicator variables,
+one each representing each possible update to the \emph{pair} $\casedef$.
+These indicator variables allow us to easily identify the cases in which updates will
+be needed for $\nbest$, $\pbest$ or both.
+
+For example, we can write $\casexn$ to identify the case where $\pbest$ will
+be updated with the better position $\ppos_{i,t}$, shown in the first positions,
+but a no new neighborhood best was found so
+$\nbest$ remains in the second position.
+
+For any topology with 2 neighbors there are 7 possible update cases listed in
+Table~\ref{tab:evals}.
+This list assumes, as is typically the case, that each particle is also
+part of its own neighborhood (can cause an update to $\nbest$). The list also
+omits the case where $\nbest$ is updated by $\ppos_{i,t}$ but $\pbest$ was not updated, as this is
+logically impossible. $\caseset$ represents the set of all cases.
+
+For minimization, we can define the indicator variable representing the case where for particle $i$ at time $t$
+$\pbest$ will
+be updated with the better position $x_{i,t}$ but
+$\nbest$ will not updated by:
+\begin{align}
+\nonumber
+	\indic_{i,t}^{\casexn} & (\ofunc ( \ppos_{i,t+1} ) ,\ofunc(\ppos_{\ln(i),t+1}),\ofunc(\ppos_{\rn(i),t+1}) ,\ofunc(\pbest_{i,t}) ,\ofunc(\nbest_{i,t}))= \\
+\nonumber
+	& 1 \ if \  \ofunc(\ppos_{i,t+1}) > \ofunc(\pbest_{i,t}) \\
+\nonumber
+	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\ppos_{i,t}) \\
+\nonumber
+	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\ppos_{\ln(i),t}) \\
+\nonumber
+	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\ppos_{\rn(i),t}) \\
+\label{eq:deficasexn}
+	& 0 \ otherwise
+\end{align}
+
+For compactness in our equations we represent this without the parameters since
+they can be inferred from the subscripts on $\indic_{i,t}^{\casexn}$.
+The indicators variables for the other update cases shown in 
+Table~\ref{tab:evals}
+($\casepn$, $\casepl$, $\casepr$, etc.)
+can be defined in similar fashion but obviously using the
+corresponding boolean expression.
+
+For each cases identified in
+Table~\ref{tab:evals}
+and identified by a corresponding indicator variable defined above,
+we define also a velocity update equation; once again using $\casexn$ as an example:
+\begin{align}
+\nonumber
+	\specvel_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
+\label{eq:defvocasexn}
+		& \constriction \left[ \pvel_t +
+			\pcoeff\pURand_{i,t}\otimes(\pbest_{i,t} - \ppos_{i,t}) +
+			\ncoeff\nURand_{i,t}\otimes(\nbest_{i,t} - \ppos_{i,t})
+		\right]
+\end{align}
+
+Again we will drop the parameters for compactness and since
+they can be inferred from the subscripts on $\specvel_{i,t}^{\casexn}$.
+Since this equation is restricted to a specific case, $\casexn$ for this example,
+it is no longer necessary to use $\pbest$ and $\nbest$, since in this case
+$\pbest_{i,t+1}=\ppos_{i,t+1}$ and $\nbest_{i,t+1}=\nbest_{i,t+1}$ we can re-write
+$\specvel_{i,t}^{\casexn}$ as:
+\begin{align}
+\nonumber
+	\specvel_{i,t+1}^{\casexn} & = \\
+\label{eq:defvcasexn}
+		& \constriction \left[ \pvel_t +
+			\pcoeff\pURand_{i,t}\otimes(\ppos_{i,t} - \ppos_{i,t}) +
+			\ncoeff\nURand_{i,t}\otimes(\nbest_{i,t} - \ppos_{i,t})
+		\right]
+\end{align}
+
+For each cases identified in
+Table~\ref{tab:evals}
+and identified by a corresponding indicator variable defined above,
+we define also a position update equation with its compact form; once again using $\casexn$ as an example:
+\begin{align}
+\label{eq:defpcasexn}
+	\specpos_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
+\nonumber
+	\specpos_{i,t+1}^{\casexn} & =  \ppos_{i,t} + \specvel_{i,t+1}^{\casexn}
+\end{align}
+
+With this notation we can re-write the ``next iteration'' form of the PSO motion equations as:
+\begin{align}
+\label{eq:vel2update}
+	\pvel_{i,t+2} &= \sum_{c \in \caseset} \ \specvel_{i,t+1}^{c} \ \indic_{i,t}^{c} \\
+\label{eq:pos2update}
+	\ppos_{i,t+2} &= \sum_{c \in \caseset} \ \specpos_{i,t+1}^{c} \ \indic_{i,t}^{c}
+\end{align}
+
+The value of the objective function at $\ppos_{i,t+2}$ is given by:
+\begin{align}
+\label{eq:pos2value}
+	\ofunc (\ppos_{i,t+2}) = \sum_{c \in \caseset} \ \ofunc(\specpos_{i,t+1}^{c}) \ \indic_{i,t}^{c}
+\end{align}
+or, with $\specpos$ and $\indic$ written with the parameters which were omitted above:
+\begin{align}
+\nonumber
+\ofunc & (\ppos_{i,t+2}) = \sum_{c \in \caseset} \\
+\nonumber
+& \ofunc(\specpos_{i,t+1}^{c}(\ppos_{i,t+1} ,\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1} ,\pbest_{i,t} ,\nbest_{i,t})) \\
+\label{eq:pos2valuelong}
+& \indic_{i,t}^{c}(\ofunc ( \ppos_{i,t+1} ) ,\ofunc(\ppos_{\ln(i),t+1}),\ofunc(\ppos_{\rn(i),t+1}) ,\ofunc(\pbest_{i,t}) ,\ofunc(\nbest_{i,t}))
+\end{align}
+
+None of the $\specpos_{i,t+1}^{c} \ \ c \in\ \caseset$ depend upon $f(i,x_t)$
+or any other objective function evaluation at $t+1$.
+Thus PSO has been refactored such that the algorithm can begin computing
+all of the objective function evaluations needed in iteration $t+1$ before $f(x_t)$ is computed.
+
+This refactoring comes a significant expense, instead of just computing
+$\ofunc(\ppos_{i,t+1})$ and then $\ofunc(\ppos_{i,t+2})$ in the usual way, this refactored PSO
+can compute $\ofunc(\ppos_{i,t+1})$ and all 
+of the $\ofunc(\specpos_{i,t+1}^{c}) \ \ c \in \caseset$ at the same time.
+Once all of the evaluations $f(\ppos_{i,t+1})$ are completed only one
+of the indicator functions $\indic_{i,t}^{c} \ \ c \in \caseset$ will have been set to one;
+the rest will be ignored, and might just as well never have been computed.
+We call these evaluated points $\specpos_{i,t+1}^{c}$ ``speculative children''
+because they may or may not be needed.
+
+The potential value of these speculative children lies in the phase used above
+``this refactored PSO
+can compute $\ofunc(\ppos_{i,t+1})$ and all 
+of the $\ofunc(\specpos_{i,t+1}^{c}) \ \ c \in \caseset$ at the same time''. 
+Remember that our intent is to accelerate parallel PSO and that we
+are interested in objective functions that have at least non-trivial computational
+complexity.
+Thus we assume that computing
+$\ofunc(\ppos_{i,t+1})$ and all 
+of the $\ofunc(\specpos_{i,t+1}^{c}) \ \ c \in \caseset$ is the computationally difficult part.
+
+Suppose that unlimited processors were available and that the evaluation of 
+the objective function took 1 hour. If for each particle $i$ 
+the computations
+$\ofunc(\ppos_{i,t+1})$ and all 
+of the $\ofunc(\specpos_{i,t+1}^{c}) \ \ c \in \caseset$ were sent to separate
+processors and completed in parallel.
+In this environment all of the function evaluations needed for 2 iterations of PSO
+could be completed in just one hour where as the conventional implementation would
+require two hours for those same 2 iterations of PSO.
+
+the same time''. 
+in the indicator functions $indic_{i,t}^{c} \ \ c \in \caseset$
+given the values $\ofunc(\ppos_{i,t+1}) i \in \swarm$ 
+is inconsequential relative to the computational cost of obtaining those values 
+$\ofunc(\ppos_{i,t+1})$ and all 
+
+
 
 While in some algorithms enumerating all possible next sampling positions would
 be impossible or extremely difficult, in PSO all we need to know are the
@@ -251,23 +471,23 @@ correct one, and two iterations have been evaluated at once.
   \caption{All possible updates for a particle with two neighbors}
   \label{tab:evals}
   \centering
-  \begin{tabular}{cc}
-	$\pbest$ updated&Source of $\nbest$ update\\
+  \begin{tabular}{lcc}
+	Identifier&$\pbest$ updated&Source of $\nbest$ update\\
 	\hline
 	\hline
-	No update&No update\\
+	$\casepn$&No update&No update\\
 	\hline
-	No update&Neighbor 1\\
+	$\casepl$&No update&Left Neighbor\\
 	\hline
-	No update&Neighbor 2\\
+	$\casepr$&No update&Right Neighbor\\
 	\hline
-	Updated&No update\\
+	$\casexn$&Updated&No update\\
 	\hline
-	Updated&Neighbor 1\\
+	$\casexl$&Updated&Left Neighbor\\
 	\hline
-	Updated&Neighbor 2\\
+	$\casexr$&Updated&Right Neighbor\\
 	\hline
-	Updated&The particle itself\\
+	$\casexx$&Updated&The particle itself\\
 	\hline
   \end{tabular}
 \end{table}
