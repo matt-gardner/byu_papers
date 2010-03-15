@@ -70,10 +70,14 @@ we call speculative evaluation in PSO.  Future positions of the particles are
 speculated and evaluated in parallel with current positions, performing two
 iterations of PSO at once.
 
-We also propose another way of making use of these speculative particles,
-keeping the best position found instead of the position that PSO actually would
-have taken.  We show that for a number of functions, speculative evaluation
-gives dramatic improvements over adding additional particles to the swarm.
+We show that while speculative evaluation in PSO is an intriguing idea, its
+usefulness is limited unless some slight modifications are made to the PSO
+algorithm.  When we relax the requirement that speculative evaluation exactly
+reproduce the behavior of the original PSO, we can make improvements such as
+using all of the extra speculative particles, instead of throwing away all but
+one of them, or speculating several iterations ahead instead of just one.
+Using these algorithmic modifications, we see dramatic improvements on a number
+of functions over simply adding additional particles to the swarm.
 
 \end{abstract}
 
@@ -110,9 +114,9 @@ fewer iterations with more particles.
 To solve this problem, we take inspiration from speculative execution
 techniques commonly used in processors.  Modern processors, when faced with a
 branch on which they must wait (e.g. a memory cache miss), guess which way the
-branch will go and start executing.  If the processor guessed right, execution
+branch will go and start executing.  If the processor guesses right, execution
 is much farther ahead than if it had just idly waited on the branch.  If it
-guessed wrong, execution restarts right where it would have been anyway.  This
+guesses wrong, execution restarts right where it would have been anyway.  This
 is called speculative execution or branch prediction.
 
 The idea of speculative execution can be applied to some types of optimization
@@ -191,12 +195,19 @@ functions, as would be expected by the No Free Lunch
 theorem~\cite{wolpert-tec97}.  An in-depth discussion of topologies in PSO is
 beyond the scope of this paper.  The two most common topologies used in the
 literature are the Ring topology and the Complete
-topology~\cite{bratton-sis07}.  In this paper we use those topologies, as well
-as a parallel adaptation of the Complete topology called Random that has been
-shown to simulate the behavior of Complete with far less
-communication~\cite{mcnabb-cec09}.  Both the Ring and the Random topologies can
-be defined as having $n$ neighbors; we use 2 neighbors for all of our
-experiments.
+topology~\cite{bratton-sis07}.  In the Ring topology, each particle has one
+neighbor to either side of it; in the Complete topology, every particle is a
+neighbor to every other particle.  In all topologies, a particle is also a
+neighbor to itself, in that its own position is considered when updating the
+particle's $\nbest$.  Thus with $p$ particles, using the Ring topology each
+particle $i$ has three neighbors: $i-1$, $i$, and $i+1$.  With the Complete
+topology, each particle has $p$ neighbors.  In this paper we use these
+topologies, as well as a parallel adaptation of the Complete topology, called
+Random, that has been shown to simulate the behavior of Complete with far less
+communication~\cite{mcnabb-cec09}.  In the Random topology, each particle
+randomly picks two other particles to share information with at each iteration,
+along with itself.  Thus in both the Ring and the Random topologies, all
+particles have 3 neighbors.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -236,16 +247,16 @@ To enumerate all of the possible next positions of a particle, one must simply
 evaluate the motion equations for all possible combinations of personal best
 and neighborhood best updates that a particle could see.  This produces
 $2(n+1)$ speculative positions to be evaluated, where $n$ is the number of
-neighbors the particle has.  If a particle is also its own neighbor, as is most
-often the case, one of the $2(n+1)$ speculative positions can be eliminated, as
-a particle cannot be the source of its $\nbest$ update while not updating its
-$\pbest$.  Thus we have $2(n+1)-1$, or $2n+1$, evaluations.
-Table~\ref{tab:evals} lists all possible combinations of updates that can be
-seen by a particle with two neighbors other than itself, which is the case in
-all of the topologies we use.  If all of these speculative positions are
-evaluated in parallel along with the original, non-speculative position of the
-particle at time $t-1$, then one of the speculative positions has to be the
-correct one, and two iterations have been evaluated at once.
+neighbors the particle has.  Because a particle is also its own neighbor, one
+of the $2(n+1)$ speculative positions can be eliminated, as a particle cannot
+be the source of its $\nbest$ update while not updating its $\pbest$.  Thus we
+have $2(n+1)-1$, or $2n+1$, evaluations.  Table~\ref{tab:evals} lists all
+possible combinations of updates that can be seen by a particle with two
+neighbors other than itself, which is the case in all of the topologies we use.
+If all of these speculative positions are evaluated in parallel along with the
+original, non-speculative position of the particle at time $t-1$, then one of
+the speculative positions has to be the correct one, and two iterations have
+been evaluated at once.
 
 \begin{table}
   \caption{All possible updates for a particle with two neighbors}
@@ -281,22 +292,19 @@ much smaller than $O(p^2)$.  However, some functions are better optimized with
 the Complete topology and the quick spread of information it entails than with
 sparse topologies.  Accordingly, we use the Random topology described
 in~\cite{mcnabb-cec09}, which has been shown to effectively simulate the
-Complete topology.  In that topology, 2 neighbors are chosen at random from the
-swarm for each particle at each iteration.  Because a particle is also always
-its own neighbor, $n$ is $3$ in that case.  In~\sec{results} we report the
-results for performing speculative evaluation using both the Ring topology
-(where $n$ again is $3$) and the Random topology on a number of common
-benchmark functions.
+Complete topology.  In~\sec{results} we report the results for performing
+speculative evaluation using both the Ring topology and the Random topology on
+a number of common benchmark functions.
 
 It is not trivial in some parallel architectures to determine which speculative
 position was the correct next position of each particle.  First we discuss the
-relatively easy case of a centralized parallel PSO algorithm.  In such an
-architecture, the master keeps track of all necessary information with only
-trivial message passing needed.  Then we discuss the more complicated case of a
-distributed algorithm, where each particle is on its own and needs to send and
-receive messages to and from other particles.  Finally we discuss the further
-complications of a dynamic topology, where a particle's neighbors change from
-one iteration to another.
+relatively easy case of a centralized parallel PSO algorithm with a master
+computer and many slaves.  In such an architecture, the master keeps track of
+all necessary information with only trivial message passing needed.  Then we
+discuss the more complicated case of a distributed algorithm, where each
+particle is on its own and needs to send and receive messages to and from other
+particles.  Finally we discuss the further complications of a dynamic topology,
+where a particle's neighbors change from one iteration to another.
 
 \subsection{Terminology}
 
@@ -408,7 +416,7 @@ The parent also needs to pass the value of the neighborhood best that the child
 guessed.  The child only knows the position and needs the value in order to
 make future comparisons between neighborhood best positions (step 8).
 
-Upon picking the correct branch for each particle and updating the children's
+Upon picking the correct branch for each particle and updating the child's
 personal best and neighborhood best value (from iteration $t$), the result is
 the set $\nonbest{\pset}_{t+1}$, as the particles are now no longer
 speculative.  What remains is to update the neighborhood best of those
@@ -463,204 +471,22 @@ $\nonbest{\p}_{t+1}$ can be updated to $\p_{t+1}$.  Two iterations have then
 been completed with only one round of evaluations, and the next iteration can
 start again with the first round of message passing.
 
-\subsection{Alternate form of message passing}
-
 In some distributed frameworks, like the MapReduce framework that we used in
 our experiments, rounds of message passing can be expensive.  The method just
 described uses three rounds of message passing for every two iterations
-(corresponding to steps 2, 5 and 10 in \alg{centralized}).  Accordingly, we
-describe a method that requires only one round of communication for each pair
-of iterations, which happens at step 5 of \alg{centralized}.  Many more
-messages are needed, but that is sometimes more desirable than synchronizing
-all of the machines three times.
-
-This second method only requires one round of passing information because
-information about iterations $t$ and $t+1$ is passed at the same time.  Each
-processor reconstructs from the messages it receives all of the information
-that it needs about its neighbors.  Messages are passed directly after
-evaluating each particle and its children, so all messages are of the form of
-$\nonbest{\p}_t$ or $\nonbest{\s}_{t+1}$.  The first iteration needs to be
-treated specially, so each particle can produce its initial set of speculative
-children---neighbors need only pass their initial position.  This kind of
-message passing necessitates the careful use of random seeds, so that when each
-processor computes the motion equations for its neighbors it gets the same
-results as its neighboring processors.
-
-With the results of evaluating $\noeval{\p}_t$ and $\noeval{\sset}_{t+1}$,
-along with all of the required messages from neighboring particles, the goal is
-to produce $\p_{t+1}$ and output $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$
-ready to be evaluated for the next iteration.  We first focus on the messages
-needed to produce $\p_{t+1}$.
-
-Upon evaluation, $\noeval{\p}_t$ becomes $\nonbest{\p}_t$, needing only to get
-its neighborhood best information from its neighbors.  All of its neighbors,
-then, must send it a message, so that from their updated personal best at
-iteration $t$ the particle becomes $\p_t$.  The work done with the messages
-received thus far is just as in regular PSO, and is graphically depicted in 
-\fig{messages1}.
-
-\begin{figure}
-  \centering
-  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
-  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
-  \psfrag{pt}[C][C]{$\p_{t}$}
-  \includegraphics[width=.3\columnwidth]{messages1.eps}
-  \caption{The production of $\p_{t}$ from the original particle
-  $\nonbest{\p}_{t}$ and the messages $\nonbest{\nset}_{t}$.}
-  \label{fig:messages1}
-\end{figure}
-
-With $\p_t$ we can select the correct speculative child as described above and
-produce $\nonbest{\p}_{t+1}$.  Again we show the use of messages thus far
-graphically, in \fig{messages2}.  
-
-\begin{figure}
-  \centering
-  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
-  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
-  \psfrag{pt}[C][C]{$\p_{t}$}
-  \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
-  \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
-  \includegraphics[width=.5\columnwidth]{messages2.eps}
-  \caption{The production of $\nonbest{\p}_{t+1}$ from the original particle 
-  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$ and
-  $\nonbest{\sset}_{t+1}$, and intermediate particles.}
-  \label{fig:messages2}
-\end{figure}
-
-We then need the set of neighbors to $\nonbest{\p}_{t+1}$,
-$\nonbest{\nset}_{t+1}$, so we can update $\nonbest{\p}_{t+1}$'s neighborhood
-best.  To produce each neighbor $\nonbest{\n}_{t+1}$, we need the same
-information for the neighboring particle that we needed to produce the original
-particle, $\nonbest{\p}_{t+1}$; we need the original neighbor particle, its
-speculative children, and its neighbors.  With that information, the set
-$\nonbest{\nset}_{t+1}$ can be obtained by following the same process used to
-obtain $\nonbest{\p}_{t+1}$.  We graphically show the messages needed to
-produce $\nonbest{\nset}_{t+1}$ in \fig{messages3}.  Note that it looks
-identical to \fig{messages2}, just with different sets of particles.
-
-\begin{figure}
-  \centering
-  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
-  \psfrag{nnt-n}[C][C]{$\nonbest{\nnset}_{t}$}
-  \psfrag{nt}[C][C]{$\nset_{t}$}
-  \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
-  \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
-  \includegraphics[width=.6\columnwidth]{messages3.eps}
-  \caption{The production of each $\nonbest{\n}_{t+1}$ from the original
-  particle $\nonbest{\n}_{t}$, messages $\nonbest{\nnset}_{t}$ and
-  $\nonbest{\nsset}_{t+1}$, and intermediate particles.  $\nnset$ is the set of
-  neighbors for each particle $\n$, and $\nsset$ is the set of $\n$'s
-  speculative children.  Note the similarity between this and \fig{messages2}.}
-  \label{fig:messages3}
-\end{figure}
-
-With $\nonbest{\nset}_{t+1}$ and $\nonbest{\p}_{t+1}$, we can produce
-$\p_{t+1}$.  This is shown in \fig{messages4}.  Note that we just combined
-Figures~\ref{fig:messages2}~and~\ref{fig:messages3}, putting them together
-to make $\p_{t+1}$, as all the particle needs is its neighborhood best to be
-updated.
-
-\begin{figure}
-  \centering
-  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
-  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
-  \psfrag{pt}[C][C]{$\p_{t}$}
-  \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
-  \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
-  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
-  \psfrag{nnt-n}[C][C]{$\nonbest{\nnset}_{t}$}
-  \psfrag{nt}[C][C]{$\nset_{t}$}
-  \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
-  \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
-  \psfrag{pt1}[C][C]{$\p_{t+1}$}
-  \includegraphics[width=.8\columnwidth]{messages4.eps}
-  \caption{The production of $\p_{t+1}$ from the original particle 
-  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$, $\nonbest{\sset}_{t+1}$,
-  $\nonbest{\nnset}_{t}$, and $\nonbest{\nsset}_{t+1}$, and intermediate
-  particles.  Note that this is just a combination of \fig{messages2} and
-  \fig{messages3}.}
-  \label{fig:messages4}
-\end{figure}
-
-In order to get $\p_{t+1}$, then, a particle needs to receive messages from its
-neighbors, its neighbors' neighbors, its speculative children, and its
-neighbors' speculative children.  The particle $\p_{t+1}$ can be passed to some
-central machine to track the progress of the algorithm, and it can be moved to
-$\noeval{\p}_{t+2}$ in order to start the next iteration.
-
-The next goal is to produce the set $\noeval{\sset}_{t+3}$.  As described
-above, the necessary components to produce $\noeval{\sset}_{t+3}$ are
-$\noeval{\p}_{t+2}$ and the neighbors of $\noeval{\p}_{t+2}$,
-$\noeval{\nset}_{t+2}$.  We already have $\noeval{\p}_{t+2}$, so what remains
-is to produce $\noeval{\nset}_{t+2}$.  It is sufficient to obtain
-$\nset_{t+1}$, as each neighbor particle $\n_{t+1}$ can be moved with the
-motion equations to $\noeval{\n}_{t+2}$.
-
-We have already described how to use a set of messages to obtain $\p_{t+1}$.
-The process is exactly the same to produce each $\n_{t+1}$, requiring the same
-messages, except for the neighbor particles instead of the particle itself.  
-\fig{messages5} shows graphically how $\noeval{\sset}_{t+3}$ is produced.
-
-\begin{figure}
-  \centering
-  \psfrag{pt1}[C][C]{$\p_{t+1}$}
-  \psfrag{nt1}[C][C]{$\nset_{t+1}$}
-  \psfrag{nt2-e}[C][C]{$\noeval{\nset}_{t+2}$}
-  \psfrag{pt2-e}[C][C]{$\noeval{\p}_{t+2}$}
-  \psfrag{st3-e}[C][C]{$\noeval{\sset}_{t+3}$}
-  \includegraphics[width=.5\columnwidth]{messages5.eps}
-  \caption{The production of $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$
-  from $\p_{t+1}$ and $\n_{t+1}$, each of which are produced as in
-  \fig{messages4}.}
-  \label{fig:messages5}
-\end{figure}
-
-Having obtained both $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$ from the
-messages received, the algorithm then moves to the evaluation phase, and the
-process repeats itself.  The particles are evaluated, send their messages, and
-produce the next set of particles to be evaluated from the messages received.
-
-To perform the entire process, at each message passing round a particle must
-receive messages from its neighbors, its neighbors' neighbors, its neighbors'
-neighbors' neighbors, its speculative children, its neighbors' speculative
-children, and its neighbors' neighbors' speculative children.  With the Ring
-topology, that looks like more messages than it really is, as many of the
-neighbors' neighbors are duplicates.  With the Random topology, however, the
-list of necessary messages could be rather large.  
-
-This may seem like an inordinate amount of work, and with some distributed PSO
-frameworks it is.  However, other parallel frameworks necessitate this type of
-message passing, so we have described how speculative evaluation can be
-performed in those circumstances.
+(corresponding to steps 2, 5 and 10 in \alg{centralized}).  It is possible to
+perform speculative evaluation in PSO with only one round of communication per
+two iterations.  However, the methodology is tedius and is not the focus of
+this paper, so we defer its description to the Appendix.
 
 \subsection{Dynamic Topologies}
 
-Performing speculative evaluation in PSO with a dynamic topology raises a few
-issues of its own.  First, with neighbors changing each iteration, messages
-that processors pass to their neighbors need to be sent to the correct
-neighbors for each iteration.  In centralized algorithms and in distributed
-algorithms with several rounds of message passing (the first method described
-above), nothing needs to be changed.  However, in the case where processors
-reconstruct information about neighboring particles from messages, those
-messages need to be sent to the correct neighbors.  A particle cannot simply
-send messages to its neighbors' neighbors' neighbors---it needs to send
-messages to its iteration $t$ neighbors' iteration $t+1$ neighbors, and so on.
-For every neighbor outward information is sent, the iteration also needs to be
-incremented, as information about neighbors' neighbors is used during iteration
-$t+1$, and information about neighbors' neighbors' neighbors is used to
-reconstruct information about iteration $t+2$.  Also, this method of message
-passing again requires the use of random seeds if the topology is random, so
-that each processor computes the same neighbors for a particle as all other
-processors.
-
-Also, an issue common to all methods of performing speculative evaluation is
-that of getting available information from neighbors before generating
-speculative children.  In a static topology, at iteration $t$ a particle
+Performing speculative evaluation in PSO with a dynamic topology raises a
+sticky issue of its own.  In a static topology, at iteration $t$ a particle
 already has all of the information about the positions of its neighbors during
-iterations $1$ through $t-1$.  If the neighbor finds a better position at 
+iterations $1$ through $t-1$.  If the neighbor finds a better position at
 iteration $t$, the particle updates its neighborhood best, but if it does not,
-it still has its old neighborhood best from its neighbors for all previous 
+it still has its old neighborhood best from its neighbors for all previous
 iterations.
 
 In a dynamic topology, a particle might not have information about the previous
@@ -673,12 +499,13 @@ potentially more than $2n+1$ possible next positions, increasing the amount of
 work that must be done to perform the second iteration at the same time as the
 first.
 
-This is easily fixed by updating $\noeval{\p}_{t+2}$ with the currently
-available information about $\noeval{\nset}_{t+2}$ before producing
-$\noeval{\sset}_{t+3}$.  If a particle $\noeval{\p}_{t+2}$ updates its
-neighborhood best with the personal bests of $\noeval{\nset}_{t+2}$ before
-calculating the next possible positions for $\noeval{\sset}_{t+3}$, there are
-still only $2n+1$ possible next positions, and the problem is avoided.
+This is easily fixed by updating each new particle $\noeval{\p}_{t+2}$ with the
+currently available information about its neighbors $\noeval{\nset}_{t+2}$
+before producing its children $\noeval{\sset}_{t+3}$.  If a particle
+$\noeval{\p}_{t+2}$ updates its neighborhood best with the personal bests of
+$\noeval{\nset}_{t+2}$ before calculating the next possible positions for
+$\noeval{\sset}_{t+3}$, there are still only $2n+1$ possible next positions,
+and the problem is avoided.
 
 \subsection{Comparison with Standard PSO}
 \label{sec:results}
@@ -821,6 +648,7 @@ requirement of exactly reproducing the behavior of the original PSO algorithm,
 we see some very impressive results.
 
 \subsection{Pick the Best Child}
+\label{sec:pickbest}
 
 In performing speculative evaluation as we have described it, $2n+1$
 speculative evaluations are done per particle, while all but one of them are
@@ -895,7 +723,7 @@ In Table~\ref{tab:evals} we presented all possible branches that a particle
 with two neighbors could take.  Here we lump all of the neighbors together and
 consider the statistics for the five branches shown in Table~\ref{tab:branches}.
 
-\begin{table}
+\begin{table}[h]
   \caption{Five Branches to Consider for Statistics}
   \label{tab:branches}
   \centering
@@ -910,27 +738,42 @@ consider the statistics for the five branches shown in Table~\ref{tab:branches}.
   \end{tabular}
 \end{table}
 
-\begin{table}
+\begin{table}[h]
   \caption{Branch Statistics in PSO}
   \label{tab:stats}
   \centering
   \begin{tabular}{c|c|c|c|c|c|c}
 	Topology&Function&1&2&3&4&5\\
 	\hline
-	Ring&Sphere&0.530&0.093&0.114&0.202&0.062\\
-	&Griewank&0.517&0.084&0.122&0.207&0.070\\
-	&Rastrigin&0.495&0.048&0.146&0.213&0.099\\
-	&Rosenbrock&0.513&0.074&0.129&0.211&0.073\\
 	\hline
-	Random&Sphere&0.667&0.119&0.026&0.156&0.031\\
-	&Griewank&0.690&0.109&0.025&0.149&0.027\\
-	&Rastrigin&0.819&0.055&0.015&0.100&0.010\\
-	&Rosenbrock&0.742&0.077&0.022&0.140&0.018\\
+	Ring&Sphere&53.0\%&9.3\%&11.4\%&20.2\%&6.2\%\\
+	&Griewank&51.7\%&8.4\%&12.2\%&20.7\%&7.0\%\\
+	&Rastrigin&49.5\%&4.8\%&14.6\%&21.3\%&9.9\%\\
+	&Rosenbrock&51.3\%&7.4\%&12.9\%&21.1\%&7.3\%\\
+	\cline{2-7}
+	&Average&{51.3\%}&{7.5\%}&{12.8\%}&{20.8\%}&
+	{7.6\%}\\
 	\hline
-	Complete&Sphere&0.319&0.092&0.002&0.451&0.135\\
-	&Griewank&0.353&0.084&0.002&0.441&0.119\\
-	&Rastrigin&0.477&0.067&0.002&0.382&0.070\\
-	&Rosenbrock&0.353&0.034&0.003&0.544&0.066\\
+	\hline
+	Random&Sphere&66.7\%&11.9\%&2.6\%&15.6\%&3.1\%\\
+	&Griewank&69.0\%&10.9\%&2.5\%&14.9\%&2.7\%\\
+	&Rastrigin&81.9\%&5.5\%&1.5\%&10.0\%&1.0\%\\
+	&Rosenbrock&74.2\%&7.7\%&2.2\%&14.0\%&1.8\%\\
+	\cline{2-7}
+	&Average&{73.0\%}&{9.0\%}&{2.2\%}&{13.6\%}&
+	{2.2\%}\\
+	\hline
+	\hline
+	Complete&Sphere&31.9\%&9.2\%&0.2\%&45.1\%&13.5\%\\
+	&Griewank&35.3\%&8.4\%&0.2\%&44.1\%&11.9\%\\
+	&Rastrigin&47.7\%&6.7\%&0.2\%&38.2\%&7.0\%\\
+	&Rosenbrock&35.3\%&3.4\%&0.3\%&54.4\%&6.6\%\\
+	\cline{2-7}
+	&Average&{37.6\%}&{6.9\%}&{.2\%}&{45.5\%}&
+	{9.8\%}\\
+	\hline
+	\multicolumn{7}{l}{The numbers in the column headings refer to branch
+	numbers in Table~\ref{tab:branches}.}
   \end{tabular}
 \end{table}
 
@@ -1010,11 +853,11 @@ their branch.  This keeps the iteration number constant across all particles,
 simplifying the work needed to be done in determining neighbors when dynamic
 topologies are involved.
 
-Another possibility is to pick the best child, as described above.  This
-ignores the fact that the branch might have been wrong; we do not care, because
-we just want the child that had the best value, anyway.  In almost all of the
-experiments that we ran, it turned out that picking the best child performed
-better than keeping the particle back an iteration.
+Another possibility is to pick the best child, as described in \sec{pickbest}.
+This ignores the fact that the branch might have been wrong; we do not care,
+because we just want the child that had the best value, anyway.  In almost all
+of the experiments that we ran, it turned out that picking the best child
+performed better than keeping the particle back an iteration.
 
 There are a large number of ways to prune speculative evaluations.  We
 experimented with several, but present results only for one possible pruning.
@@ -1279,6 +1122,190 @@ modern problems.  To properly use PSO with such clusters, a balance needs to be
 made between using processors to increase the swarm size and using them to
 increase the speed of the algorithm, or for perhaps as yet unconsidered
 techniques.  This work is a first step in that direction.
+
+\appendix[Alternate form of message passing]
+
+Here we describe a method that requires only one round of communication for
+each pair of iterations, which happens at step 5 of \alg{centralized}.  Many
+more messages are needed, but that is sometimes more desirable than
+synchronizing all of the machines three times.
+
+This second method only requires one round of passing information because
+information about iterations $t$ and $t+1$ is passed at the same time.  Each
+processor reconstructs from the messages it receives all of the information
+that it needs about its neighbors.  Messages are passed directly after
+evaluating each particle and its children, so all messages are of the form of
+$\nonbest{\p}_t$ or $\nonbest{\s}_{t+1}$.  The first iteration needs to be
+treated specially, so each particle can produce its initial set of speculative
+children---neighbors need only pass their initial position.  This kind of
+message passing necessitates the careful use of random seeds, so that when each
+processor computes the motion equations for its neighbors it gets the same
+results as its neighboring processors.
+
+With the results of evaluating $\noeval{\p}_t$ and $\noeval{\sset}_{t+1}$,
+along with all of the required messages from neighboring particles, the goal is
+to produce $\p_{t+1}$ and output $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$
+ready to be evaluated for the next iteration.  We first focus on the messages
+needed to produce $\p_{t+1}$.
+
+Upon evaluation, $\noeval{\p}_t$ becomes $\nonbest{\p}_t$, needing only to get
+its neighborhood best information from its neighbors.  All of its neighbors,
+then, must send it a message, so that from their updated personal best at
+iteration $t$ the particle becomes $\p_t$.  The work done with the messages
+received thus far is just as in regular PSO, and is graphically depicted in 
+\fig{messages1}.
+
+\begin{figure}
+  \centering
+  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{pt}[C][C]{$\p_{t}$}
+  \includegraphics[width=.3\columnwidth]{messages1.eps}
+  \caption{The production of $\p_{t}$ from the original particle
+  $\nonbest{\p}_{t}$ and the messages $\nonbest{\nset}_{t}$.}
+  \label{fig:messages1}
+\end{figure}
+
+With $\p_t$ we can select the correct speculative child as described above and
+produce $\nonbest{\p}_{t+1}$.  Again we show the use of messages thus far
+graphically, in \fig{messages2}.  
+
+\begin{figure}
+  \centering
+  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{pt}[C][C]{$\p_{t}$}
+  \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
+  \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
+  \includegraphics[width=.5\columnwidth]{messages2.eps}
+  \caption{The production of $\nonbest{\p}_{t+1}$ from the original particle 
+  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$ and
+  $\nonbest{\sset}_{t+1}$, and intermediate particles.}
+  \label{fig:messages2}
+\end{figure}
+
+We then need the set of neighbors to $\nonbest{\p}_{t+1}$,
+$\nonbest{\nset}_{t+1}$, so we can update $\nonbest{\p}_{t+1}$'s neighborhood
+best.  To produce each neighbor $\nonbest{\n}_{t+1}$, we need the same
+information for the neighboring particle that we needed to produce the original
+particle, $\nonbest{\p}_{t+1}$; we need the original neighbor particle, its
+speculative children, and its neighbors.  With that information, the set
+$\nonbest{\nset}_{t+1}$ can be obtained by following the same process used to
+obtain $\nonbest{\p}_{t+1}$.  We graphically show the messages needed to
+produce $\nonbest{\nset}_{t+1}$ in \fig{messages3}.  Note that it looks
+identical to \fig{messages2}, just with different sets of particles.
+
+\begin{figure}
+  \centering
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{nnt-n}[C][C]{$\nonbest{\nnset}_{t}$}
+  \psfrag{nt}[C][C]{$\nset_{t}$}
+  \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
+  \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
+  \includegraphics[width=.6\columnwidth]{messages3.eps}
+  \caption{The production of each $\nonbest{\n}_{t+1}$ from the original
+  particle $\nonbest{\n}_{t}$, messages $\nonbest{\nnset}_{t}$ and
+  $\nonbest{\nsset}_{t+1}$, and intermediate particles.  $\nnset$ is the set of
+  neighbors for each particle $\n$, and $\nsset$ is the set of $\n$'s
+  speculative children.  Note the similarity between this and \fig{messages2}.}
+  \label{fig:messages3}
+\end{figure}
+
+With $\nonbest{\nset}_{t+1}$ and $\nonbest{\p}_{t+1}$, we can produce
+$\p_{t+1}$.  This is shown in \fig{messages4}.  Note that we just combined
+Figures~\ref{fig:messages2}~and~\ref{fig:messages3}, putting them together
+to make $\p_{t+1}$, as all the particle needs is its neighborhood best to be
+updated.
+
+\begin{figure}
+  \centering
+  \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{pt}[C][C]{$\p_{t}$}
+  \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
+  \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
+  \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
+  \psfrag{nnt-n}[C][C]{$\nonbest{\nnset}_{t}$}
+  \psfrag{nt}[C][C]{$\nset_{t}$}
+  \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
+  \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
+  \psfrag{pt1}[C][C]{$\p_{t+1}$}
+  \includegraphics[width=.8\columnwidth]{messages4.eps}
+  \caption{The production of $\p_{t+1}$ from the original particle 
+  $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$, $\nonbest{\sset}_{t+1}$,
+  $\nonbest{\nnset}_{t}$, and $\nonbest{\nsset}_{t+1}$, and intermediate
+  particles.  Note that this is just a combination of \fig{messages2} and
+  \fig{messages3}.}
+  \label{fig:messages4}
+\end{figure}
+
+In order to get $\p_{t+1}$, then, a particle needs to receive messages from its
+neighbors, its neighbors' neighbors, its speculative children, and its
+neighbors' speculative children.  The particle $\p_{t+1}$ can be passed to some
+central machine to track the progress of the algorithm, and it can be moved to
+$\noeval{\p}_{t+2}$ in order to start the next iteration.
+
+The next goal is to produce the set $\noeval{\sset}_{t+3}$.  As described
+above, the necessary components to produce $\noeval{\sset}_{t+3}$ are
+$\noeval{\p}_{t+2}$ and the neighbors of $\noeval{\p}_{t+2}$,
+$\noeval{\nset}_{t+2}$.  We already have $\noeval{\p}_{t+2}$, so what remains
+is to produce $\noeval{\nset}_{t+2}$.  It is sufficient to obtain
+$\nset_{t+1}$, as each neighbor particle $\n_{t+1}$ can be moved with the
+motion equations to $\noeval{\n}_{t+2}$.
+
+We have already described how to use a set of messages to obtain $\p_{t+1}$.
+The process is exactly the same to produce each $\n_{t+1}$, requiring the same
+messages, only for the neighbor particles instead of the particle itself.
+\fig{messages5} shows graphically how $\noeval{\sset}_{t+3}$ is produced.
+
+\begin{figure}
+  \centering
+  \psfrag{pt1}[C][C]{$\p_{t+1}$}
+  \psfrag{nt1}[C][C]{$\nset_{t+1}$}
+  \psfrag{nt2-e}[C][C]{$\noeval{\nset}_{t+2}$}
+  \psfrag{pt2-e}[C][C]{$\noeval{\p}_{t+2}$}
+  \psfrag{st3-e}[C][C]{$\noeval{\sset}_{t+3}$}
+  \includegraphics[width=.5\columnwidth]{messages5.eps}
+  \caption{The production of $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$
+  from $\p_{t+1}$ and $\n_{t+1}$, each of which are produced as in
+  \fig{messages4}.}
+  \label{fig:messages5}
+\end{figure}
+
+Having obtained both $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$ from the
+messages received, the algorithm then moves to the evaluation phase, and the
+process repeats itself.  The particles are evaluated, send their messages, and
+produce the next set of particles to be evaluated from the messages received.
+
+To perform the entire process, at each message passing round a particle must
+receive messages from its neighbors, its neighbors' neighbors, its neighbors'
+neighbors' neighbors, its speculative children, its neighbors' speculative
+children, and its neighbors' neighbors' speculative children.  With the Ring
+topology, that looks like more messages than it really is, as many of the
+neighbors' neighbors are duplicates.  With the Random topology, however, the
+list of necessary messages could be rather large.  
+
+One more issue arises when dealing with dynamic topologies.  With neighbors
+changing each iteration, messages that processors pass to their neighbors need
+to be sent to the correct neighbors for each iteration.  In centralized
+algorithms and in distributed algorithms with several rounds of message passing
+(the first method described above), nothing needs to be changed.  However, in
+the case where processors reconstruct information about neighboring particles
+from messages, those messages need to be sent to the correct neighbors.  A
+particle cannot simply send messages to its neighbors' neighbors'
+neighbors---it needs to send messages to its iteration $t$ neighbors' iteration
+$t+1$ neighbors, and so on.  For every neighbor outward information is sent,
+the iteration also needs to be incremented, as information about neighbors'
+neighbors is used during iteration $t+1$, and information about neighbors'
+neighbors' neighbors is used to reconstruct information about iteration $t+2$.
+Also, this method of message passing again requires the use of random seeds if
+the topology is random, so that each processor computes the same neighbors for
+a particle as all other processors.
+
+This may seem like an inordinate amount of work, and with some distributed PSO
+frameworks it is.  However, other parallel frameworks necessitate this type of
+message passing, so we have described how speculative evaluation can be
+performed in those circumstances.
 
 
 \bibliographystyle{unsrt}
