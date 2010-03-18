@@ -1,4 +1,4 @@
-set xlabel "Iterations"
+set xlabel "Rounds of Evaluations"
 set ylabel "Best Function Value"
 set clip two
 plot [1:999] [0:300] '-' title "SEPSO" with lines lw 4, '-' title "PSO Random" with lines lw 4, '-' title "PSO Complete" with lines lw 4
