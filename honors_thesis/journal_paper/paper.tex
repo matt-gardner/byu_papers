@@ -47,6 +47,7 @@
 \providecommand{\indic}{\ensuremath{I}}
 \providecommand{\specvel}{\ensuremath{V}}
 \providecommand{\specpos}{\ensuremath{X}}
+\providecommand{\specval}{\ensuremath{FX}}
 \providecommand{\ln}{\ensuremath{ln}}
 \providecommand{\rn}{\ensuremath{rn}}
 \providecommand{\caseset}{\ensuremath{\mathcal{C}}}
@@ -384,6 +385,15 @@ we define also a position update equation with its compact form; once again usin
 	\specpos_{i,t+1}^{\casexn} & =  \ppos_{i,t} + \specvel_{i,t+1}^{\casexn}
 \end{align}
 
+Lastly, we also define notation for the value of the objective function at these points,
+once again using $\casexn$ as an example:
+\begin{align}
+\label{eq:deffcasexn}
+	\specval_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
+\nonumber
+	\specval_{i,t+1}^{\casexn} & =  \ofunc(\specval_{i,t+1}^{\casexn}
+\end{align}
+
 With this notation we can re-write the ``next iteration'' form of the PSO motion equations as:
 \begin{align}
 \label{eq:vel2update}
@@ -394,8 +404,8 @@ With this notation we can re-write the ``next iteration'' form of the PSO motion
 
 The value of the objective function at $\ppos_{i,t+1}$ is given by:
 \begin{align}
-\label{eq:pos2value}
-	\ofunc (\ppos_{i,t+1}) = \sum_{c \in \caseset} \ \ofunc(\specpos_{i,t+1}^{c}) \ \indic_{i,t+1}^{c}
+\label{eq:val2update}
+	\ofunc (\ppos_{i,t+1}) = \sum_{c \in \caseset} \ \specval_{i,t+1}^{c} \ \indic_{i,t+1}^{c}
 \end{align}
 or, with $\specpos$ and $\indic$ written with the parameters which were omitted above:
 \begin{align}
@@ -404,7 +414,7 @@ or, with $\specpos$ and $\indic$ written with the parameters which were omitted 
 \nonumber
 & \ofunc(\specpos_{i,t+1}^{c}(\ppos_{i,t+1},\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1},
 \pbest_{i,t},\nbest_{i,t},\pURand_{i,t}, \nURand_{i,t})) \\
-\label{eq:pos2valuelong}
+\label{eq:val2updatelong}
 & \indic_{i,t}^{c}(\ofunc ( \ppos_{i,t+1} ) ,\ofunc(\ppos_{\ln(i),t+1}),\ofunc(\ppos_{\rn(i),t+1}) ,\ofunc(\pbest_{i,t}) ,\ofunc(\nbest_{i,t}))
 \end{align}
 
@@ -477,6 +487,8 @@ resultant algorithm, produces numerically identical results.
           \STATE {$\fppos_{i.t} \leftarrow \ofunc(\ppos_{i,t})$}
         \ENDFOR
         \FOR{$i \in \swarm$}
+          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
+          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
           \label{alg1:startifs}
           \STATE $\pbest_{i,t}\leftarrow \pbest_{i,t-1}$
           \STATE $\fpbest_{i,t}\leftarrow \fpbest_{i,t-1}$
@@ -497,9 +509,8 @@ resultant algorithm, produces numerically identical results.
           \IF {$\ofunc(\ppos_{i,t})<\ofunc(\nbest_{\rn(i),t})$}
             \STATE $\pbest_{i,t}\leftarrow \ppos_{\rn(i),t}$
             \STATE $\fpbest_{i,t}\leftarrow \fppos_{\rn(i),t}$
+          \label{alg1:endifs}
           \ENDIF
-          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
-          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
           \STATE Update $\pvel_{i,t+1}$ as shown in equation~\eqref{eq:velupdate} 
           \STATE Update $\ppos_{i,t+1}$ as shown in equation~\eqref{eq:posupdate}
         \ENDFOR
@@ -507,8 +518,83 @@ resultant algorithm, produces numerically identical results.
   \end{algorithmic}
 \end{algorithm}
 
-stuff \ref{alg1:startifs} more
+This algorithm can be transformed, will retaining it exact behavior, by
+``unrolling'' one iteration of the ``Repeat'' loop, re-writing the ``if'''s in lines
+\ref{alg1:startifs} through
+\ref{alg1:endifs} to use the indicator functions $\indic_{i,t+1}$, and
 
+\begin{algorithm} [h!]
+  \caption{Unrolled PSO}
+  \label{alg:unrolled}
+  \begin{algorithmic}[1]
+    \STATE t=0
+    \STATE Initialize the swarm including
+    \FOR{$i \in \swarm$}
+      \STATE {$\ppos_{i,t} \leftarrow Random position$}
+      \STATE {$\pvel_{i,t} \leftarrow Random velocities$}
+      \STATE {$\fpbest_{i,t} \leftarrow Max Float$}
+      \STATE {$\fnbest_{i,t} \leftarrow Max Float$}
+    \ENDFOR
+    \REPEAT
+        \STATE $t=t+1$
+        \FOR{$i \in \swarm$}
+          \label{alg2:fatitert}
+          \STATE DISPATCH {$\fppos_{i.t} \leftarrow \ofunc(\ppos_{i,t})$} to a seperate processor
+        \ENDFOR
+        \FOR{$i \in \swarm$}
+          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
+          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
+          \FOR{$c \in \caseset$}
+            \STATE Compute $\specvel_{i,t+1}^c$ and $\specpos_{i,t+1}^c$.
+	    Examples shown in equations~\eqref{eq:defvcasexn} and~\eqref{eq:defpcasexn}
+            \label{alg2:fatitertp1}
+            \STATE DISPATCH computation of $\specval_{i,t+1}^c$ to a seperate processor.
+	    Example shown in equation~\eqref{eq:deffcasexn}.
+	    \COMMENT Note that none of the computations, $\specvel_{i,t+1}^c$,
+	    $\specpos_{i,t+1}^c$ and $\specval_{i,t+1}^c$ depend on $\fppos_{i.t}$.
+          \ENDFOR
+        \ENDFOR
+        \STATE WAIT for all function evaluations dispatched above to complete
+        \FOR{$i \in \swarm$}
+          \FOR{$c \in \caseset$}
+            \STATE Compute $\indic_{i,t+1}^c$
+	           Examples shown in equation~\eqref{eq:deficasexn} and~\eqref{eq:defpcasexn}
+	  \ENDFOR 
+          \STATE Compute $\pvel_{i,t+1}$ as shown in equation~\eqref{eq:vel2update} 
+          \STATE Compute $\ppos_{i,t+1}$ as shown in equation~\eqref{eq:pos2update}
+          \STATE Compute $\fppos_{i,t+1}$ as shown in equation~\eqref{eq:val2update}
+        \ENDFOR
+
+        \STATE $t=t+1$
+        \FOR{$i \in \swarm$}
+          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
+          \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
+          \STATE $\pbest_{i,t}\leftarrow \pbest_{i,t-1}$
+          \STATE $\fpbest_{i,t}\leftarrow \fpbest_{i,t-1}$
+          \IF {$\fppos_{i,t}<\fpbest_{i,t-1}$}
+            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
+            \STATE $\fpbest_{i,t}\leftarrow \fppos_{i,t}$
+          \ENDIF
+          \STATE $\nbest_{i,t}\leftarrow \nbest_{i,t-1}$
+          \STATE $\fnbest_{i,t}\leftarrow \fnbest_{i,t-1}$
+          \IF {$\fppos_{i,t}<\fnbest_{i,t}$}
+            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
+            \STATE $\fpbest_{i,t}\leftarrow \fppos_{i,t}$
+          \ENDIF
+          \IF {$\fppos_{\ln(i),t}<\fnbest_{i,t}$}
+            \STATE $\pbest_{i,t}\leftarrow \ppos_{\ln(i),t}$
+            \STATE $\fpbest_{i,t}\leftarrow \fppos_{\ln(i),t}$
+          \ENDIF
+          \IF {$\ofunc(\ppos_{i,t})<\ofunc(\nbest_{\rn(i),t})$}
+            \STATE $\pbest_{i,t}\leftarrow \ppos_{\rn(i),t}$
+            \STATE $\fpbest_{i,t}\leftarrow \fppos_{\rn(i),t}$
+          \ENDIF
+          \STATE Update $\pvel_{i,t+1}$ as shown in equation~\eqref{eq:velupdate} 
+          \STATE Update $\ppos_{i,t+1}$ as shown in equation~\eqref{eq:posupdate}
+        \ENDFOR
+    \UNTIL {$t >$ max iteration or convergence criteria met}
+  \end{algorithmic}
+\end{algorithm}
 
 While in some algorithms enumerating all possible next sampling positions would
 be impossible or extremely difficult, in PSO all we need to know are the
