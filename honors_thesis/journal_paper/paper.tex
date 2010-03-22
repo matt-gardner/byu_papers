@@ -27,6 +27,8 @@
 \DeclareMathOperator*{\argsup}{arg\;sup}
 \providecommand{\pers}{\ensuremath{P}}
 \providecommand{\neigh}{\ensuremath{N}}
+\providecommand{\leftind}{\ensuremath{L}}
+\providecommand{\rightind}{\ensuremath{R}}
 \providecommand{\nURand}{\ensuremath{U^\neigh}}
 \providecommand{\pURand}{\ensuremath{U^\pers}}
 \providecommand{\ppos}{\ensuremath{\Vec{x}}}
@@ -48,17 +50,17 @@
 \providecommand{\specvel}{\ensuremath{V}}
 \providecommand{\specpos}{\ensuremath{X}}
 \providecommand{\specval}{\ensuremath{FX}}
-\providecommand{\ln}{\ensuremath{ln}}
-\providecommand{\rn}{\ensuremath{rn}}
+\providecommand{\leftn}{\ensuremath{\Vec{x}^\leftind}}
+\providecommand{\rightn}{\ensuremath{\Vec{x}^\rightind}}
 \providecommand{\caseset}{\ensuremath{\mathcal{C}}}
 \providecommand{\casedef}{\ensuremath{(\pbest:\nbest)}}
-\providecommand{\casexn}{\ensuremath{(x:\neigh*)}}
+\providecommand{\casexn}{\ensuremath{(x:\neigh)}}
 \providecommand{\casexx}{\ensuremath{(x:x)}}
-\providecommand{\casexl}{\ensuremath{(x:\ln)}}
-\providecommand{\casexr}{\ensuremath{(x:\rn)}}
-\providecommand{\casepn}{\ensuremath{(\pers*:\neigh*)}}
-\providecommand{\casepl}{\ensuremath{(\pers*:\ln)}}
-\providecommand{\casepr}{\ensuremath{(\pers*:\rn)}}
+\providecommand{\casexl}{\ensuremath{(x:\leftind)}}
+\providecommand{\casexr}{\ensuremath{(x:\rightind)}}
+\providecommand{\casepn}{\ensuremath{(\pers:\neigh)}}
+\providecommand{\casepl}{\ensuremath{(\pers:\leftind)}}
+\providecommand{\casepr}{\ensuremath{(\pers:\rightind)}}
 \providecommand{\noeval}[1]{\ensuremath{#1^{-e}}}
 \providecommand{\nonbest}[1]{\ensuremath{#1^{-n}}}
 \providecommand{\p}{\ensuremath{p}}
@@ -237,12 +239,13 @@ attracted to the best solution that any of their neighbors have found.
 At each iteration of the algorithm, the position $\ppos_t$ and velocity
 $\pvel_t$ of each particle $i$ are updated as follows:
 \begin{align}
-\label{eq:velupdate}
+\nonumber
 	\pvel_{i,t+1} &=
-		\constriction \left[ \pvel_t +
-			\pcoeff\pURand_{i,t}\otimes(\pbest_{i,t} - \ppos_{i,t}) +
-			\ncoeff\nURand_{i,t}\otimes(\nbest_{i,t} - \ppos_{i,t})
-		\right] \\
+		\constriction \bigl[ \pvel_t
+			+ \pcoeff\pURand_{i,t}\otimes(\pbest_{i,t} - \ppos_{i,t}) \\
+\label{eq:velupdate}
+			& \quad \quad + \ncoeff\nURand_{i,t}\otimes(\nbest_{i,t} - \ppos_{i,t})
+		\bigr] \\
 \label{eq:posupdate}
 	\ppos_{i,t+1} &= \ppos_{i,t} + \pvel_{i,t+1}
 \end{align}
@@ -301,7 +304,7 @@ We do this by refactoring the standard PSO equations as described here.
 For simplicity in this
 explanation, we restrict our discussion here to the case of a Ring topology
 with two neighbors which we will call the ``right neighbor'' and ``left
-neighbor'' neighbors identified for each particle $i$ as $\rn(i)$ and $\ln(i)$
+neighbor'' neighbors identified for each particle $i$ as $\rightn$ and $\leftn$
 respectively.
 
 Next note that the computation of $\pbest$ and $\nbest$ is not seen in the
@@ -330,15 +333,15 @@ where for particle $i$ will need to update $\pbest$ with the better
 position $x_{i,t}$ for the next iteration ($t+1$), but $\nbest$ will not updated by:
 \begin{align}
 \nonumber
-	\indic_{i,t+1}^{\casexn} & (\ofunc ( \ppos_{i,t+1} ) ,\ofunc(\ppos_{\ln(i),t+1}),\ofunc(\ppos_{\rn(i),t+1}) ,\ofunc(\pbest_{i,t}) ,\ofunc(\nbest_{i,t}))= \\
+	\indic_{i,t+1}^{\casexn} & (\ofunc ( \ppos_{i,t+1} ) ,\ofunc(\leftn_{i,t+1}),\ofunc(\rightn_{i,t+1}) ,\ofunc(\pbest_{i,t}) ,\ofunc(\nbest_{i,t}))= \\
 \nonumber
 	& 1 \ if \  \ofunc(\ppos_{i,t+1}) > \ofunc(\pbest_{i,t}) \\
 \nonumber
 	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\ppos_{i,t+1}) \\
 \nonumber
-	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\ppos_{\ln(i),t+1}) \\
+	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\leftn_{i,t+1}) \\
 \nonumber
-	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\ppos_{\rn(i),t+1}) \\
+	& \quad \quad \ \wedge \ \ofunc(\nbest_{i,t}) > \ofunc(\rightn_{i,t+1}) \\
 \label{eq:deficasexn}
 	& 0 \ otherwise
 \end{align}
@@ -354,7 +357,7 @@ corresponding indicator variable defined above, we also provide notation for the
 update equation; once again using $\casexn$ as an example:
 \begin{align}
 \nonumber
-	\specvel_{i,t+1}^{\casexn} & (\ppos_{i,t+1}, \ppos_{\ln(i),t+1}, \ppos_{\rn(i),t+1},
+	\specvel_{i,t+1}^{\casexn} & (\ppos_{i,t+1}, \leftn_{i,t+1}, \rightn_{i,t+1},
         \pbest_{i,t} , \nbest_{i,t}, \pURand_{i,t}, \nURand_{i,t})= \\
 \label{eq:defvocasexn}
 		& \constriction \left[ \pvel_t +
@@ -387,7 +390,7 @@ and identified by a corresponding indicator variable defined above,
 we define also a position update equation with its compact form; once again using $\casexn$ as an example:
 \begin{align}
 \label{eq:defpcasexn}
-	\specpos_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
+	\specpos_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\leftn_{i,t+1},\rightn_{i,t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
 \nonumber
 	\specpos_{i,t+1}^{\casexn} & =  \ppos_{i,t} + \specvel_{i,t+1}^{\casexn}
 \end{align}
@@ -396,7 +399,7 @@ Lastly, we also define notation for the value of the objective function at these
 once again using $\casexn$ as an example:
 \begin{align}
 \label{eq:deffcasexn}
-	\specval_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
+	\specval_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\leftn_{i,t+1},\rightn_{i,t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
 \nonumber
 	\specval_{i,t+1}^{\casexn} & =  \ofunc(\specval_{i,t+1}^{\casexn}
 \end{align}
@@ -419,10 +422,10 @@ or, with $\specpos$ and $\indic$ written with the parameters which were omitted 
 \nonumber
 \ofunc & (\ppos_{i,t+1}) = \sum_{c \in \caseset} \\
 \nonumber
-& \ofunc(\specpos_{i,t+1}^{c}(\ppos_{i,t+1},\ppos_{\ln(i),t+1},\ppos_{\rn(i),t+1},
+& \ofunc(\specpos_{i,t+1}^{c}(\ppos_{i,t+1},\leftn_{i,t+1},\rightn_{i,t+1},
 \pbest_{i,t},\nbest_{i,t},\pURand_{i,t}, \nURand_{i,t})) \\
 \label{eq:val2updatelong}
-& \indic_{i,t}^{c}(\ofunc ( \ppos_{i,t+1} ) ,\ofunc(\ppos_{\ln(i),t+1}),\ofunc(\ppos_{\rn(i),t+1}) ,\ofunc(\pbest_{i,t}) ,\ofunc(\nbest_{i,t}))
+& \indic_{i,t}^{c}(\ofunc ( \ppos_{i,t+1} ) ,\ofunc(\leftn_{i,t+1}),\ofunc(\rightn_{i,t+1}) ,\ofunc(\pbest_{i,t}) ,\ofunc(\nbest_{i,t}))
 \end{align}
 
 None of the $\specpos_{i,t+1}^{c} \ \ c \in\ \caseset$ depend upon $f(i,x_t)$
@@ -476,18 +479,51 @@ provably equivalent (except that the algorithms will no longer be able to do an 
 since it will do two at a time). At this point we are moving work around and adding work, but the
 resultant algorithm, produces numerically identical results.
 
+First we define a helper function to update the personal and neighborhood bests, $\pbest$ and $\nbest$.
+This algorithm is shown in \alg{alg:bests}.
+
+\begin{algorithm}
+  \caption{``UpdateBests'': Update personal and neighborhood best values (minimizing)}
+  \label{alg:bests}
+  \begin{algorithmic}[1]
+          \STATE $\pbest_{i,t}\leftarrow \pbest_{i,t-1}$
+          \STATE $\ofunc(\pbest_{i,t})\leftarrow \ofunc(\pbest_{i,t-1})$
+          \IF {$\ofunc(\ppos_{i,t})<\ofunc(\pbest_{i,t-1})$}
+            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
+            \STATE $\fpbest_{i,t}\leftarrow \fppos_{i,t}$
+          \ENDIF
+          \STATE $\nbest_{i,t}\leftarrow \nbest_{i,t-1}$
+          \STATE $\ofunc(\nbest_{i,t})\leftarrow \ofunc(\nbest_{i,t-1})$
+          \IF {$\ofunc(\fppos_{i,t})<\ofunc(\nbest_{i,t})$}
+            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
+            \STATE $\ofunc(\pbest_{i,t})\leftarrow \ofunc(\ppos_{i,t})$
+          \ENDIF
+          \IF {$\ofunc(\leftn_{i,t})<\ofunc(nbest_{i,t})$}
+            \STATE $\pbest_{i,t}\leftarrow \leftn_{i,t}$
+            \STATE $\ofunc(pbest_{i,t})\leftarrow \ofunc(\leftn_{i,t})$
+          \ENDIF
+          \IF {$\ofunc(\rightn_{i,t})<\ofunc(\nbest_{i,t})$}
+            \STATE $\pbest_{i,t}\leftarrow \rightn_{i,t}$
+            \STATE $\ofunc(\pbest_{i,t})\leftarrow \ofunc(\rightn_{i,t}$
+          \label{alg1:endifs}
+          \ENDIF
+          \STATE Update $\pvel_{i,t+1}$ as shown in equation~\eqref{eq:velupdate} 
+          \STATE Update $\ppos_{i,t+1}$ as shown in equation~\eqref{eq:posupdate}
+  \end{algorithmic}
+\end{algorithm}
+
 \begin{algorithm} [h!]
   \caption{Standard PSO (minimizing)}
   \label{alg:standard}
   \begin{algorithmic}[1]
     \STATE t=0
-    \STATE Initialize the swarm including
-    \FOR{$i \in \swarm$}
-      \STATE {$\ppos_{i,t} \leftarrow Random position$}
-      \STATE {$\pvel_{i,t} \leftarrow Random velocities$}
-      \STATE {$\fpbest_{i,t} \leftarrow Max Float$}
-      \STATE {$\fnbest_{i,t} \leftarrow Max Float$}
-    \ENDFOR
+    \STATE Initialize the swarm
+%    \FOR{$i \in \swarm$}
+%      \STATE {$\ppos_{i,t} \leftarrow Random position$}
+%      \STATE {$\pvel_{i,t} \leftarrow Random velocities$}
+%      \STATE {$\fpbest_{i,t} \leftarrow Max Float$}
+%      \STATE {$\fnbest_{i,t} \leftarrow Max Float$}
+%    \ENDFOR
     \REPEAT
         \STATE $t=t+1$
         \FOR{$i \in \swarm$}
@@ -496,32 +532,11 @@ resultant algorithm, produces numerically identical results.
         \FOR{$i \in \swarm$}
           \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
           \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
-          \label{alg1:startifs}
-          \STATE $\pbest_{i,t}\leftarrow \pbest_{i,t-1}$
-          \STATE $\fpbest_{i,t}\leftarrow \fpbest_{i,t-1}$
-          \IF {$\fppos_{i,t}<\fpbest_{i,t-1}$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{i,t}$
-          \ENDIF
-          \STATE $\nbest_{i,t}\leftarrow \nbest_{i,t-1}$
-          \STATE $\fnbest_{i,t}\leftarrow \fnbest_{i,t-1}$
-          \IF {$\fppos_{i,t}<\fnbest_{i,t}$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{i,t}$
-          \ENDIF
-          \IF {$\fppos_{\ln(i),t}<\fnbest_{i,t}$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{\ln(i),t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{\ln(i),t}$
-          \ENDIF
-          \IF {$\ofunc(\ppos_{i,t})<\ofunc(\nbest_{\rn(i),t})$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{\rn(i),t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{\rn(i),t}$
-          \label{alg1:endifs}
-          \ENDIF
+          \STATE UpdateBests
           \STATE Update $\pvel_{i,t+1}$ as shown in equation~\eqref{eq:velupdate} 
           \STATE Update $\ppos_{i,t+1}$ as shown in equation~\eqref{eq:posupdate}
         \ENDFOR
-    \UNTIL {$t >$ max iteration or convergence criteria met}
+    \UNTIL {$t > max \ iterations$ or convergence criteria met}
   \end{algorithmic}
 \end{algorithm}
 
@@ -536,17 +551,17 @@ This algorithm can be transformed, will retaining it exact behavior, by
   \begin{algorithmic}[1]
     \STATE t=0
     \STATE Initialize the swarm including
-    \FOR{$i \in \swarm$}
-      \STATE {$\ppos_{i,t} \leftarrow Random position$}
-      \STATE {$\pvel_{i,t} \leftarrow Random velocities$}
-      \STATE {$\fpbest_{i,t} \leftarrow Max Float$}
-      \STATE {$\fnbest_{i,t} \leftarrow Max Float$}
-    \ENDFOR
+%    \FOR{$i \in \swarm$}
+%      \STATE {$\ppos_{i,t} \leftarrow Random position$}
+%      \STATE {$\pvel_{i,t} \leftarrow Random velocities$}
+%      \STATE {$\fpbest_{i,t} \leftarrow Max Float$}
+%      \STATE {$\fnbest_{i,t} \leftarrow Max Float$}
+%    \ENDFOR
     \REPEAT
         \STATE $t=t+1$
         \FOR{$i \in \swarm$}
           \label{alg2:fatitert}
-          \STATE DISPATCH {$\fppos_{i.t} \leftarrow \ofunc(\ppos_{i,t})$} to a seperate processor
+          \STATE DISPATCH the computation of {$\ofunc(\ppos_{i.t})$} to a seperate processor
         \ENDFOR
         \FOR{$i \in \swarm$}
           \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
@@ -555,10 +570,10 @@ This algorithm can be transformed, will retaining it exact behavior, by
             \STATE Compute $\specvel_{i,t+1}^c$ and $\specpos_{i,t+1}^c$.
 	    Examples shown in equations~\eqref{eq:defvcasexn} and~\eqref{eq:defpcasexn}
             \label{alg2:fatitertp1}
-            \STATE DISPATCH computation of $\specval_{i,t+1}^c$ to a seperate processor.
+            \STATE DISPATCH computation of $\ofunc(\specpos_{i,t+1}^c)$ to a seperate processor.
 	    Example shown in equation~\eqref{eq:deffcasexn}.
-	    \COMMENT Note that none of the computations, $\specvel_{i,t+1}^c$,
-	    $\specpos_{i,t+1}^c$ and $\specval_{i,t+1}^c$ depend on $\fppos_{i.t}$.
+	    // Note that NONE of the computations, $\specvel_{i,t+1}^c$,
+	    $\specpos_{i,t+1}^c$ and $\ofunc(\specpos_{i,t+1}^c)$ depend on $\ofunc(\ppos_{i.t})$.
           \ENDFOR
         \ENDFOR
         \STATE WAIT for all function evaluations dispatched above to complete
@@ -570,36 +585,18 @@ This algorithm can be transformed, will retaining it exact behavior, by
           \STATE Compute $\pvel_{i,t+1}$ as shown in equation~\eqref{eq:vel2update} 
           \STATE Compute $\ppos_{i,t+1}$ as shown in equation~\eqref{eq:pos2update}
           \STATE Compute $\fppos_{i,t+1}$ as shown in equation~\eqref{eq:val2update}
+	  \STATE UpdateBests
         \ENDFOR
 
         \STATE $t=t+1$
         \FOR{$i \in \swarm$}
           \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
           \STATE $\nURand_{i,t} \Leftarrow RandomVector()$
-          \STATE $\pbest_{i,t}\leftarrow \pbest_{i,t-1}$
-          \STATE $\fpbest_{i,t}\leftarrow \fpbest_{i,t-1}$
-          \IF {$\fppos_{i,t}<\fpbest_{i,t-1}$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{i,t}$
-          \ENDIF
-          \STATE $\nbest_{i,t}\leftarrow \nbest_{i,t-1}$
-          \STATE $\fnbest_{i,t}\leftarrow \fnbest_{i,t-1}$
-          \IF {$\fppos_{i,t}<\fnbest_{i,t}$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{i,t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{i,t}$
-          \ENDIF
-          \IF {$\fppos_{\ln(i),t}<\fnbest_{i,t}$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{\ln(i),t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{\ln(i),t}$
-          \ENDIF
-          \IF {$\ofunc(\ppos_{i,t})<\ofunc(\nbest_{\rn(i),t})$}
-            \STATE $\pbest_{i,t}\leftarrow \ppos_{\rn(i),t}$
-            \STATE $\fpbest_{i,t}\leftarrow \fppos_{\rn(i),t}$
-          \ENDIF
+          \STATE UpdateBests
           \STATE Update $\pvel_{i,t+1}$ as shown in equation~\eqref{eq:velupdate} 
           \STATE Update $\ppos_{i,t+1}$ as shown in equation~\eqref{eq:posupdate}
         \ENDFOR
-    \UNTIL {$t >$ max iteration or convergence criteria met}
+    \UNTIL {$t > max \ iteration/2$ or convergence criteria met}
   \end{algorithmic}
 \end{algorithm}
 
