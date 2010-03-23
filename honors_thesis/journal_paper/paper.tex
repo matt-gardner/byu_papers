@@ -357,13 +357,14 @@ corresponding indicator variable defined above, we also provide notation for the
 update equation; once again using $\casexn$ as an example:
 \begin{align}
 \nonumber
-	\specvel_{i,t+1}^{\casexn} & (\ppos_{i,t+1}, \leftn_{i,t+1}, \rightn_{i,t+1},
-        \pbest_{i,t} , \nbest_{i,t}, \pURand_{i,t}, \nURand_{i,t})= \\
+	\specvel_{i,t+1}^{\casexn} & (\pvel_t, \ppos_{i,t+1}, \leftn_{i,t+1}, \rightn_{i,t+1}, \pbest_{i,t} \\
+\nonumber
+        &, \quad \quad \nbest_{i,t}, \pURand_{i,t}, \nURand_{i,t}) \\
 \label{eq:defvocasexn}
-		& \constriction \left[ \pvel_t +
+		&= \constriction \bigl[ \pvel_{i,t} +
 			\pcoeff\pURand_{i,t+1}\otimes(\pbest_{i,t+1} - \ppos_{i,t}+1) +
 			\ncoeff\nURand_{i,t+1}\otimes(\nbest_{i,t+1} - \ppos_{i,t+1})
-		\right]
+		\bigr]
 \end{align}
 
 Again we will drop the parameters for compactness and since
@@ -376,12 +377,12 @@ $\pbest_{i,t+1}=\ppos_{i,t+1}$ and $\nbest_{i,t+1}=\nbest_{i,t+1}$ we can re-wri
 $\specvel_{i,t+1}^{\casexn}$ as:
 \begin{align}
 \nonumber
-	\specvel_{i,t+1}^{\casexn} & = \\
+	\specvel_{i,t+1}^{\casexn} & \\
 \label{eq:defvcasexn}
-		& \constriction \left[ \pvel_t +
-			\pcoeff\pURand_{i,t+1}\otimes(\ppos_{i,t+1} - \ppos_{i,t+1}) +
-			\ncoeff\nURand_{i,t+1}\otimes(\nbest_{i,t+1} - \ppos_{i,t+1})
-		\right]
+		&= \constriction \bigl[ \pvel_{i,t} +
+			\pcoeff\pURand_{i,t+1}\otimes(\ppos_{i,t+1} - \ppos_{i,t+1}) \\
+			& \quad \quad \ncoeff\nURand_{i,t+1}\otimes(\nbest_{i,t+1} - \ppos_{i,t+1})
+		\bigr]
 \end{align}
 
 For each cases identified in
@@ -390,7 +391,7 @@ and identified by a corresponding indicator variable defined above,
 we define also a position update equation with its compact form; once again using $\casexn$ as an example:
 \begin{align}
 \label{eq:defpcasexn}
-	\specpos_{i,t+1}^{\casexn} & (\ppos_{i,t+1} ,\leftn_{i,t+1},\rightn_{i,t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
+	\specpos_{i,t+1}^{\casexn} & (\ppos_{1,t}, \pvel_{i,t},\ppos_{i,t+1} ,\leftn_{i,t+1},\rightn_{i,t+1} ,\pbest_{i,t} ,\nbest_{i,t})= \\
 \nonumber
 	\specpos_{i,t+1}^{\casexn} & =  \ppos_{i,t} + \specvel_{i,t+1}^{\casexn}
 \end{align}
