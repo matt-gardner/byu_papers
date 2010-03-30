@@ -580,7 +580,7 @@ instructions are moved around and added, but the
 resultant algorithm, produces numerically identical results.
 
 We first define a helper function to update the personal and neighborhood bests, $\pbest$ and $\nbest$.
-This algorithm is shown in~\alg{alg:bests}.
+This algorithm is shown in~\alg{bests}.
 
 \begin{algorithm}
   \caption{``UpdateBests'': Update personal and neighborhood best values (minimizing)}
@@ -610,7 +610,7 @@ This algorithm is shown in~\alg{alg:bests}.
 \end{algorithm}
 
 
-\begin{algorithm} [h!]
+\begin{algorithm} [ht!]
   \caption{Standard PSO (minimizing)}
   \label{alg:standard}
   \begin{algorithmic}[1]
@@ -638,16 +638,16 @@ This algorithm is shown in~\alg{alg:bests}.
   \end{algorithmic}
 \end{algorithm}
 
-Using this helper function we can write PSO as shown in~\alg{alg:standard}.
+Using this helper function we can write PSO as shown in~\alg{standard}.
 This algorithm can be transformed, while retaining it exact behavior, by
 ``unrolling'' one iteration of the ``Repeat'' loop, redundantly expressing work done in the ``if'''s
-in~\alg{alg:bests}
+in~\alg{bests}
 using the indicator functions $\indic_{t+1}$ and re-writing the computation of the next velocity,
 positions and objective function value using 
 equations~\eqref{eq:vel2update}, \eqref{eq:pos2update} and \eqref{eq:val2update} 
-as shown in the new version of the algorithm as shown in~\alg{alg:unrolled}
+as shown in the new version of the algorithm as shown in~\alg{unrolled}
 
-\begin{algorithm} [h!]
+\begin{algorithm} [ht!]
   \caption{Unrolled PSO}
   \label{alg:unrolled}
   \begin{algorithmic}[1]
@@ -1128,8 +1128,7 @@ doing speculative evaluations.  Then Sections~\ref{sec:pruning}
 through~\ref{sec:wrong} present a technique that reduces the number of
 speculative evaluations that need to be done for each particle.  Finally,
 \sec{manyiters} shows a method for speculating several iterations ahead,
-instead of just one.  \sec{other} presents a few other ideas that seem
-promising but need further development.
+instead of just one.  
 
 \subsection{Pick the Best Child}
 \label{sec:pickbest}
