@@ -34,10 +34,10 @@
 \providecommand{\ppos}{\ensuremath{\Vec{x}}}
 \providecommand{\fppos}{\ensuremath{\Vec{fx}}}
 \providecommand{\pvel}{\ensuremath{\Vec{v}}}
-\providecommand{\nbest}{\ensuremath{\Vec{b}^\neigh}}
-\providecommand{\fnbest}{\ensuremath{\Vec{fb}^\neigh}}
-\providecommand{\pbest}{\ensuremath{\Vec{b}^\pers}}
-\providecommand{\fpbest}{\ensuremath{\Vec{fb}^\pers}}
+\providecommand{\nbest}{\ensuremath{\Vec{x}^\neigh}}
+\providecommand{\fnbest}{\ensuremath{\Vec{fx}^\neigh}}
+\providecommand{\pbest}{\ensuremath{\Vec{x}^\pers}}
+\providecommand{\fpbest}{\ensuremath{\Vec{fx}^\pers}}
 \providecommand{\constriction}{\ensuremath{\chi}}
 \providecommand{\ncoeff}{\ensuremath{\phi^\neigh}}
 \providecommand{\pcoeff}{\ensuremath{\phi^\pers}}
@@ -52,14 +52,15 @@
 \providecommand{\leftn}{\ensuremath{\Vec{x}^\leftind}}
 \providecommand{\rightn}{\ensuremath{\Vec{x}^\rightind}}
 \providecommand{\caseset}{\ensuremath{\mathcal{C}}}
+\providecommand{\casegen}{\ensuremath{c}}
 \providecommand{\casedef}{\ensuremath{(\pbest,\nbest)}}
-\providecommand{\casexn}{\ensuremath{(x,\neigh)}}
-\providecommand{\casexx}{\ensuremath{(x,x)}}
-\providecommand{\casexl}{\ensuremath{(x,\leftind)}}
-\providecommand{\casexr}{\ensuremath{(x,\rightind)}}
-\providecommand{\casepn}{\ensuremath{(\pers,\neigh)}}
-\providecommand{\casepl}{\ensuremath{(\pers,\leftind)}}
-\providecommand{\casepr}{\ensuremath{(\pers,\rightind)}}
+\providecommand{\casexn}{\ensuremath{(S,-)}}
+\providecommand{\casexx}{\ensuremath{(S,S)}}
+\providecommand{\casexl}{\ensuremath{(S,\leftind)}}
+\providecommand{\casexr}{\ensuremath{(S,\rightind)}}
+\providecommand{\casepn}{\ensuremath{(-,-)}}
+\providecommand{\casepl}{\ensuremath{(-,\leftind)}}
+\providecommand{\casepr}{\ensuremath{(-,\rightind)}}
 \providecommand{\noeval}[1]{\ensuremath{#1^{-e}}}
 \providecommand{\nonbest}[1]{\ensuremath{#1^{-n}}}
 \providecommand{\p}{\ensuremath{p}}
@@ -89,30 +90,30 @@ of Computer Science, Brigham Young University, 3361 TMCB, Provo, UT 84602
 
 \begin{abstract}
 
-Particle swarm optimization (PSO) has previously been parallelized primarily by 
-distributing the computation corresponding to particles or sets
-across multiple processors.  However, in many cases this approach is not efficient when scale to 
-very large populations sizes (on very large clusters).
-In this paper we present a different way of using multiple processors of the 
-computation in PSO, motivated by the ``speculative execution'' in modern computer hardware and which we call
-Speculative Evaluation in PSO (SEPSO).
+Particle swarm optimization (PSO) has previously been parallelized primarily by
+distributing the computation corresponding to particles across multiple
+processors.  In these approaches, additional processors can only add more
+particles to the swarm.  However, in many cases this is not efficient when
+scaled to very large swarm sizes (on very large clusters).  In this paper we
+present a different way of using additional processors in the computation of
+PSO motivated by speculative execution in modern computer hardware.  We call
+our method Speculative Evaluation in PSO (SEPSO).
 
-In SEPSO future positions of the particles are
-speculated and evaluated in parallel with the evaluation of current positions.
-We show that a set of separate speculative evaluation threads can be constructed
-such that the set will always include the position and corresponding
-evaluation that would normally have occurred at the next iteration of standard PSO.
-Thus SEPSO performs two
-iterations of PSO at once, allowing it to achieve better fitness faster.
-Not only can SEPSO can achieve better fitness in the same number of iterations,
-it also reaches better fitness for the same number of total function evaluations
+In SEPSO future positions of the particles are speculated and evaluated in
+parallel with the evaluation of current positions.  We show that a set of
+speculative evaluation threads can be constructed such that the set will always
+include the position and corresponding evaluation that would normally have
+occurred at the next iteration of standard PSO.  Thus SEPSO performs two
+iterations of PSO at once, allowing it to achieve better fitness faster.  Not
+only can SEPSO can achieve better fitness in the same number of iterations, it
+also reaches better fitness for the same number of total function evaluations
 in large scale parallel environments.
 
-Speculative Evaluation in PSO can be enhanced by diverging from the
-behavior of the standard PSO to make better use of the information
-obtained by the speculative evaluations.
-Using these algorithmic modifications, we see dramatic improvements in the
-effectiveness of the algorithm. 
+Speculative Evaluation in PSO can be enhanced by diverging from the behavior of
+the standard PSO to make better use of the information obtained by the
+speculative evaluations.  Using these algorithmic modifications, we see
+dramatic improvements in the effectiveness of the algorithm. 
+
 \end{abstract}
 
 \section{Introduction}
@@ -122,48 +123,40 @@ Particle swarm optimization (PSO) has been found to be a highly robust and
 effective algorithm for solving many types of optimization problems.  For much
 of the algorithm's history, PSO was run serially on a single machine.  However,
 the world's computing power is increasingly coming from large clusters of
-processors.
-%Even in desktop machines, systems with 4 or 8 cores are
-%commonplace.  
-In order to efficiently utilize these resources for
+processors.  In order to efficiently utilize these resources for
 computationally intensive problems, PSO needs to run in parallel.
 
 Within the last few years, researchers have begun to recognize the need to
 develop parallel implementations of PSO, publishing many papers on the subject.
 The methods they have used include various synchronous algorithms
 \cite{mcnabb-cec07,belal-ijicis04,chu-sci06,jin-aps05,parsopoulos-aia04,schutte-ijnme04},
-and asynchronous algorithms \cite{koh-ijnme06,mostaghim-report06,venter-wcsmo05}.
-Parallelizing the evaluation of the objective function can also be done in some
-cases, though that is not an adaption of the PSO algorithm itself and thus is
-not the focus of this paper.
+and asynchronous algorithms
+\cite{koh-ijnme06,mostaghim-report06,venter-wcsmo05}.  Parallelizing the
+evaluation of the objective function can also be done in some cases, though
+that is not an adaption of the PSO algorithm itself and thus is not the focus
+of this paper.
 
-These previous parallel techniques 
-distribute the computation needed by the particles in the swarm over the available processors.
-if more processors are available, these prior techniques increase the
-number of particles in the swarm, either by adding individual particles or by
-adding entire new sub-swarms but in all cases
-the number of processors never exceeds the number of particles.
-The number of iterations of PSO that the
-algorithms can perform is thus inherently limited by the time it takes to
-evaluate the objective function---additional processors add more particles, but do not
-make the iterations go any faster.
+These previous parallel techniques distribute the computation needed by the
+particles in the swarm over the available processors.  If more processors are
+available, these techniques increase the number of particles in the swarm,
+either by adding individual particles or by adding entire new sub-swarms, but
+in all cases the number of processors never exceeds the number of particles.
+The number of iterations of PSO that the algorithms can perform is thus
+inherently limited by the time it takes to evaluate the objective
+function---additional processors add more particles, but do not make the
+iterations go any faster.
 
-The purpose of this paper is to consider PSO parallelization strategies for
-clusters of thousands of processors and functions for which a single
-evaluation will take at least tens of seconds, but probably hours or perhaps days.
-Our purpose is to explore the question ``Since PSO is often run with
-a swarm of size of 50-100, what would one do if a few thousand processors were available?''
-
-For many functions there comes a point of diminishing returns with respect to adding particles.
-In \fig{basic-sphere} we show the value obtained after 20,000 function evaluations (not iterations)
-as a function of swarm size
-for the well-know benchmark function Sphere (20 dimensions, reporting the average of thirty runs). 
-Increasing the swarm size from 10 to 50 has a significant effect value obtained
-however, increasing the swarm size from 100 to 200 makes the algorithm less efficient,
-that is, it reduces the progress the algorithm makes per-evaluation.
-For this reason, previous work has recommended the use a swarm size of 50 for this function
-~\cite{bratton-sis07}.
-Thus, in at least some cases, added particles indefinitely will not yield an efficient implementation. 
+For many functions there comes a point of diminishing returns with respect to
+adding particles.  In \fig{evals-sphere} we show the value obtained after
+20,000 function evaluations (not iterations) as a function of swarm size for
+the well-know benchmark function Sphere (20 dimensions, reporting the average
+of thirty runs).  Increasing the swarm size from 10 to 50 has a significant
+effect on the value obtained.  However, increasing the swarm size from 100 to
+200 makes the algorithm less efficient, that is, it reduces the progress the
+algorithm makes per evaluation.  For this reason, previous work has recommended
+the use of a swarm size of 50 for this function~\cite{bratton-sis07}.  Thus, in
+at least some cases, adding particles indefinitely will not yield an efficient
+implementation. 
 
 \begin{figure}
   \centering
@@ -172,66 +165,75 @@ Thus, in at least some cases, added particles indefinitely will not yield an eff
   \label{fig:evals-sphere}
 \end{figure}
 
-To solve this problem, we take inspiration from speculative execution
-techniques commonly used in processors.  Modern processors, when faced with a
-branch on which they must wait (e.g. a memory cache miss), guess which way the
-branch will go and start executing, being careful not to make changes that can not be undone.
-If the processor guesses right, execution
-is much farther ahead than if it had just idly waited on the memory reference.  If it
-guesses wrong, execution restarts where it would have been anyway.
-This is called speculative execution or branch prediction.
+In this paper we consider PSO parallelization strategies for clusters of
+thousands of processors and functions for which a single evaluation will take
+at least tens of seconds, but probably minutes or perhaps hours.  Our purpose
+is to explore the question of what to do with a thousand processors when 50 or
+100 particles is the recommended swarm size, and simply increasing the swarm
+size encounters diminishing returns.
 
-\begin{quote}
-SKIP SKIP
+To solve this problem, we propose a method for performing two iterations of PSO
+at the same in parallel that we call speculative evaluation.  The name comes
+from an analogy to speculative execution techniques commonly used in
+processors.  Modern processors, when faced with a branch on which they must
+wait (e.g. a memory cache miss), guess which way the branch will go and start
+executing, being careful not to make changes that can not be undone.  If the
+processor guesses right, execution is much farther ahead than if it had just
+idly waited on the memory reference.  If it guesses wrong, execution restarts
+where it would have been anyway.  This is called speculative execution or
+branch prediction.
 
-No really, try reading without this! The idea of speculative execution can be applied to some types of optimization
-algorithms.  When the next sampling position of the algorithm does not depend
-on the value of the objective function at the current position,
-future positions can be speculated and evaluated in parallel with the current
-position.
-This is trivially true for optimization by random sampling, for example.
-The next random sample does not depend on the previous point nor on the value
-of the objective function at that point in any way.
-It depends only on a random number.
-There is no need to wait to see
-what objective function value was obtained at the previous point,
-evaluation of the object function at the next point can begin as soon as the next random number is drawn.
-In other optimization algorithms, the next position depends on the previous position, but not the
-value obtained there, a random walk for example.
-In this case
-the next position to be evaluated
-depends only on the previous position and a random number.
-In this case, as it was in the case of random sampling,
-the object function evaluation of the next position can be done in parallel
-because it 
-does not depend on the \emph{value} of the objective function at the previous position.
-There are an infinite number of possible next positions, but only one given the draw of the random number.
-
-In still other cases, the next position to be evaluated may depend on the current position and some
-discrete valued (binary, for example) test on the value obtained at the current position.
-For example, consider a greedy random walk, in which the state only advances if a better
-position is found.
-That is, if the current value is better than the previous value,
-use the sum of the current position and the random number as the next position.
-Otherwise, computer the next position using the sum of the previous position and the random number.
-In this case the objective function can be evaluated at three positions:
-(1) the value of the objective function at the current position,
-(2) the value at the position if the test turns out to be true and (3) the value at the position
-if the test turns out to be false; all in parallel.
-In this example it is important to note that we do not need the value of the objective function at the current
-point to to reduce the infinite number of possible next positions to just two alternatives.
-Choosing between these two alternatives can be done post-hoc, after the objective function value
-at the current position and at the two alternative are computed.
-For all but the most computationally-trivial objective functions, this approach saves almost half of the
-``wall-clock'' time.
-This approach has been applied to simulated annealing~\cite{witte-tpds91} which like the greedy random walk,
-depends on positions and a binary test.
-
-This approach can not be used in gradient methods where the
-step size for sampling typically depends on the gradient and therefor the position and 
-a set of infinitely many possible \emph{values} outcomes
-obtained at the current position (not binary or even finite).
-\end{quote}
+%\begin{quote}
+%SKIP SKIP
+%
+%No really, try reading without this! The idea of speculative execution can be applied to some types of optimization
+%algorithms.  When the next sampling position of the algorithm does not depend
+%on the value of the objective function at the current position,
+%future positions can be speculated and evaluated in parallel with the current
+%position.
+%This is trivially true for optimization by random sampling, for example.
+%The next random sample does not depend on the previous point nor on the value
+%of the objective function at that point in any way.
+%It depends only on a random number.
+%There is no need to wait to see
+%what objective function value was obtained at the previous point,
+%evaluation of the object function at the next point can begin as soon as the next random number is drawn.
+%In other optimization algorithms, the next position depends on the previous position, but not the
+%value obtained there, a random walk for example.
+%In this case
+%the next position to be evaluated
+%depends only on the previous position and a random number.
+%In this case, as it was in the case of random sampling,
+%the object function evaluation of the next position can be done in parallel
+%because it 
+%does not depend on the \emph{value} of the objective function at the previous position.
+%There are an infinite number of possible next positions, but only one given the draw of the random number.
+%
+%In still other cases, the next position to be evaluated may depend on the current position and some
+%discrete valued (binary, for example) test on the value obtained at the current position.
+%For example, consider a greedy random walk, in which the state only advances if a better
+%position is found.
+%That is, if the current value is better than the previous value,
+%use the sum of the current position and the random number as the next position.
+%Otherwise, computer the next position using the sum of the previous position and the random number.
+%In this case the objective function can be evaluated at three positions:
+%(1) the value of the objective function at the current position,
+%(2) the value at the position if the test turns out to be true and (3) the value at the position
+%if the test turns out to be false; all in parallel.
+%In this example it is important to note that we do not need the value of the objective function at the current
+%point to to reduce the infinite number of possible next positions to just two alternatives.
+%Choosing between these two alternatives can be done post-hoc, after the objective function value
+%at the current position and at the two alternative are computed.
+%For all but the most computationally-trivial objective functions, this approach saves almost half of the
+%``wall-clock'' time.
+%This approach has been applied to simulated annealing~\cite{witte-tpds91} which like the greedy random walk,
+%depends on positions and a binary test.
+%
+%This approach can not be used in gradient methods where the
+%step size for sampling typically depends on the gradient and therefor the position and 
+%a set of infinitely many possible \emph{values} outcomes
+%obtained at the current position (not binary or even finite).
+%\end{quote}
 
 % Use this later?
 % Skip this??
@@ -250,42 +252,46 @@ obtained at the current position (not binary or even finite).
 % 
 % But the following does need some intro
 
-In this paper we show that the results of standard PSO can be reproduced \emph{exactly}, two iterations at a time, using
-a speculative approach like the ones described above. We prove that the standard PSO equation can
-be factored such that a small set of speculative positions can be found which will \emph{always}
-include the position computed in the next iteration.
-By computing the value of the objective function for each of the speculative positions at
-the same time the algorithm evaluates the objective function for the current position,
-It is possible to know the objective function values for both the current and the next iteration at the same time.
-We demonstrate this principle by implementation and show that it
-produces exactly the same results as standard PSO, but two iterations at a time.
-The resulting implementation runs efficiently on large clusters where the number of processors is much larger than
-a typical or reasonable number of particles. Producing better results in less ``wall-clock'' time and,
-surprisingly, with fewer total function evaluations.
+In this paper we show that the results of standard PSO can be reproduced
+\emph{exactly}, two iterations at a time, using a speculative approach adapted
+from speculative execution. We prove that the standard PSO equation can be
+factored such that a set of speculative positions can be found which will
+\emph{always} include the position computed in the next iteration.  By
+computing the value of the objective function for each of the speculative
+positions at the same time the algorithm evaluates the objective function for
+the current position, it is possible to know the objective function values for
+both the current and the next iteration at the same time.  We demonstrate this
+principle by implementation and show that it produces exactly the same results
+as standard PSO, but two iterations at a time.  The resulting implementation
+runs efficiently on large clusters where the number of processors is much
+larger than a typical or reasonable number of particles, producing better
+results in less ``wall-clock'' time and, surprisingly, with fewer total
+function evaluations.
 
 Furthermore, we show that if we relax the requirements of the algorithm, no
-longer demanding that it strictly reproduce the exact behavior of standard PSO, we
-can introduce new speculative techniques that often out-perform PSO.
-These variants make better use of the extra information obtained from
-the extra exploration made by the speculative function evaluations.
-We also explore the idea that, like branch prediction in processors, we
-need not speculatively evaluate \emph{all} possible future positions,
-we can accelerate the algorithm even if we are just \emph{likely} to have guessed right.
-By pruning the speculation to just paths that are statistically likely to reproduce
-the paths that are equivalent to PSO we can also 
-speculating several iterations ahead instead of just one.
-We also consider several recovery strategies for cases where
-the pruned set of speculative evaluations does not contain the evaluation that standard PSO would have done.
+longer demanding that it strictly reproduce the exact behavior of standard PSO,
+we can introduce new speculative techniques that often out-perform PSO.  These
+variants make better use of the information obtained from the extra exploration
+made by the speculative function evaluations.  We also explore the idea that,
+like branch prediction in processors, we need not speculatively evaluate
+\emph{all} possible future positions, we can accelerate the algorithm even if
+we are just \emph{likely} to have guessed right.  By pruning the speculation to
+just paths that are statistically likely to reproduce the paths that are
+equivalent to PSO we can increase the swarm size without increasing the number
+of speculative evaluations.  We also consider several recovery strategies for
+cases where the pruned set of speculative evaluations does not contain the
+evaluation that standard PSO would have done.  A further improvement we explore
+is speculating several iterations ahead instead of just one, which is made
+possible by pruning the number of speculative evaluations.
 
-The balance of this paper is organized as follows:
-\sec{pso} describes the particle swarm optimization algorithm.
-\sec{sepso}
-describes how speculative evaluation can be done in parallel PSO to
-perform two iterations at once, then presents a comparison of the speculative
-algorithm with the original PSO.  In \sec{relax}, we discuss various methods of
-improving the performance of speculative evaluation in PSO, all of which break
-the requirement of strictly reproducing the behavior of the original algorithm.
-In \sec{conclusion} and \sec{future} we conclude and discuss future work.
+The balance of this paper is organized as follows: \sec{pso} describes the
+particle swarm optimization algorithm.  \sec{sepso} describes how speculative
+evaluation can be done in parallel PSO to perform two iterations at once, then
+presents a comparison of the speculative algorithm with the original PSO.  In
+\sec{relax}, we discuss various methods of improving the performance of
+speculative evaluation in PSO, all of which break the requirement of strictly
+reproducing the behavior of the original algorithm.  In \sec{conclusion} and
+\sec{future} we conclude and discuss future work.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -294,8 +300,8 @@ Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
 Eberhart~\cite{kennedy-icnn95}.  The algorithm is used to intelligently search
 a multi-dimensional space by mimicking the swarming and flocking behavior of
 birds and other animals. It is a social algorithm that depends on interaction
-between particles to quickly and consistently approximate the optimal solution to a
-given objective function.
+between particles to quickly and consistently approximate the optimal solution
+to a given objective function.
 
 The motion of particles through the search space has three components: an
 inertial component that gives particles momentum as they move, a cognitive
@@ -303,7 +309,7 @@ component where particles remember the best solution they have found and are
 attracted back to that place, and a social component by which particles are
 attracted to the best solution that any of their neighbors have found.
 
-At each iteration ($t+1$) of the algorithm, the position $\ppos_t$ and velocity
+At each iteration of the algorithm, the position $\ppos_t$ and velocity
 $\pvel_t$ of each particle are updated as follows:
 \begin{align}
 \nonumber
@@ -316,441 +322,76 @@ $\pvel_t$ of each particle are updated as follows:
 \label{eq:posupdate}
 	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1}
 \end{align}
-where \( \nURand_{t} \) and \( \nURand_{t} \) are vectors of independent
-and identically distributed random numbers drawn from a uniform
-distribution, the \( \otimes \) operator is an element-wise vector
-multiplication, $\pbest$ (called personal best) is the best position the
-current particle has seen, and $\nbest$ (called neighborhood best) is the best
-position the neighbors of the current particle have seen~\cite{bratton-sis07}.  \( \ncoeff \), \(
-\pcoeff \), and \( \constriction \) are parameters with prescribed values
-required to ensure convergence (2.05, 2.05, and .73,
-respectively)~\cite{clerc-tec02}. Note also that we use a subscript for the 
-time step $t$ or $t+1$ and have moved all other qualifiers,
-such as the personal qualifier ``$\pers$'' to the superscript position.
-Superscripts can be miss read as exponents, but they are qualifiers throughout this paper.
-We use $p$ to indicate the number of particles in the swarm.
+where \( \nURand_{t} \) and \( \nURand_{t} \) are vectors of independent random
+numbers drawn from a standard uniform distribution, the \( \otimes \) operator
+is an element-wise vector multiplication, $\pbest$ (called personal best) is
+the best position the current particle has seen, and $\nbest$ (called
+neighborhood best) is the best position the neighbors of the current particle
+have seen~\cite{bratton-sis07}.  \( \ncoeff \), \( \pcoeff \), and \(
+\constriction \) are parameters with prescribed values required to ensure
+convergence (2.05, 2.05, and .73, respectively)~\cite{clerc-tec02}. 
 
-There are many ways of defining the neighbors of a particle. 
-Changing the
-neighborhood topology has a significant effect on the performance of the algorithm and 
-this effect varies widely by function type.
-%, as would be expected by the No Free Lunch
-%theorem~\cite{wolpert-tec97}.
-The two most common topologies used in the
-literature are the Ring topology and the Complete
-topology~\cite{bratton-sis07}.  In the Ring topology, each particle has one
-(or more) neighbors to either side of it; in the Complete topology, every particle is a
-neighbor to every other particle.  It is generally assumed that, a particle is also a
-neighbor to itself in that its own position and value is considered when updating the
-particle's personal best, $\nbest$.  Thus with $p$ particles, using the Ring topology each
-particle has three neighbors: $i-1$, $i$ (itself), and $i+1$.  With the Complete
-topology, each particle has $p$ neighbors.
-% TODO USE THIS LATER!
-% In this paper we use these
-% topologies, as well as a parallel adaptation of the Complete topology, called
-% Random, that has been shown to simulate the behavior of Complete with far less
-% communication~\cite{mcnabb-cec09}.  In the Random topology, each particle
-% randomly picks two other particles to share information with at each iteration,
-% along with itself.  Thus in both the Ring and the Random topologies, all
-% particles have 3 neighbors.
+There are many ways of defining the neighbors of a particle.  Changing the
+neighborhood topology has a significant effect on the performance of the
+algorithm and this effect varies widely by function type.  The two most common
+topologies used in the literature are the Ring topology and the Complete
+topology~\cite{bratton-sis07}.  In the Ring topology, each particle has one (or
+more) neighbors to either side of it; in the Complete topology, every particle
+is a neighbor to every other particle.  It is generally assumed that, a
+particle is also a neighbor to itself in that its own position and value is
+considered when updating the particle's personal best, $\nbest$.  Thus with $p$
+particles, using the Ring topology each particle has three neighbors: $i-1$,
+$i$ (itself), and $i+1$.  With the Complete topology, each particle has $p$
+neighbors.
+
+In this paper we use these topologies as well as a parallel adaptation of the
+Complete topology, called Random, that has been shown to simulate the behavior
+of Complete with far less communication~\cite{mcnabb-cec09}.  In the Random
+topology, each particle randomly picks two other particles to share information
+with at each iteration, along with itself.  Thus in both the Ring and the
+Random topologies, all particles have 3 neighbors.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
 
-The PSO algorithm can be trivially parallelized by distributing the processing needed for each
-particle on a separate processor.
-But as we have seen in the introduction, for some
-functions, and for large numbers of processors just adding particles
-reaches a point of diminishing returns.
-That is, adding processors does not help us reach any given level of fitness appreciably faster.
+The PSO algorithm can be trivially parallelized by distributing the processing
+needed for each particle on across processors.  But as we have seen in the
+introduction, for some functions, and for large numbers of processors, just
+adding particles reaches a point of diminishing returns.  That is, adding
+processors does not help us reach any given level of fitness appreciably
+faster.
 
 To address this issue we present here a different use of additional processors.
-We take inspiration from speculative execution in processors and instead of adding particles
-we will employ a speculative evaluation approach like those described in the introduction. 
-This allows us to perform iterations two at a time.
+Instead of adding particles we employ a speculative evaluation approach as
+described in the introduction.  This allows us to perform iterations two at a
+time.
 
-To do so we must first re-factor PSO such that the determination of the $\pbest$ and $\nbest$,
-which depend upon the value of the objective function, is sepearate from the rest of the computation.
-%First consider formula for the \emph{next} iteration of PSO, which is identical
-%to Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate} except the time
-%subscripts are incremented.  As noted above and
-For simplicity in this
-explanation, we restrict our discussion here to the case of a Ring topology
-with two neighbors which we will call the ``right neighbor'' and ``left
-neighbor'' neighbors identified for each particle as $\rightn$ and $\leftn$
-respectively.
+To do so we must first refactor PSO such that the determination of the social
+and cognitive components, $\nbest$ and $\pbest$, which depend upon the value of
+the objective function, is separate from the rest of the computation.  For
+simplicity in this explanation, we restrict our discussion here to the case of
+a Ring topology with two neighbors which we will call the ``right neighbor''
+and ``left neighbor,'' whose positions are represented as $\rightn$ and
+$\leftn$ respectively.  Though we will only describe the case of the Ring
+topology, our methods can easily be extended to arbitrary topologies.
 
-Next note that the computation of $\pbest$ and $\nbest$ is not seen in the
-update equations~\eqref{eq:velupdate} and \eqref{eq:posupdate}, so we will make
-this mathematically explicit.  This update is usually implemented as a pair of
-independent ``if``-statements, but that is a bit awkward for our purposes
-so we instead use a set of indicator variables, one each representing each
-possible update to the pair $\casedef$.  These indicator variables allow
-us to easily identify the cases in which updates will be needed for $\nbest$,
-$\pbest$ or both.
-
-For a topology with 2 neighbors there are 7 possible update cases identified in
-Table~\ref{tab:evals}.
-For example and as indicated in the table, we write $\casexn$ to represent the case where $\pbest$ will be
-updated with the better position $\ppos_{i,t}$, shown in the first positions,
-but a no new neighborhood best was found so $\nbest$ remains in the second
-position.
-%This list assumes, as is typically the case for the ring topology, that each
-%particle is also part of its own neighborhood (can cause an update to
-%$\nbest$).
-The list omits the case where $\nbest$ is updated by
-$\ppos_{t}$ but $\pbest$ was not updated, as this is logically impossible.
-$\caseset$ represents the set of all possible update cases.
-
-For minimization, we can define the indicator variable representing the case $\casexn$,
-where the particle will need to update $\pbest$ with the better
-position $x_{t}$, but $\nbest$ will not updated, by:
-\begin{align}
-\nonumber
-	\indic_{t+1}^{\casexn} & (\ofunc ( \ppos_{t+1} ) ,\ofunc(\leftn_{t+1}),\ofunc(\rightn_{t+1}) ,\ofunc(\pbest_{t}) ,\ofunc(\nbest_{t}))= \\
-\nonumber
-	& 1 \ if \  \ofunc(\ppos_{t+1}) > \ofunc(\pbest_{t}) \\
-\nonumber
-	& \quad \quad \ \wedge \ \ofunc(\nbest_{t}) > \ofunc(\ppos_{t+1}) \\
-\nonumber
-	& \quad \quad \ \wedge \ \ofunc(\nbest_{t}) > \ofunc(\leftn_{t+1}) \\
-\nonumber
-	& \quad \quad \ \wedge \ \ofunc(\nbest_{t}) > \ofunc(\rightn_{t+1}) \\
-\label{eq:deficasexn}
-	& 0 \ otherwise
-\end{align}
-
-For compactness in our equations we represent this without the parameters since
-they can be inferred from the subscripts on $\indic_{t}^{\casexn}$.  The
-indicator variables for the other update cases shown in Table~\ref{tab:evals}
-($\casepn$, $\casepl$, $\casepr$, etc.) can be defined in similar fashion but
-obviously using the corresponding boolean expression.
-
-For each cases identified in Table~\ref{tab:evals} and identified by a
-corresponding indicator variable defined above, we also provide notation for the velocity
-update equation; once again using $\casexn$ as an example:
-\begin{align}
-\nonumber
-	\specvel_{t+1}^{\casexn} & (\pvel_t, \ppos_{t+1}, \leftn_{t+1}, \rightn_{t+1}, \pbest_{t},
-        \nbest_{t}, \pURand_{t}, \nURand_{t}) \\
-\label{eq:defvocasexn}
-		&= \constriction \bigl[ \pvel_{t} +
-			\pcoeff\pURand_{t+1}\otimes(\pbest_{t+1} - \ppos_{t+1}) \\
-		& \quad \quad \quad \; + \ncoeff\nURand_{t+1}\otimes(\nbest_{t+1} - \ppos_{t+1})
-		\bigr]
-\end{align}
-
-Again we will drop the parameters for compactness and since
-they can be inferred from the subscripts on $\specvel_{t}^{\casexn}$.
-The update equation is taken exactly from the standard update equation~\eqref{eq:velupdate}.
-However, since $\specvel_{t}^{\casexn}$ is restricted to the specific case, $\casexn$,
-it is no longer necessary to use $\pbest$ and $\nbest$, since when restricted to this case
-$\pbest_{t+1}=\ppos_{t+1}$ and $\nbest_{t+1}=\nbest_{t}$ and we can re-write
-$\specvel_{t+1}^{\casexn}$ as:
-\begin{align}
-\nonumber
-	\specvel_{t+1}^{\casexn} &= \constriction \bigl[ \pvel_{t} +
-			\pcoeff\pURand_{t+1}\otimes(\ppos_{t+1} - \ppos_{t+1}) \\
-\label{eq:defvcasexn}
-			& \quad \quad \quad \; + \ncoeff\nURand_{t+1}\otimes(\nbest_{t} - \ppos_{t+1})
-		\bigr]
-\end{align}
-
-In the same way we can create notation for the position update
-equation~\eqref{eq:velupdate}; once again using $\casexn$ as an example:
-\begin{align}
-\label{eq:defpcasexn}
-	\specpos_{t+1}^{\casexn} & (\ppos_{t}, \pvel_{t},\ppos_{t+1} ,\leftn_{t+1},\rightn_{t+1} ,\pbest_{t} ,\nbest_{t})= \\
-\nonumber
-	& = \specpos_{t+1}^{\casexn} =  \ppos_{t} + \specvel_{t+1}^{\casexn}
-\end{align}
-We call these values, $\specpos^{c}) \ c \in\ \caseset$ (7 of them in this case where each particle has 2 neighbors plus itself)
-as ``speculative children''
-since they will only be useful if the corresponding $\indic^{c} \ c \in \caseset$ has the value 1.
-
-Lastly, we use the normal notation for the value of the objective function for each speculative child,
-once again using the case $\casexn$ as an example:
-\begin{align}
-\nonumber
-	\ofunc(\specpos_{t+1}^{\casexn} & (\ppos_{t+1} ,\leftn_{t+1},\rightn_{t+1} ,\pbest_{t} ,\nbest_{t}))= \\
-\label{eq:deffcasexn}
-	& =  \ofunc(\specpos_{t+1}^{\casexn})
-\end{align}
-
-With this notation we can re-write the original PSO velocity
-equation~\eqref{eq:velupdate} as:
-\begin{align}
-\nonumber
-	\pvel_{t+1} &=
-		\constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
-\nonumber
-			& \quad \quad \quad \, + \ncoeff\nURand_{t}\otimes(\nbest_{t} - \ppos_{t})
-		\bigr] \\
-\nonumber
-	&= \sum_{c \in \caseset} \constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
-\nonumber
-			& \quad \quad \quad \, + \ncoeff\nURand_{t}\otimes(\nbest_{t} - \ppos_{t})
-		\bigr] \indic_{t+1}^{c} \\
-\label{eq:vel2update}
-	&= \sum_{c \in \caseset} \ \specvel_{t+1}^{c} \ \indic_{t+1}^{c}
-\end{align}
-and the position update 
-equation~\eqref{eq:posupdate} as:
-\begin{align}
-\nonumber
-	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1} \\
-\label{eq:pos2update}
-	&= \sum_{c \in \caseset} \ \specpos_{t+1}^{c} \ \indic_{t+1}^{c}
-\end{align}
-The value of the objective function at $\ppos_{t+1}$ is given by:
-\begin{align}
-\label{eq:val2update}
-	\ofunc (\ppos_{t+1}) = \sum_{c \in \caseset} \ \ofunc(\specpos_{t+1}^{c}) \ \indic_{t+1}^{c}
-\end{align}
-
-Returning our attention to the computation of $\specpos$ in \eqref{eq:pos2update} and writing it
-with the parameters which were omitted above,
-we obtain:
-\begin{align}
-\nonumber
-\ppos_{t+1} &= \sum_{c \in \caseset} \\
-\nonumber
-& \specpos_{t+1}^{c}(\ppos_{t+1},\leftn_{t+1},\rightn_{t+1},
-\pbest_{t},\nbest_{t},\pURand_{t}, \nURand_{t}) \\
-\label{eq:val2updatelong}
-& \indic_{t}^{c}(\ofunc ( \ppos_{t+1} ) ,\ofunc(\leftn_{t+1}),\ofunc(\rightn_{t+1}) ,\ofunc(\pbest_{t}) ,\ofunc(\nbest_{t}))
-\end{align}
-In this form the important point to notice is that there are only 7 values (for this ring topology) in the set formed by
-$\specpos_{t+1}^{c} \ c \in\ \caseset$ and that none of them depend upon $f(x_t)$
-or any other objective function evaluation at $t$.
-Thus PSO has been re-factored such that the algorithm can begin computing
-all 7 of the objective function evaluations potentially needed in iteration $t+1$ \emph{before} $f(x_t)$ is computed.
-Once the evaluation of $f(\ppos_{t})$ is completed for all particles only one
-of the indicator functions $\indic_{t}^{c} \ c \in \caseset$ will be set to one.
-We will refer to the indicator function which is set to one as the
-``behavior preserving indicator'' or $bp$, since it indicates which of
-the computations $\ofunc(\specpos_{t}^{c}) \  c \in \caseset$ preservers the behavior of PSO.
-The rest 
-computations $\ofunc(\specpos_{t}^{c}) \ c \in \caseset-\{bp\}$
-will be ignored, and might just as well never have been computed.
-We call these evaluations of $\ofunc(\specpos_{t+1}^{c})$ ``speculative children''
-because they may or may not be needed.
-
-This refactoring comes a significant expense, instead of just computing
-$\ofunc(\ppos_{i,t})$ and then $\ofunc(\ppos_{i,t+1})$ in the usual way, this refactored PSO
-computes $\ofunc(\ppos_{t})$ and all 
-of the $\ofunc(\specpos_{t+1}^{c}) \ \ c \in \caseset$, 8 function evaluations in this case.
-The potential value of these speculative children lies in the phrase used above
-``this re-factored PSO
-can compute $\ofunc(\ppos_{t+1})$ and all 
-of the $\ofunc(\specpos_{t+1}^{c}) \ \ c \in \caseset$ at the same time''. 
-Remember that our intent is to accelerate parallel PSO and that we
-are interested in objective functions that have at least non-trivial computational
-complexity.
-That is, we assume that computing
-$\ofunc(\ppos_{t})$ is the computationally difficult part of one iteration of PSO.
-
-The value of the refactoring can best be seen in a small example.
-Suppose that unlimited processors were available and that the evaluation of 
-the objective function took 1 hour. Suppose also that for each particle
-the computations
-$\ofunc(\ppos_{t})$ and all 
-of the $\ofunc(\specpos_{t+1}^{c}) \ c \in \caseset$ were sent to separate
-processors and completed in parallel.
-\emph{Given} the values 
-of $\ofunc(\ppos_{t})$ for all particles
-the computation of the indicator functions $\indic_{t}^{c} \ c \in \caseset$ and to complete iteration t+1
-is inconsequential relative to the computational cost of obtaining the function values. 
-In this environment all of the function evaluations needed for 2 iterations of PSO
-could be completed in just one hour where as the conventional implementation would
-require two hours for those same 2 iterations of PSO.
-
-While the algebra shows that the computation of 
-equations~\eqref{eq:vel2update} and \eqref{eq:pos2update} are identical to the 
-equations~\eqref{eq:velupdate} and \eqref{eq:posupdate},
-There are some issues better seen in an algorithmic setting, in particular the use of the random
-vectors, 
-$\pURand_{t}$ and $\nURand_{t}$.
-As with the algebra given above, each transformation (used below) of the algorithm is
-provably equivalent; except that the algorithms will no longer be able to do an odd number of iterations,
-since it will do two at a time. In the algorithmic transformations given below,
-instructions are moved around and added, but the
-resultant algorithm, produces numerically identical results.
-
-We first define a helper function to update the personal and neighborhood bests, $\pbest$ and $\nbest$.
-This algorithm is shown in~\alg{bests}.
-
-\begin{algorithm}
-  \caption{``UpdateBests'': Update personal and neighborhood best values (minimizing)}
-  \label{alg:bests}
-  \begin{algorithmic}[1]
-          \STATE $\pbest_{t}\leftarrow \pbest_{t-1}$
-          \STATE $\ofunc(\pbest_{t})\leftarrow \ofunc(\pbest_{t-1})$
-          \IF {$\ofunc(\ppos_{t})<\ofunc(\pbest_{t-1})$}
-            \STATE $\pbest_{t}\leftarrow \ppos_{t}$
-            \STATE $\fpbest_{t}\leftarrow \fppos_{t}$
-          \ENDIF
-          \STATE $\nbest_{t}\leftarrow \nbest_{t-1}$
-          \STATE $\ofunc(\nbest_{t})\leftarrow \ofunc(\nbest_{t-1})$
-          \IF {$\ofunc(\fppos_{t})<\ofunc(\nbest_{t})$}
-            \STATE $\pbest_{t}\leftarrow \ppos_{t}$
-            \STATE $\ofunc(\pbest_{t})\leftarrow \ofunc(\ppos_{t})$
-          \ENDIF
-          \IF {$\ofunc(\leftn_{t})<\ofunc(nbest_{t})$}
-            \STATE $\pbest_{t}\leftarrow \leftn_{t}$
-            \STATE $\ofunc(pbest_{t})\leftarrow \ofunc(\leftn_{t})$
-          \ENDIF
-          \IF {$\ofunc(\rightn_{t})<\ofunc(\nbest_{t})$}
-            \STATE $\pbest_{t}\leftarrow \rightn_{t}$
-            \STATE $\ofunc(\pbest_{t})\leftarrow \ofunc(\rightn_{t}$
-          \ENDIF
-  \end{algorithmic}
-\end{algorithm}
-
-
-\begin{algorithm} [ht!]
-  \caption{Standard PSO (minimizing)}
-  \label{alg:standard}
-  \begin{algorithmic}[1]
-    \STATE t=0
-    \STATE Initialize the swarm
-%    \FOR{$i \in \swarm$}
-%      \STATE {$\ppos_{i,t} \leftarrow Random position$}
-%      \STATE {$\pvel_{i,t} \leftarrow Random velocities$}
-%      \STATE {$\fpbest_{i,t} \leftarrow Max Float$}
-%      \STATE {$\fnbest_{i,t} \leftarrow Max Float$}
-%    \ENDFOR
-    \REPEAT
-        \STATE $t=t+1$
-        \FOR{each particle in the swarm}
-          \STATE {$\fppos_{t} \leftarrow \ofunc(\ppos_{t})$}
-        \ENDFOR
-        \FOR{each particle in the swarm}
-          \STATE $\nURand_{t} \Leftarrow RandomVector()$
-          \STATE $\nURand_{t} \Leftarrow RandomVector()$
-          \STATE UpdateBests
-          \STATE Update $\pvel_{t+1}$ as shown in equation~\eqref{eq:velupdate} 
-          \STATE Update $\ppos_{t+1}$ as shown in equation~\eqref{eq:posupdate}
-        \ENDFOR
-    \UNTIL {$t > max \ iterations$ or convergence criteria met}
-  \end{algorithmic}
-\end{algorithm}
-
-Using this helper function we can write PSO as shown in~\alg{standard}.
-This algorithm can be transformed, while retaining it exact behavior, by
-``unrolling'' one iteration of the ``Repeat'' loop, redundantly expressing work done in the ``if'''s
-in~\alg{bests}
-using the indicator functions $\indic_{t+1}$ and re-writing the computation of the next velocity,
-positions and objective function value using 
-equations~\eqref{eq:vel2update}, \eqref{eq:pos2update} and \eqref{eq:val2update} 
-as shown in the new version of the algorithm as shown in~\alg{unrolled}
-
-\begin{algorithm} [ht!]
-  \caption{Unrolled PSO}
-  \label{alg:unrolled}
-  \begin{algorithmic}[1]
-    \STATE t=0
-    \STATE Initialize the swarm including
-%    \FOR{$i \in \swarm$}
-%      \STATE {$\ppos_{i,t} \leftarrow Random position$}
-%      \STATE {$\pvel_{i,t} \leftarrow Random velocities$}
-%      \STATE {$\fpbest_{i,t} \leftarrow Max Float$}
-%      \STATE {$\fnbest_{i,t} \leftarrow Max Float$}
-%    \ENDFOR
-    \REPEAT
-        \STATE $t=t+1$
-        \FOR{each particle in the swarm}
-          \label{alg2:fatitert}
-          \STATE DISPATCH the computation of {$\ofunc(\ppos_{t})$} to a seperate processor
-        \ENDFOR
-        \FOR{each particle in the swarm}
-          \STATE $\nURand_{t} \Leftarrow RandomVector()$
-          \STATE $\nURand_{t} \Leftarrow RandomVector()$
-          \FOR{$c \in \caseset$}
-            \STATE Compute $\specvel_{t+1}^c$ and $\specpos_{t+1}^c$.
-	    Examples shown in equations~\eqref{eq:defvcasexn} and~\eqref{eq:defpcasexn}
-            \label{alg2:fatitertp1}
-            \STATE DISPATCH computation of $\ofunc(\specpos_{t+1}^c)$ to a seperate processor.
-	    Example shown in equation~\eqref{eq:deffcasexn}.
-	    // Note that NONE of the computations, $\specvel_{t+1}^c$,
-	    $\specpos_{t+1}^c$ and $\ofunc(\specpos_{t+1}^c)$ depend on $\ofunc(\ppos_{t})$.
-          \ENDFOR
-        \ENDFOR
-        \STATE WAIT for all function evaluations dispatched above to complete
-        \FOR{each particle in the swarm}
-          \FOR{$c \in \caseset$}
-            \STATE Compute $\indic_{t+1}^c$
-	           Examples shown in equation~\eqref{eq:deficasexn} and~\eqref{eq:defpcasexn}
-	  \ENDFOR 
-            \label{alg2:startcut}
-          \STATE Compute $\pvel_{t+1}$ as shown in equation~\eqref{eq:vel2update} 
-          \STATE Compute $\ppos_{t+1}$ as shown in equation~\eqref{eq:pos2update}
-          \STATE Compute $\ofunc(ppos_{t+1})$ as shown in equation~\eqref{eq:val2update}
-	  \STATE UpdateBests
-            \label{alg2:endcut}
-        \ENDFOR
-
-        \STATE $t=t+1$
-        \FOR{each particle in the swarm}
-          \STATE $\nURand_{t} \Leftarrow RandomVector()$
-          \STATE $\nURand_{t} \Leftarrow RandomVector()$
-          \STATE UpdateBests
-          \STATE Update $\pvel_{t+1}$ as shown in equation~\eqref{eq:velupdate} 
-          \STATE Update $\ppos_{t+1}$ as shown in equation~\eqref{eq:posupdate}
-        \ENDFOR
-    \UNTIL {$t > max \ iteration/2$ or convergence criteria met}
-  \end{algorithmic}
-\end{algorithm}
-
-In this form we can easily see that the random values
-$\pURand_{t}$ and $\nURand_{t}$ usually used just for the computations in
-Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate} are passed to all of the
-speculative children, but only the behavior preserving computation will
-pass through the computations in lines
-\ref{alg2:startcut} through
-\ref{alg2:endcut}. The fact that these values are also used by other speculative
-children and later discarded will not change the behavior preserving case.
-
-End of Kevin
-
-While in some algorithms enumerating all possible next sampling positions would
-be impossible or extremely difficult, in PSO all we need to know are the
-current positions of the particle and its neighbors, from which we can easily
-enumerate and evaluate all possible positions of that particle at the next
-iteration.  The defining components of a particle's motion
-(see~\eqref{eq:velupdate}) are $\pvel_t$, $\ppos_t$, $\pbest$, and $\nbest$.
-For a particle at iteration $t-1$, $\pvel_t$ and $\ppos_t$ are defined by
-Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate}.  The only remaining
-components are $\pbest$ and $\nbest$, each of which has only a few
-possibilities.  The particle already knows its personal best $\pbest$ at
-iteration $t-1$, but it could be updated to $\ppos_t$ if its position at
-iteration $t$ has a better value than its current personal best.  Likewise, the
-particle knows its neighborhood best $\nbest$ at iteration $t-1$, though it
-could be updated by any of its neighbors' positions at iteration $t$.
-
-To enumerate all of the possible next positions of a particle, one must simply
-evaluate the motion equations for all possible combinations of personal best
-and neighborhood best updates that a particle could see.  This produces
-$2(n+1)$ speculative positions to be evaluated, where $n$ is the number of
-neighbors the particle has.  Because a particle is also its own neighbor, one
-of the $2(n+1)$ speculative positions can be eliminated, as a particle cannot
-be the source of its $\nbest$ update while not updating its $\pbest$.  Thus we
-have $2(n+1)-1$, or $2n+1$, evaluations.  Table~\ref{tab:evals} lists all
-possible combinations of updates that can be seen by a particle with two
-neighbors in addition to itself, which is the case in all of the topologies we
-use.  If all of these speculative positions are evaluated in parallel along
-with the original, non-speculative position of the particle at time $t-1$, then
-one of the speculative positions has to be the correct one, and two iterations
-have been evaluated at once.
+Our refactoring hinges on the idea that there is a finite set of possible
+updates to $\nbest$ and $\pbest$ at each iteration.  For the Ring topology we
+are discussing, there are 7 possible update cases, identified in
+Table~\ref{tab:evals}.  We label each case with an identifier referring to the
+source of the update; a hyphen represents no update, $L$ represents an update
+to $\nbest$ coming from the left neighbor, $R$ represents an update to $\nbest$
+coming from the right neighbor, and $S$ represents an update to either $\pbest$
+or $\nbest$ coming from the particle itself.  In the equations that follow, we
+refer to an unspecified update case as $\casegen$, and to the set of cases
+collectively as $\caseset$
 
 \begin{table}
   \caption{All possible updates for a particle with two neighbors}
   \label{tab:evals}
   \centering
   \begin{tabular}{lcc}
-	Identifier&$\pbest$ updated&Source of $\nbest$ update\\
+	Identifier&Source of $\pbest$ update&Source of $\nbest$ update\\
 	\hline
 	\hline
 	$\casepn$&No update&No update\\
@@ -759,29 +400,201 @@ have been evaluated at once.
 	\hline
 	$\casepr$&No update&Right Neighbor\\
 	\hline
-	$\casexn$&Updated&No update\\
+	$\casexn$&Self&No update\\
 	\hline
-	$\casexl$&Updated&Left Neighbor\\
+	$\casexl$&Self&Left Neighbor\\
 	\hline
-	$\casexr$&Updated&Right Neighbor\\
+	$\casexr$&Self&Right Neighbor\\
 	\hline
-	$\casexx$&Updated&The particle itself\\
+	$\casexx$&Self&Self\\
 	\hline
   \end{tabular}
 \end{table}
 
-Because $2n+1$ speculative evaluations must be performed for each particle, the
-choice of topology is an important one.  The use of the Complete topology,
-where every particle is a neighbor to every other particle, would require
-$O(p^2)$ speculative evaluations per iteration, where $p$ is the swarm size.
-Clearly it is much more desirable to have a sparse topology, where $O(np)$ is
-much smaller than $O(p^2)$.  However, some functions are better optimized with
-the Complete topology and the quick spread of information it entails than with
-sparse topologies.  Accordingly, we use the Random topology described
-in~\cite{mcnabb-cec09}, which has been shown to effectively simulate the
-Complete topology.  In~\sec{results} we report the results for performing
-speculative evaluation using both the Ring topology and the Random topology on
-a number of common benchmark functions.
+Next, note that the computation of $\pbest$ and $\nbest$ (and hence which case
+in $\caseset$ actually occurs) is not seen in the update
+equations~\eqref{eq:velupdate} and \eqref{eq:posupdate}.  This update is
+usually implemented as a pair of independent if-statements, but that is a bit
+awkward for our purposes.  We will instead make this mathematically explicit by
+introducing a set of indicator functions, each representing a case from
+Table~\ref{tab:evals}.  We can then sum over all of the cases, and the
+indicator function will make all of the terms drop to zero except for the case
+that actually occurs.
+
+In what follows we will examine the indicator function and the position and
+velocity update equations for a specific case, $\casexn$, as presenting
+equations for every case would be tedious.  The extension to cases not
+presented is straightforward.  When we are performing function minimization, we
+can define the indicator function representing the case $\casexn$ by:
+
+\begin{align}
+  \nonumber
+	\indic_{t+1}^{\casexn} & (\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
+	\ofunc(\rightn_{t}) ,\ofunc(\pbest_{t-1}) ,\ofunc(\nbest_{t-1}))= \\
+  \label{eq:deficasexn}
+	&\begin{cases}
+	   1 & \text{if} \ \ofunc(\ppos_{t}) < \ofunc(\pbest_{t-1}) \\
+	   &\quad \wedge \quad \ofunc(\nbest_{t-1}) < \ofunc(\ppos_{t}) \\
+	   &\quad \wedge \quad \ofunc(\nbest_{t-1}) < \ofunc(\leftn_{t}) \\
+	   &\quad \wedge \quad \ofunc(\nbest_{t-1}) < \ofunc(\rightn_{t}) \\
+	   0 & \text{otherwise}
+	\end{cases}
+\end{align}
+
+For compactness in our equations we represent this without the parameters since
+they can be inferred from the subscripts on $\indic_{t+1}^{\casexn}$.
+
+We now provide notation for the velocity update equation.  Once again we use
+$\casexn$ as an example:
+
+\begin{align}
+\nonumber
+	\specvel_{t+1}^{\casexn} & (\pvel_t, \ppos_{t}, \leftn_{t}, \rightn_{t},
+	\pbest_{t-1}, \nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
+\nonumber
+		&= \constriction \bigl[ \pvel_{t} +
+			\pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
+\nonumber
+		& \quad \quad \quad \; + \ncoeff\nURand_{t}\otimes(\nbest_{t} -
+		\ppos_{t}) \bigr] \\
+\nonumber
+		&= \constriction \bigl[ \pvel_{t} +
+			\pcoeff\pURand_{t}\otimes(\ppos_{t} - \ppos_{t}) \\
+\label{eq:defvcasexn}
+			& \quad \quad \quad \; + \ncoeff\nURand_{t}\otimes(\nbest_{t-1} -
+			\ppos_{t}) \bigr]
+\end{align}
+
+Note that we have substituted the actual values obtained for $\pbest$ and
+$\nbest$ into Equation~\eqref{eq:defvcasexn}.  Since we have restricted
+ourselves to a specific case, we know the values of $\pbest$ and $\nbest$ and
+do not need those terms as parameters to $\specvel_{t+1}^{\casexn}$.  In this
+case, $\pbest_{t}=\ppos_{t}$, as \pbest was updated by the particle's current
+position, and $\nbest_{t}=\nbest_{t-1}$, as \nbest was not updated at iteration
+$t$.  Again we will drop the parameters to $\specvel_{t+1}^{\casexn}$ for
+compactness.
+
+In the same way we can create notation for the position update
+equation~\eqref{eq:velupdate}:
+\begin{align}
+\label{eq:defpcasexn}
+	\specpos_{t+1}^{\casexn} & (\ppos_{t}, \pvel_{t}, \leftn_{t},
+	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
+\nonumber
+	& = \ppos_{t} + \specvel_{t+1}^{\casexn}
+\end{align}
+
+With this notation we can re-write the original PSO velocity
+equation~\eqref{eq:velupdate}, introducing our sum over cases with the
+indicator functions.  The equation becomes:
+\begin{align}
+\nonumber
+	\pvel_{t+1} &=
+		\constriction \bigl[ \pvel_t
+			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
+\nonumber
+			& \quad \quad \quad \, + \ncoeff\nURand_{t}\otimes(\nbest_{t} -
+			\ppos_{t}) \bigr] \\
+\nonumber
+	&= \sum_{c \in \caseset} \indic_{t+1}^{c} \ \constriction \bigl[ \pvel_t
+			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
+\nonumber
+			& \quad \quad \quad \, + \ncoeff\nURand_{t}\otimes(\nbest_{t} -
+			\ppos_{t}) \bigr]  \\
+\label{eq:vel2update}
+	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specvel_{t+1}^{c} 
+\end{align}
+
+We can similarly re-write the position update equation~\eqref{eq:posupdate} as:
+\begin{align}
+\nonumber
+	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1} \\
+\label{eq:pos2update}
+	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specpos_{t+1}^{c} 
+\end{align}
+
+The value of the objective function at $\ppos_{t+1}$ is given by:
+\begin{align}
+\label{eq:val2update}
+	\ofunc (\ppos_{t+1}) = \sum_{c \in \caseset} \ \indic_{t+1}^{c}
+	\ \ofunc(\specpos_{t+1}^{c})
+\end{align}
+
+Returning our attention to the computation of $\ppos_{t+1}$ in
+\eqref{eq:pos2update} and writing it with the parameters which were omitted
+above, we obtain:
+\begin{align}
+\nonumber
+  \ppos_{t+1} &= \sum_{c \in \caseset} \\
+\nonumber
+	& \indic_{t+1}^{c}(\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
+	\ofunc(\rightn_{t}) ,\ofunc(\pbest_{t-1}) ,\ofunc(\nbest_{t-1})) \\
+\label{eq:val2updatelong}
+	& \specpos_{t+1}^{c}(\ppos_{t},\pvel_{t},\leftn_{t},\rightn_{t},
+	\pbest_{t-1},\nbest_{t-1},\pURand_{t}, \nURand_{t})
+\end{align}
+
+In this form the important point to notice is that there are only 7 values (for
+this Ring topology) in the set formed by $\specpos_{t+1}^{c} \ c \in\ \caseset$
+and that none of them depend upon $f(\ppos_t)$ or any other objective function
+evaluation at iteration $t$ (note also that while there are random numbers in
+the equation, they are assumed fixed once drawn for any particular particle at
+a specific iteration).  Thus PSO has been refactored such that the algorithm
+can begin computing all 7 of the objective function evaluations potentially
+needed in iteration $t+1$ \emph{before} $f(\ppos_t)$ is computed.  Once the
+evaluation of $f(\ppos_{t})$ is completed for all particles only one of the
+indicator functions $\indic_{t+1}^{c}$ will be set to 1.  We will refer to
+the indicator function which is set to 1 as the ``behavior preserving
+indicator'' or $bp$, since it indicates which of the computations
+$\ofunc(\specpos_{t+1}^{c})$ preserves the behavior of PSO.  The rest of the
+computations $\ofunc(\specpos_{t+1}^{c}) \ c \in \caseset-\{bp\}$ will be
+ignored, and might just as well never have been computed.  We call these
+evaluations of $\ofunc(\specpos_{t+1}^{c})$ ``speculative children'' because
+they may or may not be needed.
+
+This refactoring comes at significant expense; instead of just computing
+$\ofunc(\ppos_{t})$ and then $\ofunc(\ppos_{t+1})$ in the usual way, this
+refactored PSO computes $\ofunc(\ppos_{t})$ and all of the
+$\ofunc(\specpos_{t+1}^{c})$, eight function evaluations in this case.  The
+potential value of these speculative children lies in the fact that we can
+perform the computation needed for both iteration $t$ and iteration $t+1$ at
+the same time.  Remember that our intent is to accelerate parallel PSO and that
+we are interested in objective functions that have at least non-trivial
+computational complexity.  That is, we assume that computing
+$\ofunc(\ppos_{t})$ is the computationally difficult part of one iteration of
+PSO.
+
+The value of the refactoring can best be seen in a small example.  Suppose that
+unlimited processors were available and that the evaluation of the objective
+function took 1 hour. Suppose also that for each particle the computations
+$\ofunc(\ppos_{t})$ and all of the $\ofunc(\specpos_{t+1}^{c})$ were sent to
+separate processors and completed in parallel.  Once the values of
+$\ofunc(\ppos_{t})$ have been computed for all particles, the computation
+needed to determine the values of the indicator functions $\indic_{t+1}^{c}$
+and to complete iteration $t+1$ is inconsequential.  In this environment all of
+the function evaluations needed for 2 iterations of PSO could be completed in
+just one hour where as the conventional implementation would require two hours
+for those same 2 iterations.
+
+However, we do not have an infinite number of processors at our disposal, and
+performing speculative evaluation significantly increases the number of
+function evaluations needed in PSO.  We show in the rest of this paper that in
+many, though not all, instances the extra performance achieved by being able to
+do more iterations at a time outweighs the benefit that would have been gained
+by merely increasing the number of particles in the swarm.
+
+Because the number of speculative evaluations depends on the number of
+neighbors a particle has, the choice of topology is an important one.  The use
+of the Complete topology, where every particle is a neighbor to every other
+particle, would require $O(p^2)$ speculative evaluations per iteration, where
+$p$ is the swarm size.  Clearly it is much more desirable to have a sparse
+topology, where $O(np)$ is much smaller than $O(p^2)$.  However, some functions
+are better optimized with the Complete topology and the quick spread of
+information it entails than with sparse topologies.  Accordingly, we use the
+Random topology described in~\cite{mcnabb-cec09}, which has been shown to
+effectively simulate the Complete topology.  In~\sec{results} we report the
+results for performing speculative evaluation using both the Ring topology and
+the Random topology on a number of common benchmark functions.
 
 It is not trivial in some parallel architectures to determine which speculative
 position was the correct next position of each particle.  First we discuss the
@@ -1039,10 +852,10 @@ First we look at the function Sphere, the simplest of common benchmark
 functions.  Its equation is $f(\Vec{x}) = \sum_{i=1}^D x_i^2$.  The function
 has no local optima and is best optimized in terms of function evaluations with
 a small swarm using a Complete topology.  Accordingly, we show results for a
-Complete swarm in \fig{basic-sphere}.  In comparing SEPSO with PSO, we can see
-that when both are using a Random topology, SEPSO clearly outperforms PSO.
-However, the comparison between SEPSO and PSO Complete is not as
-encouraging---PSO Complete performs slightly better.
+Complete swarm in \fig{basic-sphere}.  We can see that when both SEPSO and PSO
+are using a Random topology, SEPSO clearly outperforms PSO.  However, the
+comparison between SEPSO and PSO Complete is not as encouraging---PSO Complete
+performs slightly better.
 
 \begin{figure}
   \centering
