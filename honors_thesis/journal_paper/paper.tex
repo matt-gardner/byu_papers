@@ -416,7 +416,6 @@ except for the case that actually occurs.  Although this update is usually
 implemented using if-statements, it is convenient to describe it as a
 mathematical expression.  For example, the indicator function for the specific
 case $\casexn$ can be written as follows:
-
 \begin{align}
   \nonumber
 	\indic_{t+1}^{\casexn} & (\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
@@ -431,22 +430,17 @@ case $\casexn$ can be written as follows:
 	\end{cases}
 \end{align}
 
-For compactness in our equations we represent this without the parameters since
-they can be inferred from the subscripts on $\indic_{t+1}^{\casexn}$.
-
-We now provide notation for the velocity update equation.  Once again we use
-$\casexn$ as an example:
-
+For each case $\casegen \in \caseset$, there is also a corresponding
+velocity update function $\specvel_{t+1}^{\casegen}$.  When the case is
+known, the specific values of $\pbest_t$ and $\nbest_t$ may be substituted
+directly into~\eqref{eq:velupdate}.  For example, in case $\casexn$,
+$\pbest_{t}=\ppos_{t}$, as \pbest was updated by the particle's current
+position, and $\nbest_{t}=\nbest_{t-1}$, as $\nbest$ was not updated at
+iteration $t$:
 \begin{align}
 \nonumber
 	\specvel_{t+1}^{\casexn} & (\pvel_t, \ppos_{t}, \leftn_{t}, \rightn_{t},
 	\pbest_{t-1}, \nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
-\nonumber
-		&= \constriction \bigl[ \pvel_{t} +
-			\pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
-\nonumber
-		& \quad \quad \quad \; + \ncoeff\nURand_{t}\otimes(\nbest_{t} -
-		\ppos_{t}) \bigr] \\
 \nonumber
 		&= \constriction \bigl[ \pvel_{t} +
 			\pcoeff\pURand_{t}\otimes(\ppos_{t} - \ppos_{t}) \\
@@ -455,28 +449,22 @@ $\casexn$ as an example:
 			\ppos_{t}) \bigr]
 \end{align}
 
-Note that we have substituted the actual values obtained for $\pbest$ and
-$\nbest$ into Equation~\eqref{eq:defvcasexn}.  Since we have restricted
-ourselves to a specific case, we know the values of $\pbest$ and $\nbest$ and
-do not need those terms as parameters to $\specvel_{t+1}^{\casexn}$.  In this
-case, $\pbest_{t}=\ppos_{t}$, as \pbest was updated by the particle's current
-position, and $\nbest_{t}=\nbest_{t-1}$, as \nbest was not updated at iteration
-$t$.  Again we will drop the parameters to $\specvel_{t+1}^{\casexn}$ for
-compactness.
-
-In the same way we can create notation for the position update
-equation~\eqref{eq:velupdate}:
+In the same way we can create notation for the position update function by
+substituting into~\eqref{eq:posupdate}.  For compactness, we will drop the
+parameters to $\specvel_{t+1}^{\casegen}$ since they can be inferred from the
+subscripts on $\indic_{t+1}^{\casegen}$.
 \begin{align}
-\label{eq:defpcasexn}
-	\specpos_{t+1}^{\casexn} & (\ppos_{t}, \pvel_{t}, \leftn_{t},
+\label{eq:defpcasegen}
+	\specpos_{t+1}^{\casegen} & (\ppos_{t}, \pvel_{t}, \leftn_{t},
 	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
 \nonumber
-	& = \ppos_{t} + \specvel_{t+1}^{\casexn}
+	& = \ppos_{t} + \specvel_{t+1}^{\casegen}
 \end{align}
 
 With this notation we can re-write the original PSO velocity
 equation~\eqref{eq:velupdate}, introducing our sum over cases with the
-indicator functions.  The equation becomes:
+indicator functions.  Again, we represent the indicator functions and velocity
+functions without the parameters for compactness.  The equation becomes:
 \begin{align}
 \nonumber
 	\pvel_{t+1} &=
@@ -495,7 +483,7 @@ indicator functions.  The equation becomes:
 	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specvel_{t+1}^{c} 
 \end{align}
 
-We can similarly re-write the position update equation~\eqref{eq:posupdate} as:
+Similarly, the position update equation~\eqref{eq:posupdate} becomes:
 \begin{align}
 \nonumber
 	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1} \\
@@ -627,7 +615,7 @@ and its personal best.  Finally, a particle gets information from its neighbors
 and updates its neighborhood best.
 
 A particle at iteration $t-1$ that has been moved to iteration $t$ using
-Equations~\eqref{eq:velupdate}~and~\eqref{eq:posupdate}, but whose position has
+\eqref{eq:velupdate}~and~\eqref{eq:posupdate}, but whose position has
 not yet been evaluated, is denoted as $\noeval{\p}_t$.  Once its position has
 been evaluated, but it has still not yet received information from its
 neighbors, it is denoted as $\nonbest{\p}_t$.  Only when the particle has
@@ -641,9 +629,9 @@ master, keeps track of all necessary information, and all other machines are
 merely used to evaluate the objective function at various positions as directed
 by the master~\cite{belal-2004-parallel-models-for-pso}.  To perform speculative evaluation in such
 an architecture, the master generates the positions to evaluate speculatively
-as in Equation~\eqref{eq:pos2update}.  After having the slaves evaluate the
+as in \eqref{eq:pos2update}.  After having the slaves evaluate the
 objective function at all necessary positions, the master then decides which
-position to accept for each particle, as in Equation~\eqref{eq:val2updatelong}.
+position to accept for each particle, as in \eqref{eq:val2updatelong}.
 The outline of the procedure is given in \alg{centralized}.
 
 \begin{algorithm}
@@ -651,10 +639,10 @@ The outline of the procedure is given in \alg{centralized}.
   \label{alg:centralized}
   \begin{algorithmic}[1]
 	\STATE Move all $\p_{t-1}$ to $\noeval{\p}_t$ using
-	  Equations~\eqref{eq:velupdate}~and~\eqref{eq:posupdate}
+	  \eqref{eq:velupdate}~and~\eqref{eq:posupdate}
 	\STATE For each $\noeval{\p}_t$, get its neighbors $\noeval{\nset}_t$ and
 	  generate $\noeval{\sset}_{t+1}$ according to
-	  Equation~\eqref{eq:pos2update}.
+	  \eqref{eq:pos2update}.
 	\STATE Evaluate all $\noeval{\p}_t$ and $\noeval{\sset}_{t+1}$ in parallel
 	\STATE Update personal best for each $\noeval{\p}_t$ and
 	  $\noeval{\s}_{t+1}$, creating $\nonbest{\p}_t$ and $\nonbest{\s}_{t+1}$
@@ -663,7 +651,7 @@ The outline of the procedure is given in \alg{centralized}.
 	\FORALL{$\p_t$}
 	\STATE Pick $\nonbest{\s}_{t+1}$ from $\nonbest{\sset}_{t+1}$ that matches
 	  the branch taken by $\p_t$ according to
-	  Equation~\eqref{eq:val2updatelong}.
+	  \eqref{eq:val2updatelong}.
 	\STATE Pass along personal and neighborhood best values obtained by $\p_t$,
 	  making $\nonbest{\p}_{t+1}$
 	\ENDFOR
@@ -675,13 +663,13 @@ The outline of the procedure is given in \alg{centralized}.
 
 Given a set of particles at iteration $t-1$ (perhaps which have just been
 initialized), the master must move each particle using
-Equations~\eqref{eq:velupdate} and \eqref{eq:posupdate} to obtain the set
+\eqref{eq:velupdate} and \eqref{eq:posupdate} to obtain the set
 $\noeval{\pset}_t$.  For each particle $\noeval{\p}_t$, the master must get its
 set of neighbors $\noeval{\nset}_t$ and use their positions, along with the
 position of $\noeval{\p}_t$, to enumerate all possible combinations of $\pbest$
 and $\nbest$ that particle $\noeval{\p}_t$ could end up with (as shown in
 Table~\ref{tab:evals}).  Each of those combinations defines a speculative
-particle, $\s_t$, that can be moved using Equation~\eqref{eq:pos2update} to
+particle, $\s_t$, that can be moved using \eqref{eq:pos2update} to
 obtain $\noeval{\s}_{t+1}$.  The result is a set of particles
 $\noeval{\pset}_t$, and for each particle a set of speculative children
 $\noeval{\sset}_{t+1}$, which can all be evaluated at once.
@@ -693,7 +681,7 @@ correct one.
 
 This is done by first updating each particle's personal and neighborhood bests.
 Mathematically, this corresponds to the evaluation of an indicator function
-similar to that found in Equation~\eqref{eq:deficasexn}.  In practice, this is
+similar to that found in \eqref{eq:deficasexn}.  In practice, this is
 done by moving each $\noeval{\p}_t$ to $\nonbest{\p}_t$ and each speculative
 particle $\noeval{\s}_{t+1}$ to $\nonbest{\s}_{t+1}$ by associating the value
 determined by the slave to the particle it came from, and updating that
@@ -708,7 +696,7 @@ particle can be determined, and the correct speculative child can be chosen.
 The branches depend entirely on whether or not the personal best of $p_t$ was
 updated and which particle, if any, updated the particle's neighborhood best.
 Both of those items are now known, and the child that matches the branch is
-selected as per Equation~\eqref{eq:val2updatelong} (step 7 in
+selected as per \eqref{eq:val2updatelong} (step 7 in
 \alg{centralized}).
 
 The parent $\p_t$ must pass its personal best value to the child, as the child
