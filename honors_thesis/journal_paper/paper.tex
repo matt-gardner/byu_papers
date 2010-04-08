@@ -512,23 +512,22 @@ above, we obtain:
 	\pbest_{t-1},\nbest_{t-1},\pURand_{t}, \nURand_{t})
 \end{align}
 
-In this form the important point to notice is that there are only 7 values (for
-this Ring topology) in the set formed by $\specpos_{t+1}^{c} \ c \in\ \caseset$
-and that none of them depend upon $f(\ppos_t)$ or any other objective function
-evaluation at iteration $t$ (note also that while there are random numbers in
-the equation, they are assumed fixed once drawn for any particular particle at
-a specific iteration).  Thus PSO has been refactored such that the algorithm
-can begin computing all 7 of the objective function evaluations potentially
-needed in iteration $t+1$ \emph{before} $f(\ppos_t)$ is computed.  Once the
-evaluation of $f(\ppos_{t})$ is completed for all particles only one of the
-indicator functions $\indic_{t+1}^{c}$ will be set to 1.  We will refer to
-the indicator function which is set to 1 as the ``behavior preserving
-indicator'' or $bp$, since it indicates which of the computations
-$\ofunc(\specpos_{t+1}^{c})$ preserves the behavior of PSO.  The rest of the
-computations $\ofunc(\specpos_{t+1}^{c}) \ c \in \caseset-\{bp\}$ will be
-ignored, and might just as well never have been computed.  We call these
-evaluations of $\ofunc(\specpos_{t+1}^{c})$ ``speculative children'' because
-they may or may not be needed.
+In this form the important point to notice is that there are only 7 values
+(for this Ring topology) in the set $\{\specpos_{t+1}^{\casegen}: \casegen \in
+\caseset\}$ and that none of them depend upon $f(\ppos_t)$ or any other
+objective function evaluation at iteration $t$ (note also that while there are
+random numbers in the equation, they are assumed fixed once drawn for any
+particular particle at a specific iteration).  Thus PSO has been refactored
+such that the algorithm can begin computing all 7 of the objective function
+evaluations potentially needed in iteration $t+1$ \emph{before} $f(\ppos_t)$
+is computed.  Once the evaluation of $f(\ppos_{t})$ is completed for all
+particles only one of the indicator functions $\indic_{t+1}^{\casegen}$ will
+be set to 1.  Although this speculative algorithm computes
+$\ofunc(\specpos_{t+1}^{\casegen})$ for all $\casegen \in \caseset$, even
+those for which $\indic_{t+1}^{\casegen} = 0$, these extra computations will
+be ignored, and might just as well never have been computed.  We call the set
+of computations $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$
+``speculative children'' because only one of them will be needed.
 
 This refactoring comes at significant expense; instead of just computing
 $\ofunc(\ppos_{t})$ and then $\ofunc(\ppos_{t+1})$ in the usual way, this
@@ -542,17 +541,16 @@ computational complexity.  That is, we assume that computing
 $\ofunc(\ppos_{t})$ is the computationally difficult part of one iteration of
 PSO.
 
-The value of the refactoring can best be seen in a small example.  Suppose that
-unlimited processors were available and that the evaluation of the objective
-function took one hour. Suppose also that for each particle the computations
-$\ofunc(\ppos_{t})$ and all of the $\ofunc(\specpos_{t+1}^{c})$ were sent to
-separate processors and completed in parallel.  Once the values of
-$\ofunc(\ppos_{t})$ have been computed for all particles, the computation
+Suppose that unlimited processors were available and that the evaluation of
+the objective function took one hour. Suppose also that for each particle the
+computations $\ofunc(\ppos_{t})$ and all of the $\ofunc(\specpos_{t+1}^{c})$
+were sent to separate processors and completed in parallel.  Once the values
+of $\ofunc(\ppos_{t})$ have been computed for all particles, the computation
 needed to determine the values of the indicator functions $\indic_{t+1}^{c}$
-and to complete iteration $t+1$ is inconsequential.  In this environment all of
-the function evaluations needed for two iterations of PSO could be completed in
-just one hour where as the conventional implementation would require two hours
-for those same two iterations.
+and to complete iteration $t+1$ is inconsequential.  In this environment all
+of the function evaluations needed for two iterations of PSO could be
+completed in just one hour where as the conventional implementation would
+require two hours for those same two iterations.
 
 However, we do not have an infinite number of processors at our disposal, and
 performing speculative evaluation significantly increases the number of
