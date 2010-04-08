@@ -179,9 +179,9 @@ at the same time in parallel that we call speculative evaluation.  The name
 comes from an analogy to speculative execution (also known as branch
 prediction) techniques commonly used in processors.  Modern processors, when
 faced with a branch on which they must wait (e.g. a memory cache miss), guess
-which way the branch will go and start executing, being careful not to make
-changes that can not be undone.  If the processor guesses right, execution is
-much farther ahead than if it had just idly waited on the memory reference.  If
+which way the branch will go and start executing, ensuring that any changes
+can be undone.  If the processor guesses right, execution is
+much farther ahead than if it had idly waited on the memory reference.  If
 it guesses wrong, execution restarts where it would have been anyway.  
 
 %\begin{quote}
@@ -285,7 +285,7 @@ evaluation that standard PSO would have done.  A further improvement we explore
 is speculating several iterations ahead instead of just one, which is made
 possible by pruning the number of speculative evaluations.
 
-The balance of this paper is organized as follows: \sec{pso} describes the
+The balance of this paper is organized as follows. \sec{pso} describes the
 particle swarm optimization algorithm.  \sec{sepso} describes how speculative
 evaluation can be done in parallel PSO to perform two iterations at once, then
 presents a comparison of the speculative algorithm with the original PSO.  In
@@ -328,11 +328,11 @@ numbers drawn from a standard uniform distribution, the \( \otimes \) operator
 is an element-wise vector multiplication, $\pbest$ (called personal best) is
 the best position the current particle has seen, and $\nbest$ (called
 neighborhood best) is the best position the neighbors of the current particle
-have seen~\cite{bratton-sis07}.  \( \ncoeff \), \( \pcoeff \), and \(
-\constriction \) are parameters with prescribed values required to ensure
+have seen~\cite{bratton-sis07}.  The parameters \( \ncoeff \), \( \pcoeff \),
+and \( \constriction \) are given prescribed values required to ensure
 convergence (2.05, 2.05, and .73, respectively)~\cite{clerc-tec02}. 
 
-There are many ways of defining the neighbors of a particle.  Changing the
+Changing the
 neighborhood topology has a significant effect on the performance of the
 algorithm and this effect varies widely by function type.  The two most common
 topologies used in the literature are the Ring topology and the Complete
@@ -356,37 +356,35 @@ and the Random topologies, all particles have three neighbors.
 \label{sec:sepso}
 
 The PSO algorithm can be trivially parallelized by distributing the processing
-needed for each particle on across processors.  But as we have seen in the
-introduction, for some functions, and for large numbers of processors, just
-adding particles reaches a point of diminishing returns.  That is, adding
-processors does not help us reach any given level of fitness appreciably
-faster.
+needed for each particle on across processors.  But as we have seen in
+\fig{fig:evals-sphere}, for some functions, and for large numbers of
+processors, just adding particles reaches a point of diminishing returns.
+That is, adding processors does not help us reach any given level of fitness
+appreciably faster.  Instead of adding particles we employ a speculative
+evaluation approach that allows us to perform iterations two at a time.
 
-To address this issue we present here a different use of additional processors.
-Instead of adding particles we employ a speculative evaluation approach that
-allows us to perform iterations two at a time.
+To do so we must first refactor PSO such that the determination of the value
+of the objective function is separate from the rest of the computation.  For
+simplicity, this discussion will describe the case where PSO is performing
+function minimization using the Ring topology.  In this example, each particle
+has two neighbors, the ``right neighbor'' and ``left neighbor,'' whose
+positions are represented as $\rightn$ and $\leftn$ respectively.  Though we
+will only describe the case of the Ring topology, this method can easily be
+extended to arbitrary topologies.
 
-To do so we must first refactor PSO such that the determination of the social
-and cognitive components, $\nbest$ and $\pbest$, which depend upon the value of
-the objective function, is separate from the rest of the computation.  For
-simplicity in this explanation, we restrict our discussion here to the case of
-a Ring topology with two neighbors which we will call the ``right neighbor''
-and ``left neighbor,'' whose positions are represented as $\rightn$ and
-$\leftn$ respectively.  Though we will only describe the case of the Ring
-topology, our methods can easily be extended to arbitrary topologies.
-
-Our refactoring hinges on the idea that there is a finite set of possible
-updates to $\nbest$ and $\pbest$ at each iteration.  For the Ring topology we
-are discussing there are 7 possible update cases, identified in
-Table~\ref{tab:evals}.  We label each case with an identifier referring to the
-source of the update; a hyphen represents no update, $L$ represents an update
-to $\nbest$ coming from the left neighbor, $R$ represents an update to $\nbest$
-coming from the right neighbor, and $S$ represents an update to either $\pbest$
-or $\nbest$ coming from the particle itself.  As an example, $\casexn$ refers
-to the case that the particle finds a new personal best, but neither it nor its
-neighbors found a position that updated its neighborhood best.  In the
-equations that follow, we refer to an unspecified update case as $\casegen$,
-and to the set of cases collectively as $\caseset$
+The refactoring hinges on the idea that once the random coefficients are
+determined, there are only a few possibilities for the new values of updates
+to $\nbest$ and $\pbest$.  For the Ring topology there are 7 possible update
+cases, identified in Table~\ref{tab:evals}.  We label each case with an
+identifier referring to the source of the update: a minus sign ($-$)
+represents no update, $L$ represents an update to $\nbest$ coming from the
+left neighbor, $R$ represents an update to $\nbest$ coming from the right
+neighbor, and $S$ represents an update to either $\pbest$ or $\nbest$ coming
+from the particle itself.  As an example, $\casexn$ refers to the case that
+the particle finds a new personal best, but neither it nor its neighbors found
+a position that updated its neighborhood best.  In the equations that follow,
+we refer to an unspecified update case as $\casegen$, and to the set of cases
+collectively as $\caseset$.
 
 \begin{table}
   \caption{All possible updates for a particle with two neighbors}
@@ -413,21 +411,14 @@ and to the set of cases collectively as $\caseset$
   \end{tabular}
 \end{table}
 
-Next, note that the computation of $\pbest$ and $\nbest$ (and hence which case
-in $\caseset$ actually occurs) is not seen in the update
-equations~\eqref{eq:velupdate} and \eqref{eq:posupdate}.  This update is
-usually implemented as a pair of independent if-statements, but that is a bit
-awkward for our purposes.  We will instead make this mathematically explicit by
-introducing a set of indicator functions, each representing a case from
-Table~\ref{tab:evals}.  We can then sum over all of the cases, and the
-indicator function will make all of the terms drop to zero except for the case
-that actually occurs.
-
-In what follows we will examine the indicator function and the position and
-velocity update equations for a specific case, $\casexn$, as presenting
-equations for every case would be tedious.  The extension to cases not
-presented is straightforward.  When we are performing function minimization, we
-can define the indicator function representing the case $\casexn$ by:
+For each case $\casegen \in \caseset$, we introduce an indicator function
+$\indic_{t}^{\casegen}$.  This function is 1 for the realized case from
+Table~\ref{tab:evals} and 0 for the other cases.  We can then sum over all of
+the cases, and the indicator function will make all of the terms drop to zero
+except for the case that actually occurs.  Although this update is usually
+implemented using if-statements, it is convenient to describe it as a
+mathematical expression.  For example, the indicator function for the specific
+case $\casexn$ can be written as follows:
 
 \begin{align}
   \nonumber
