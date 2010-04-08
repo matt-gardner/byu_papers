@@ -9,9 +9,6 @@
 
 \IEEEoverridecommandlockouts
 
-% AML bibliography references
-\newcommand{\bib}[1]{/aml/home/mjg82/bib/#1}
-
 % Better references, I think
 \renewcommand{\sec}[1]{Section~\ref{sec:#1}}
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
@@ -131,9 +128,9 @@ computationally intensive problems, PSO needs to run in parallel.
 Within the last few years, researchers have begun to recognize the need to
 develop parallel implementations of PSO, publishing many papers on the subject.
 The methods they have used include various synchronous algorithms
-\cite{mcnabb-cec07,belal-ijicis04,chu-sci06,jin-aps05,parsopoulos-aia04,schutte-ijnme04},
+\cite{mcnabb-2007-parallel-pso-using-mapreduce,belal-2004-parallel-models-for-pso,chu-2006-intelligent-parallel-pso,jin-2005-pso-antenna-designs,parsopoulos-2004-parallel-vector-evaluated-pso,schutte-2004-parallel-global-optimization-with-pso}
 and asynchronous algorithms
-\cite{koh-ijnme06,mostaghim-report06,venter-wcsmo05}.  Parallelizing the
+\cite{koh-2006-parallel-asynchronous-pso,mostaghim-2006-multi-objective-pso-on-grids,venter-2005-parallel-pso-asynchronous-evaluations}.  Parallelizing the
 evaluation of the objective function can also be done in some cases, though
 that is not an adaption of the PSO algorithm itself and thus is not the focus
 of this paper.
@@ -156,13 +153,13 @@ of thirty runs).  Increasing the swarm size from 10 to 50 has a significant
 effect on the value obtained.  However, increasing the swarm size from 100 to
 200 makes the algorithm less efficient, that is, it reduces the progress the
 algorithm makes per evaluation.  For this reason, previous work has recommended
-the use of a swarm size of 50 for this function~\cite{bratton-sis07}.  Thus, in
+the use of a swarm size of 50 for this function~\cite{bratton-2007-defining-a-standard-for-pso}.  Thus, in
 at least some cases, adding particles indefinitely will not yield an efficient
 implementation. 
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\columnwidth]{evals_sphere.eps}
+  \includegraphics[width=.8\columnwidth]{evals_sphere}
   \caption{Function Sphere with a swarm with various swarm sizes.}
   \label{fig:evals-sphere}
 \end{figure}
@@ -227,7 +224,7 @@ it guesses wrong, execution restarts where it would have been anyway.
 %at the current position and at the two alternative are computed.
 %For all but the most computationally-trivial objective functions, this approach saves almost half of the
 %``wall-clock'' time.
-%This approach has been applied to simulated annealing~\cite{witte-tpds91} which like the greedy random walk,
+%This approach has been applied to simulated annealing~\cite{witte-1991-parallel-simulated-annealing-speculative} which like the greedy random walk,
 %depends on positions and a binary test.
 %
 %This approach can not be used in gradient methods where the
@@ -298,7 +295,7 @@ reproducing the behavior of the original algorithm.  In \sec{conclusion} and
 \label{sec:pso}
 
 Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
-Eberhart~\cite{kennedy-icnn95}.  The algorithm is used to intelligently search
+Eberhart~\cite{kennedy-1995-particle-swarm-optimization}.  The algorithm is used to intelligently search
 a multi-dimensional space by mimicking the swarming and flocking behavior of
 birds and other animals. It is a social algorithm that depends on interaction
 between particles to quickly and consistently approximate the optimal solution
@@ -328,15 +325,15 @@ numbers drawn from a standard uniform distribution, the \( \otimes \) operator
 is an element-wise vector multiplication, $\pbest$ (called personal best) is
 the best position the current particle has seen, and $\nbest$ (called
 neighborhood best) is the best position the neighbors of the current particle
-have seen~\cite{bratton-sis07}.  \( \ncoeff \), \( \pcoeff \), and \(
+have seen~\cite{bratton-2007-defining-a-standard-for-pso}.  \( \ncoeff \), \( \pcoeff \), and \(
 \constriction \) are parameters with prescribed values required to ensure
-convergence (2.05, 2.05, and .73, respectively)~\cite{clerc-tec02}. 
+convergence (2.05, 2.05, and .73, respectively)~\cite{clerc-2002-constricted-pso}. 
 
 There are many ways of defining the neighbors of a particle.  Changing the
 neighborhood topology has a significant effect on the performance of the
 algorithm and this effect varies widely by function type.  The two most common
 topologies used in the literature are the Ring topology and the Complete
-topology~\cite{bratton-sis07}.  In the Ring topology, each particle has one
+topology~\cite{bratton-2007-defining-a-standard-for-pso}.  In the Ring topology, each particle has one
 neighbor to either side of it; in the Complete topology, every particle is a
 neighbor to every other particle.  In all topologies a particle is also a
 neighbor to itself in that its own position and value are considered when
@@ -347,7 +344,7 @@ $p$ neighbors.
 
 In this paper we use these topologies as well as a parallel adaptation of the
 Complete topology, called Random, that has been shown to approximate the
-behavior of Complete with far less communication~\cite{mcnabb-cec09}.  In the
+behavior of Complete with far less communication~\cite{mcnabb-2009-large-particle-swarms}.  In the
 Random topology, each particle randomly picks two other particles to share
 information with at each iteration, along with itself.  Thus in both the Ring
 and the Random topologies, all particles have three neighbors.
@@ -605,7 +602,7 @@ Clearly it is much more desirable to have a sparse topology, where $O(np)$ is
 much smaller than $O(p^2)$.  However, some functions are better optimized with
 the Complete topology and the quick spread of information it entails than with
 sparse topologies.  Accordingly, we use the Random topology described
-in~\cite{mcnabb-cec09}, which has been shown to effectively simulate the
+in~\cite{mcnabb-2009-large-particle-swarms}, which has been shown to effectively simulate the
 Complete topology.  In~\sec{results} we report the results for performing
 speculative evaluation using both the Ring topology and the Random topology on
 a number of common benchmark functions.
@@ -651,7 +648,7 @@ is then simply denoted as $\p_t$.
 In a centralized, or Master-Slave, parallel PSO algorithm, one machine, the
 master, keeps track of all necessary information, and all other machines are
 merely used to evaluate the objective function at various positions as directed
-by the master~\cite{belal-ijicis04}.  To perform speculative evaluation in such
+by the master~\cite{belal-2004-parallel-models-for-pso}.  To perform speculative evaluation in such
 an architecture, the master generates the positions to evaluate speculatively
 as in Equation~\eqref{eq:pos2update}.  After having the slaves evaluate the
 objective function at all necessary positions, the master then decides which
@@ -932,7 +929,7 @@ Lastly we look at a function that does not show any kind of improvement with
 this method.  The function Rastrigin is defined as $f(\Vec{x}) = \sum_{i=1}^D
 \left(x_i^2 - 10\cos\left(2\pi x_i\right) + 10\right)$.  It has been shown that
 with Rastrigin, the more particles there are in the swarm, the lower function
-value it finds, up to at least 4000 particles~\cite{mcnabb-cec09}.  Smaller
+value it finds, up to at least 4000 particles~\cite{mcnabb-2009-large-particle-swarms}.  Smaller
 swarms get caught in local optima.  Because our speculative algorithm has a
 significantly smaller swarm size, it gets stuck at higher values while the
 larger swarms performing regular PSO continue to improve the best value found.
@@ -1401,7 +1398,7 @@ topologies, categorizing both the topologies and the functions and discovering
 what it is that makes certain topologies work well with certain functions.
 There are also some particles that seem to drive the swarm and others that are
 stagnant almost the entire time.  Such information could be used in a
-TRIBES-like fashion~\cite{clerc-oep03} to determine which particles should be
+TRIBES-like fashion~\cite{clerc-2003-tribes} to determine which particles should be
 removed from the swarm, perhaps starting them close to well-performing
 particles.
 
@@ -1426,7 +1423,7 @@ function evaluations the extra overhead of intelligently allocating resources
 would likely be negligible.
 
 A technique similar to ours has been previously used to parallelize simulated
-annealing~\cite{witte-tpds91}.  Any other optimization algorithm that only
+annealing~\cite{witte-1991-parallel-simulated-annealing-speculative}.  Any other optimization algorithm that only
 depends on current sampling positions when computing the next position to
 sample can be parallelized with this technique.  In particular, genetic
 algorithms produce future generations by combining individuals from the current
@@ -1434,7 +1431,7 @@ generation.  With a large population size there would be an unwieldy amount of
 possible future individuals, but the potential exists to modify the algorithm
 to use some kind of speculative evaluation.  A related but quite distinct
 technique for reducing computation in evolutionary algorithms was proposed
-in~\cite{poli-ai06}.
+in~\cite{poli-2006-backward-chaining-evolutionary-algorithms}.
 
 \appendix[Alternate form of message passing]
 
@@ -1619,31 +1616,12 @@ performed in those circumstances.
 
 \bibliographystyle{unsrt}
 \bibliography{%
-\bib{wolpert-tec97},%
-\bib{merris-01},%
-\bib{pso/clerc-tec02},%
-\bib{pso/kennedy-icnn95},%
-\bib{pso/bratton-sis07},%
-\bib{pso/largeswarms/perez-emc05},%
-\bib{pso/largeswarms/montes-gecco08.bib},%
-\bib{pso/topology/liang-sis05.bib},%
-\bib{pso/parallel/belal-ijicis04},%
-\bib{pso/parallel/chu-sci06},%
-\bib{pso/parallel/jin-aps05},%
-\bib{pso/parallel/koh-ijnme06},%
-\bib{pso/parallel/mostaghim-report06},%
-\bib{pso/parallel/parsopoulos-aia04},%
-\bib{pso/parallel/schutte-ijnme04},%
-\bib{pso/parallel/venter-wcsmo05},%
-\bib{ga/poli-ai06},%
-\bib{sim-anneal/parallel/witte-tpds91.bib},%
-\bib{pso/topology/kennedy-cec02.bib},%
-\bib{pso/topology/mohais-cec04.bib},%
-\bib{pso/topology/jordan-gecco08.bib},%
-\bib{pso/topology/clerc-oep03.bib},%
-\bib{pso/topology/miranda-ijcir08.bib},%
-\bib{pso/topology/mendes-phd04.bib},%
-\bib{aml/mcnabb-cec07},%
-\bib{aml/mcnabb-cec09}}
+../../../bib/aml/bib,%
+../../../bib/pso/general/bib,%
+../../../bib/pso/parallel/bib,%
+../../../bib/pso/topology/bib,%
+../../../bib/sim-anneal/parallel/bib,%
+../../../bib/ga/bib,%
+}
 
 \end{document}
