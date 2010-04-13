@@ -335,18 +335,16 @@ have seen~\cite{bratton-2007-defining-a-standard-for-pso}.  The parameters \(
 required to ensure convergence (2.05, 2.05, and .73,
 respectively)~\cite{clerc-2002-constricted-pso}. 
 
-Changing the
-neighborhood topology has a significant effect on the performance of the
-algorithm and this effect varies widely by function type.  The two most common
-topologies used in the literature are the Ring topology and the Complete
-topology~\cite{bratton-2007-defining-a-standard-for-pso}.  In the Ring
-topology, each particle has one neighbor to either side of it; in the Complete
-topology, every particle is a neighbor to every other particle.  In all
-topologies a particle is also a neighbor to itself in that its own position and
-value are considered when updating the particle's neighborhood best, $\nbest$.
-Thus with $p$ particles, using the Ring topology each particle with index $i$
-has three neighbors: $i-1$, $i$ (itself), and $i+1$.  With the Complete
-topology, each particle has $p$ neighbors.
+Changing the way neighbors are defined (often called the ``topology'' in the
+literature) has a significant effect on the performance of the algorithm.  In
+the Ring topology, each particle has one neighbor to either side of it; in the
+Complete topology, every particle is a neighbor to every other
+particle~\cite{bratton-2007-defining-a-standard-for-pso}.  In all topologies a
+particle is also a neighbor to itself in that its own position and value are
+considered when updating the particle's neighborhood best, $\nbest$.  Thus with
+$p$ particles, using the Ring topology each particle with index $i$ has three
+neighbors: $i-1$, $i$ (itself), and $i+1$.  With the Complete topology, each
+particle has $p$ neighbors.
 
 In this paper we use these topologies as well as a parallel adaptation of the
 Complete topology, called Random, that has been shown to approximate the
@@ -361,7 +359,7 @@ Random topologies, all particles have three neighbors.
 
 The PSO algorithm can be trivially parallelized by distributing the processing
 needed for each particle on across processors.  But as we have seen in
-\fig{fig:evals-sphere}, for some functions, and for large numbers of
+\fig{evals-sphere}, for some functions, and for large numbers of
 processors, just adding particles reaches a point of diminishing returns.
 That is, adding processors does not help us reach any given level of fitness
 appreciably faster.  Instead of adding particles we employ a speculative
@@ -377,18 +375,17 @@ will only describe the case of the Ring topology, this method can easily be
 extended to arbitrary topologies.
 
 The refactoring hinges on the idea that once the random coefficients are
-determined, there are only a few possibilities for the new values of updates
-to $\nbest$ and $\pbest$.  For the Ring topology there are 7 possible update
-cases, identified in Table~\ref{tab:evals}.  We label each case with an
-identifier referring to the source of the update: a minus sign ($-$)
-represents no update, $L$ represents an update to $\nbest$ coming from the
-left neighbor, $R$ represents an update to $\nbest$ coming from the right
-neighbor, and $S$ represents an update to either $\pbest$ or $\nbest$ coming
-from the particle itself.  As an example, $\casexn$ refers to the case that
-the particle finds a new personal best, but neither it nor its neighbors found
-a position that updated its neighborhood best.  In the equations that follow,
-we refer to an unspecified update case as $\casegen$, and to the set of cases
-collectively as $\caseset$.
+determined, there are only a few possibile updates to $\nbest$ and $\pbest$.
+For the Ring topology there are 7 possible update cases, identified in
+Table~\ref{tab:evals}.  We label each case with an identifier referring to the
+source of the update: a minus sign ($-$) represents no update, $L$ represents
+an update to $\nbest$ coming from the left neighbor, $R$ represents an update
+to $\nbest$ coming from the right neighbor, and $S$ represents an update to
+either $\pbest$ or $\nbest$ coming from the particle itself.  As an example,
+$\casexn$ refers to the case that the particle finds a new personal best, but
+neither it nor its neighbors found a position that updated its neighborhood
+best.  In the equations that follow, we refer to an unspecified update case as
+$\casegen$, and to the set of cases collectively as $\caseset$.
 
 \begin{table}
   \caption{All possible updates for a particle with two neighbors}
@@ -415,14 +412,15 @@ collectively as $\caseset$.
   \end{tabular}
 \end{table}
 
-For each case $\casegen \in \caseset$, we introduce an indicator function
-$\indic_{t}^{\casegen}$.  This function is 1 for the realized case from
-Table~\ref{tab:evals} and 0 for the other cases.  We can then sum over all of
-the cases, and the indicator function will make all of the terms drop to zero
-except for the case that actually occurs.  Although this update is usually
-implemented using if-statements, it is convenient to describe it as a
-mathematical expression.  For example, the indicator function for the specific
-case $\casexn$ can be written as follows:
+In order to incorporate the determination of which case occurs into the
+position and velocity update equations, we introduce an indicator function
+$\indic_{t+1}^{\casegen}$ for each case $\casegen \in \caseset$.  When
+$\casegen$ corresponds to the case actually taken by PSO,
+$\indic_{t+1}^{\casegen}$ evaluates to 1; otherwise it evaluates to 0.  We can
+then sum over all of the cases, and the indicator function will make all of the
+terms drop to zero except for the case that actually occurs.  For example, the
+indicator function for the specific case $\casexn$ can be written as follows:
+
 \begin{align}
   \nonumber
 	\indic_{t+1}^{\casexn} & (\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
@@ -459,7 +457,7 @@ iteration $t$:
 In the same way we can create notation for the position update function by
 substituting into~\eqref{eq:posupdate}.  For compactness, we will drop the
 parameters to $\specvel_{t+1}^{\casegen}$ since they can be inferred from the
-subscripts on $\indic_{t+1}^{\casegen}$.
+subscripts.
 \begin{align}
 \label{eq:defpcasegen}
 	\specpos_{t+1}^{\casegen} & (\ppos_{t}, \pvel_{t}, \leftn_{t},
