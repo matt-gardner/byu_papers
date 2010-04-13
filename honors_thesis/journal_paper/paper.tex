@@ -151,15 +151,16 @@ iterations go any faster.
 
 For many functions there comes a point of diminishing returns with respect to
 adding particles.  In \fig{evals-sphere} we show the value obtained after
-20,000 function evaluations (not iterations) as a function of swarm size for
+50,000 function evaluations (not iterations) as a function of swarm size for
 the well-know benchmark function Sphere (20 dimensions, reporting the average
-of thirty runs).  Increasing the swarm size from 10 to 50 has a significant
-effect on the value obtained.  However, increasing the swarm size from 100 to
-200 makes the algorithm less efficient, that is, it reduces the progress the
-algorithm makes per evaluation.  For this reason, previous work has recommended
-the use of a swarm size of 50 for this
-function~\cite{bratton-2007-defining-a-standard-for-pso}.  Thus, in at least
-some cases, adding particles indefinitely will not yield an efficient
+of twenty runs).  Increasing the swarm size from 5 to 10 has a significant
+effect on the value obtained.  However, increasing the swarm size from 16 to 30
+makes the algorithm less efficient, that is, it reduces the progress the
+algorithm makes per evaluation.  Other functions show similar trends, though
+often the optimal swarm size is slightly larger.  For this reason, previous
+work has recommended the use of a swarm size of 50 for
+PSO~\cite{bratton-2007-defining-a-standard-for-pso}.  Thus, in at least some
+cases, adding particles indefinitely will not yield an efficient
 implementation. 
 
 \begin{figure}
@@ -534,35 +535,22 @@ be ignored, and might just as well never have been computed.  We call the set
 of computations $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$
 ``speculative children'' because only one of them will be needed.
 
-This refactoring comes at significant expense; instead of just computing
-$\ofunc(\ppos_{t})$ and then $\ofunc(\ppos_{t+1})$ in the usual way, this
-refactored PSO computes $\ofunc(\ppos_{t})$ and all of the
-$\ofunc(\specpos_{t+1}^{c})$, eight function evaluations in this case.  The
-potential value of these speculative children lies in the fact that we can
-perform the computation needed for both iteration $t$ and iteration $t+1$ at
-the same time.  Remember that our intent is to accelerate parallel PSO and that
-we are interested in objective functions that have at least non-trivial
-computational complexity.  That is, we assume that computing
-$\ofunc(\ppos_{t})$ is the computationally difficult part of one iteration of
-PSO.
+To see the value of this refactoring, suppose that 1000 processors are
+available, and that the evaluation of the function to be optimized takes one
+hour.  If we only want a swarm of 100 particles, 900 of the processors would be
+sitting idle for an hour at every iteration, and it would take two hours to run
+two iterations.  If instead we perform speculative evaluation, sending each of
+the $\ofunc(\specpos_{t+1}^{c})$ to be computed at the same time as
+$\ofunc(\ppos_{t})$, we would use 800 of the 1000 processors and perform two
+iterations in one hour.
 
-Suppose that unlimited processors were available and that the evaluation of
-the objective function took one hour. Suppose also that for each particle the
-computations $\ofunc(\ppos_{t})$ and all of the $\ofunc(\specpos_{t+1}^{c})$
-were sent to separate processors and completed in parallel.  Once the values
-of $\ofunc(\ppos_{t})$ have been computed for all particles, the computation
-needed to determine the values of the indicator functions $\indic_{t+1}^{c}$
-and to complete iteration $t+1$ is inconsequential.  In this environment all
-of the function evaluations needed for two iterations of PSO could be
-completed in just one hour where as the conventional implementation would
-require two hours for those same two iterations.
-
-However, we do not have an infinite number of processors at our disposal, and
-performing speculative evaluation significantly increases the number of
-function evaluations needed in PSO.  We show in the rest of this paper that in
-many, though not all, instances the extra performance achieved by being able to
-do more iterations at a time outweighs the benefit that would have been gained
-by merely increasing the number of particles in the swarm.
+In order to do two iterations at once, we must use 8 times as many processors
+as there are particles in the swarm.  If we were not performing speculative
+evaluation, those processors might very well be used to add particles to the
+swarm.  This then raises the question of whether a swarm of 100 particles doing
+twice as many iterations outperforms a swarm of 800 particles.  We show in the
+rest of this paper that in many, though not all, instances, a smaller swarm
+performing more iterations does in fact outperform a larger swarm.
 
 The number of speculative evaluations needed per particle depends on the number
 of neighbors each particle has.  The number of update cases in a topology where
