@@ -119,11 +119,9 @@ computationally intensive problems, PSO needs to run in parallel.
 Within the last few years, researchers have begun to recognize the need to
 develop parallel implementations of PSO, publishing many papers on the subject.
 The methods they have used include various synchronous algorithms
-\cite{chu-2006-intelligent-parallel-pso, jin-2005-pso-antenna-designs,
-parsopoulos-2004-parallel-vector-evaluated-pso,
+\cite{chu-2006-intelligent-parallel-pso,
 schutte-2004-parallel-global-optimization-with-pso} and asynchronous algorithms
-\cite{mostaghim-2006-multi-objective-pso-on-grids,
-venter-2005-parallel-pso-asynchronous-evaluations}.  Parallelizing the
+\cite{venter-2005-parallel-pso-asynchronous-evaluations}.  Parallelizing the
 evaluation of the objective function can also be done in some cases, though
 that is not an adaption of the PSO algorithm itself and thus is not the focus
 of this paper.
@@ -154,7 +152,7 @@ implementation.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\columnwidth]{evals_sphere}
+  \includegraphics[width=.45\columnwidth]{evals_sphere}
   \caption{Function Sphere with various swarm sizes. Error bars show median and
   10th and 90th percentiles.}
   \label{fig:evals-sphere}
@@ -196,7 +194,7 @@ The balance of this paper is organized as follows. \sec{pso} describes the
 particle swarm optimization algorithm.  \sec{sepso} describes how speculative
 evaluation can be done in parallel PSO to perform two iterations at once, then
 presents a comparison of the speculative algorithm with the original PSO.  In
-\sec{conclusion} and \sec{future} we conclude and discuss future work.
+\sec{conclusion} we conclude.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -392,13 +390,6 @@ Similarly, the position update equation~\eqref{eq:posupdate} becomes:
 	= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specpos_{t+1}^{c} 
 \end{align}
 
-The value of the objective function at $\ppos_{t+1}$ is given by:
-\begin{align}
-\label{eq:val2update}
-	\ofunc (\ppos_{t+1}) = \sum_{c \in \caseset} \ \indic_{t+1}^{c}
-	\ \ofunc(\specpos_{t+1}^{c})
-\end{align}
-
 Returning our attention to the computation of $\ppos_{t+1}$ in
 \eqref{eq:pos2update} and writing it with the parameters which were omitted
 above, we obtain:
@@ -412,13 +403,13 @@ above, we obtain:
 	\pbest_{t-1},\nbest_{t-1},\pURand_{t}, \nURand_{t}) \bigr]
 \end{align}
 
-In this form the important point to notice is that there are only $7$ values (for
-this Ring topology) in the set $\{\specpos_{t+1}^{\casegen}: \casegen \in
+In this form the important point to notice is that there are only $7$ values
+(for this Ring topology) in the set $\{\specpos_{t+1}^{\casegen}: \casegen \in
 \caseset\}$ and that none of them depend upon $f(\ppos_t)$ or any other
 objective function evaluation at iteration $t$. Note also that while there are
 random numbers in the equation, they are assumed fixed once drawn for any
-particular particle at a specific iteration.  Thus PSO has been refactored
-such that the algorithm can begin computing all $7$ of the objective function
+particular particle at a specific iteration.  Thus PSO has been refactored such
+that the algorithm can begin computing all $7$ of the objective function
 evaluations potentially needed in iteration $t+1$ \emph{before} $f(\ppos_t)$ is
 computed.  Once the evaluation of $f(\ppos_{t})$ is completed for all particles
 only one of the indicator functions $\indic_{t+1}^{\casegen}$ will be set to 1;
@@ -433,98 +424,58 @@ computations $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$
 
 To see the value of this refactoring, suppose that $800$ processors are
 available, and that the evaluation of the function to be optimized takes one
-hour.  If we only want a swarm of $100$ particles, $700$ of the processors would be
-sitting idle for an hour at every iteration, and it would take two hours to run
-two iterations.  If instead we perform speculative evaluation, sending each of
-the $\ofunc(\specpos_{t+1}^{c})$ to be computed at the same time as
-$\ofunc(\ppos_{t})$, we could create a swarm of size 100, each particle with $7$ speculative
-evaluations ($700$ processors dedicated to speculative evaluation), thus using all $800$
-processors and performing two
-iterations in one hour.
+hour.  If we only want a swarm of $100$ particles, $700$ of the processors
+would be sitting idle for an hour at every iteration, and it would take two
+hours to run two iterations.  If instead we perform speculative evaluation,
+sending each of the $\ofunc(\specpos_{t+1}^{c})$ to be computed at the same
+time as $\ofunc(\ppos_{t})$, we could create a swarm of size 100, each particle
+with $7$ speculative evaluations ($700$ processors dedicated to speculative
+evaluation), thus using all $800$ processors and performing two iterations in
+one hour.
 
-In order to do two iterations at once, we use 8 times as many processors
-as there are particles in the swarm.  If these processors were not performing speculative
-evaluation, they might instead be used for function evaluation needed to support a large swarm.
-This raises the question of whether a swarm of 100 particles doing
-twice as many iterations outperforms a swarm of 800 particles.  We show in the
-rest of this paper that in many, instances, a smaller swarm
-performing more iterations does in fact outperform a larger swarm.
-We acknowledge that both intuition and prior research~\cite{mcnabb-2009-large-particle-swarms}
-indicate that the optimization of deceptive functions benefits greatly from
-large and even very large swarm sizes. Thus this work will focus on less deceptive functions.
-
-\subsection{Topology}
-\label{sec:topology}
-
-The number of speculative evaluations needed per particle depends on the number
-of neighbors each particle has.  The number of update cases in a topology where
-each particle has $n$ neighbors is $2(n+1)$; there are two possibilities for
-updates to $\pbest$ (updated by the particle itself and not updated), and $n+1$
-possibilities for updates to $\nbest$ (updated by each neighboring particle and
-not updated).  When the particle is also a neighbor to itself, as is always the
-case in commonly used topologies, one of the cases can be eliminated, as a
-particle cannot be the source of an update to its neighborhood best while not
-also updating its personal best.  Thus we have $2(n+1)-1$, or $2n+1$,
-speculative evaluations per particle.  In a swarm with $p$ particles and $n$
-neighbors per particle, $(2n+1)p$ speculative evaluations are needed.
-
-Because the number of speculative evaluations depends on the number of
-neighbors a particle has, the choice of topology is an important one.  The use
-of the Complete topology, where every particle is a neighbor to every other
-particle, would require $O(p^2)$ speculative evaluations per iteration.
-Clearly it is much more desirable to have a sparse topology, where $O(np)$ is
-much smaller than $O(p^2)$.  However, some functions are better optimized with
-the Complete topology and the quick spread of information it entails than with
-sparse topologies.  In such cases, we use the Random topology 
-which has been shown to
-effectively approximate the rapid information flow of the Complete topology.
-In our implementation of the random topology there are to randomly chosen neighbors
-(chosen anew at every iteration)~\cite{mcnabb-2009-large-particle-swarms}.
-
-In the rest of this
-section we move from the mathematics of our method to its implementation.
-First we discuss the relatively easy case of a centralized parallel PSO
-algorithm with a master computer and many slaves.  In such an architecture, the
-master keeps track of all necessary information with only trivial message
-passing needed.  Then we discuss the more complicated case of a distributed
-algorithm, where each particle is on its own and needs to send and receive
-messages to and from other particles.  Finally we discuss the further
-complications of a dynamic topology, where a particle's neighbors change from
-one iteration to another.
-
-\subsection{Terminology}
-
-To aid in describing our implementation, we introduce a few terms. We use $\p_t$ to denote a particle at
-iteration $t$ and $\s_{t+1}$ to denote one of $\p_t$'s speculative children,
-corresponding to one of the rows in Table~\ref{tab:evals}.  $\n_t$ is a
-neighbor of particle $\p_t$.  Sets of particles are given by $\pset$, $\sset$,
-or $\nset$, whereas single particles are simply $\p$, $\s$, or $\n$.
-
-We separate each iteration of PSO into several steps.  First there is the
-motion step, where a particle updates its position and velocity.  Then a
-particle's position is evaluated, and the particle updates its current value
-and its personal best.  Finally, a particle gets information from its neighbors
-and updates its neighborhood best.
-
-A particle at iteration $t-1$ that has been moved to iteration $t$ using
-\eqref{eq:velupdate}~and~\eqref{eq:posupdate}, but whose position has
-not yet been evaluated, is denoted as $\noeval{\p}_t$.  Once its position has
-been evaluated, but it has still not yet received information from its
-neighbors, it is denoted as $\nonbest{\p}_t$.  Only when the particle has
-updated its neighborhood best is it a complete particle at iteration $t$.  It
-is then simply denoted as $\p_t$.
+In order to do two iterations at once, we use 8 times as many processors as
+there are particles in the swarm.  If these processors were not performing
+speculative evaluation, they might instead be used for function evaluation
+needed to support a large swarm.  This raises the question of whether a swarm
+of 100 particles doing twice as many iterations outperforms a swarm of 800
+particles.  We show in the rest of this paper that in many, instances, a
+smaller swarm performing more iterations does in fact outperform a larger
+swarm.  We acknowledge that both intuition and prior
+research~\cite{mcnabb-2009-large-particle-swarms} indicate that the
+optimization of deceptive functions benefits greatly from large and even very
+large swarm sizes. Thus this work will focus on less deceptive functions.
 
 \subsection{Implementation}
+\label{sec:implementation}
 
-In a centralized, or Master-Slave, parallel PSO algorithm, one machine, the
-master, keeps track of all necessary information, and all other machines are
-merely used to evaluate the objective function at various positions as directed
-by the master~\cite{belal-2004-parallel-models-for-pso}.  To perform
-speculative evaluation in such an architecture, the master generates the
-positions to evaluate speculatively as in \eqref{eq:defpcasegen}.  After having
-the slaves evaluate the objective function at all necessary positions, the
-master then decides which position to accept for each particle, as in
-\eqref{eq:val2updatelong}.  The outline of the speculative evaluation in PSO (SEPSO) algorithm is given in
+The number of speculative evaluations needed per particle depends on the number
+of neighbors each particle has.  In a swarm with $p$ particles and $n$
+neighbors per particle, $(2n+1)p$ speculative evaluations are necessary (each
+additional neighbor adds two rows to Table~\ref{tab:evals}).  This dependence
+on the number of neighbors necessitates a wise choice of topology.  The use of
+the Complete topology, where every particle is a neighbor to every other
+particle, would require $O(p^2)$ speculative evaluations per iteration.  It is
+much more desirable to have a sparse topology, where $O(np)$ is much smaller
+than $O(p^2)$.  However, some functions are better optimized with the Complete
+topology and the quick spread of information it entails than with sparse
+topologies.  In such cases, we use the Random topology described in \sec{pso}.
+
+To aid in describing our implementation, we introduce a few terms. We use
+$\p_t$ to denote a particle at iteration $t$ and $\s_{t+1}$ to denote one of
+$\p_t$'s speculative children, corresponding to one of the rows in
+Table~\ref{tab:evals}.  $\n_t$ is a neighbor of particle $\p_t$.  Sets of
+particles are given by $\pset$, $\sset$, or $\nset$, whereas single particles
+are simply $\p$, $\s$, or $\n$.
+
+A particle at iteration $t-1$ that has been moved to iteration $t$ using
+\eqref{eq:velupdate}~and~\eqref{eq:posupdate}, but whose position has not yet
+been evaluated, is denoted as $\noeval{\p}_t$.  Once its position has been
+evaluated, but it has still not yet received information from its neighbors, it
+is denoted as $\nonbest{\p}_t$.  Only when the particle has updated its
+neighborhood best is it a complete particle at iteration $t$.  It is then
+simply denoted as $\p_t$.
+
+The outline of the speculative evaluation in PSO (SEPSO) algorithm is given in
 \alg{centralized}.
 
 \begin{algorithm}
@@ -553,27 +504,6 @@ master then decides which position to accept for each particle, as in
 	\STATE Repeat from Step 1 until finished
   \end{algorithmic}
 \end{algorithm}
-
-In a distributed parallel PSO implementation, individual processors not only perform
-evaluations of particles, but also their movement.  The information for each
-particle is not held by a central machine that directs the algorithm; instead,
-each processor has the information for the particle or particles that it is in
-charge of and must perform the steps of the algorithm for those
-particles.  Messages such as
-values and positions for the neighborhood best are sent between processors.
-There may still be some machine that collects information from all of the
-particles and outputs the result of the algorithm, though that machine's
-importance is much less than in centralized algorithms.
-In some distributed frameworks rounds of message passing can be expensive.
-A N\:aive implementation of speculative evaluation
-uses three rounds of message passing for every two iterations
-(corresponding to steps 2, 5 and 10 in \alg{centralized}).  It is possible to
-perform speculative evaluation in PSO with only one round of communication per
-two iterations. 
-Dynamic topologies like the random topology discussed above, further complicate the
-needed message passing.
-However, the message passing implementation is not particularly
-interesting, but is tedious thus, in the interest of space, is omitted.
 
 \section{Using All Speculative Evaluations}
 \label{sec:extra}
@@ -636,9 +566,9 @@ the performance of PSO~\cite{mcnabb-2009-large-particle-swarms}. They generally 
 seen earlier in \fig{evals-sphere}, but these extra particles give standard PSO the best possible
 context and full access to the same resources as SEPSO.
 
-As discussed in \sec{topology}
+As discussed in \sec{implementation},
 where the Complete topology would normally be used, we use a Random topology in
-our speculative algorithm, as complete leads to an explosion of speculative
+our speculative algorithm, as Complete leads to an explosion of speculative
 evaluations.
 For the standard PSO baseline we have included experiments with the
 ring and the random topologies, both with two neighbors, as well as for the complete topology.
@@ -668,7 +598,7 @@ in this problem.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\columnwidth]{sphere1}
+  \includegraphics[width=.45\columnwidth]{sphere1}
   \caption{Function Sphere with a swarm that uses 240 processors per round of
   evaluations.  Speculative algorithms have a swarm of 30 particles and do two
   iterations per round, while standard PSO algorithms use 240 processors and do
@@ -695,7 +625,7 @@ the global optimum essentially 100\% of the time.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\columnwidth]{griewank2}
+  \includegraphics[width=.45\columnwidth]{griewank2}
   \caption{Function Griewank with a swarm that uses 800 processors per round of
   evaluations.}
   \label{fig:griewank2}
@@ -758,55 +688,11 @@ iterations performed.
 There are still other functions for which it seems there is never enough
 exploration, such as the Rastrigin function.  It has been shown that up to 4000
 particles there is no point at which ``enough'' exploration has been
-done~\cite{mcnabb-cec09}.  For those functions the correct use of processors
-cannot be easily prescribed and depends largely on the desired outcome and how
-many processors are available.  It is likely that the best thing to do with
-those functions is to use all processors to add particles to the swarm and do
-no speculative evaluation.
-
-\section{Future Work}
-\label{sec:future}
-
-This work represents the first attempt of which we are aware at using
-additional processors in parallel with PSO to do something other than either
-add particles to the swarm or parallelize the evaluation of the objective
-function.  We anticipate that many future advancements can be made.  For
-example, our technique required speculatively evaluating every possible next
-position of each particle.  The number of speculative evaluations could
-potentially be greatly reduced by using statistics for which branch of motion
-particles most often follow.  Only the subset of the most probable next
-locations would then be evaluated.  Using an asynchronous PSO variant may also
-be helpful in this case, allowing particles to be at different iterations in
-case the correct branch was not guessed and needs to be evaluated separately.
-
-Another possible advancement would be to reduce communication costs by dropping
-some of the inter-processor messages in distributed frameworks.  The PSO
-algorithm would have to be adapted to work with less information, perhaps not
-requiring that each processor have completely accurate information about what
-neighboring particles are doing.
-
-Still another possibility is to view the set of possible evaluations as an
-infinite tree.  Each level in the tree is an iteration, and the branches on
-each level represent the possible next positions of the particle.  One need not
-simply evaluate all of one level for each particle---perhaps going two or three
-iterations ahead on the most likely path would perform better.
-
-We have mentioned that this technique has been previously used to parallelize
-simulated annealing.  Any other optimization algorithm that only depends on
-current sampling positions when computing the next position to sample can be
-parallelized with this technique.  In particular, genetic algorithms produce
-future generations by combining individuals from the current generation.  With
-a large population size there would be an unwieldy amount of possible future
-individuals, but the potential exists to modify the algorithm to use some kind
-of speculative evaluation.  A related but quite distinct technique for reducing
-computation in evolutionary algorithms was proposed
-in~\cite{poli-2006-backward-chaining-evolutionary-algorithms}.
-
-Large parallel clusters are often required to successfully optimize practical
-modern problems.  To properly use PSO with such clusters, a balance needs to be
-made between using processors to increase the swarm size and using them to
-increase the speed of the algorithm, or for perhaps as yet unconsidered
-techniques.  This work is a first step in that direction.
+done~\cite{mcnabb-2009-large-particle-swarms}.  For those functions the correct
+use of processors cannot be easily prescribed and depends largely on the
+desired outcome and how many processors are available.  It is likely that the
+best thing to do with those functions is to use all processors to add particles
+to the swarm and do no speculative evaluation.
 
 \bibliographystyle{unsrt}
 \bibliography{%
