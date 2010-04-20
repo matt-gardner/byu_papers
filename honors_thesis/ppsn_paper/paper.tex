@@ -322,7 +322,6 @@ $\indic_{t+1}^{\casegen}$ evaluates to 1; otherwise it evaluates to 0.  We can
 then sum over all of the cases, and the indicator function will make all of the
 terms drop to zero except for the case that actually occurs.  For example, the
 indicator function for the specific case $\casexn$ can be written as follows:
-$f(x)$
 \begin{align}
   \nonumber
 	&\indic_{t+1}^{\casexn}\parens{
@@ -365,40 +364,45 @@ iteration $t$:
 \end{align}
 
 In the same way we can create notation for the position update function by
-substituting into~\eqref{eq:posupdate}.  For compactness, we will drop the
-parameters to $\specvel_{t+1}^{\casegen}$ since they can be inferred from the
-subscripts.
+substituting into~\eqref{eq:posupdate}:
 \begin{align}
-\label{eq:defpcasegen}
+    \nonumber
 	\specpos_{t+1}^{\casegen} & \parens{\ppos_{t}, \pvel_{t}, \leftn_{t},
 	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t}}
-	 = \ppos_{t} + \specvel_{t+1}^{\casegen}
+        \\
+    \label{eq:defpcasegen}
+        &=
+	\ppos_{t} + \specvel_{t+1}^{\casegen}
+	\parens{\pvel_t, \ppos_{t}, \leftn_{t}, \rightn_{t},
+	\pbest_{t-1}, \nbest_{t-1}, \pURand_{t}, \nURand_{t}}
 \end{align}
 
 With this notation we can re-write the original PSO velocity
 equation~\eqref{eq:velupdate}, introducing our sum over cases with the
-indicator functions.  Again, we represent the indicator functions and velocity
-functions without the parameters for compactness.
-The velocity update from~\eqref{eq:velupdate} becomes:
+indicator functions.
+The velocity~\eqref{eq:velupdate} and position~\eqref{eq:posupdate} equations become:
 \begin{align}
-\label{eq:vel2update}
-%\nonumber
-	\pvel_{t+1} 
-%		\constriction \bigl[ \pvel_t
-%			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
-%			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
-%			\ppos_{t}} \bigr] \\
-%\nonumber
-%	&= \sum_{c \in \caseset} \indic_{t+1}^{c} \ \constriction \bigl[ \pvel_t
-%			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
-%			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
-%			\ppos_{t}} \bigr]  \\
-	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specvel_{t+1}^{c} 
-\end{align}
-
-Similarly, the position update from~\eqref{eq:posupdate}
-can also be rewritten using the indicator functions, now with the parameters reinserted:
-\begin{align}
+\nonumber
+  \pvel_{t+1} &= \sum_{c \in \caseset} \bigl[
+	\indic_{t+1}^{c}\parens{
+	  \ofunc\parens{\ppos_{t}},
+	  \ofunc\parens{\leftn_{t}},
+	  \ofunc\parens{\rightn_{t}},
+	  \ofunc\parens{\pbest_{t-1}},
+	  \ofunc\parens{\nbest_{t-1}}
+	  } \\
+\label{eq:specvelupdate}
+	& \quad \quad \quad \specvel_{t+1}^{c}\parens{
+	  \ppos_{t},
+	  \pvel_{t},
+	  \leftn_{t},
+	  \rightn_{t},
+	  \pbest_{t-1},
+	  \nbest_{t-1},
+	  \pURand_{t},
+	  \nURand_{t}
+	  }\bigr]
+\\
 \nonumber
   \ppos_{t+1} &= \sum_{c \in \caseset} \bigl[
 	\indic_{t+1}^{c}\parens{
@@ -408,7 +412,7 @@ can also be rewritten using the indicator functions, now with the parameters rei
 	  \ofunc\parens{\pbest_{t-1}},
 	  \ofunc\parens{\nbest_{t-1}}
 	  } \\
-\label{eq:val2updatelong}
+\label{eq:specposupdate}
 	& \quad \quad \quad \specpos_{t+1}^{c}\parens{
 	  \ppos_{t},
 	  \pvel_{t},
@@ -513,7 +517,7 @@ The outline of the speculative evaluation in PSO (SEPSO) algorithm is given in
 	\FORALL{$\p_t$}
 	\STATE Pick $\nonbest{\s}_{t+1}$ from $\nonbest{\sset}_{t+1}$ that matches
 	  the branch taken by $\p_t$ according to
-	  \eqref{eq:val2updatelong}.
+	  \eqref{eq:specposupdate}.
 	\STATE Pass along personal and neighborhood best values obtained by $\p_t$,
 	  making $\nonbest{\p}_{t+1}$
 	\ENDFOR
