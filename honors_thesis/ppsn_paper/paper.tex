@@ -97,8 +97,8 @@ Particle swarm optimization (PSO) has previously been parallelized only by
 adding more particles to the swarm or by parallelizing the evaluation of the
 objective function.  However, some functions are more efficiently optimized with more
 iterations and fewer particles.  Accordingly, we take inspiration from 
-speculative execution commonly performed in modern processors and propose what
-we call speculative evaluation in PSO (SEPSO).  Future positions of the particles are
+speculative execution performed in modern processors and propose
+speculative evaluation in PSO (SEPSO).  Future positions of the particles are
 speculated and evaluated in parallel with current positions, performing two
 iterations of PSO at once.
 
@@ -163,32 +163,31 @@ implementation.
 
 In this paper we consider PSO parallelization strategies for clusters of
 hundreds of processors and functions for which a single evaluation will take
-at least seconds, but probably minutes.  Our purpose
-is to explore the question of what to do with a hundred processors when 50 or
-100 particles is the recommended swarm size, and simply increasing the swarm
-size encounters diminishing returns.
+at least several seconds.  Our purpose
+is to explore the question of what to do with hundreds of processors when 50 or
+100 particles is the ideal swarm size, and simply adding particles
+yields diminishing returns.
 
 To solve this problem, we propose a method for performing two iterations of PSO
 at the same time in parallel that we call speculative evaluation.  The name
 comes from an analogy to speculative execution (also known as branch
 prediction) a technique commonly used in processors.  Modern processors, when
-faced with a branch on which they must wait (e.g. a memory cache miss), guess
+faced with a branch on which they must wait (e.g., a memory cache miss), guess
 which way the branch will go and start executing, ensuring that any changes
 can be undone.  If the processor guesses right, execution is
 much farther ahead than if it had idly waited on the memory reference.  If
 it guesses wrong, execution restarts where it would have been anyway.  
 
 In this paper we show that the results of standard PSO can be reproduced
-\emph{exactly}, two iterations at a time, using a speculative approach adapted
-from speculative execution. We prove that the standard PSO equation can be
+\emph{exactly}, two iterations at a time, using a speculative approach similar
+to speculative execution. We prove that the standard PSO equation can be
 factored such that a set of speculative positions can be found which will
 \emph{always} include the position computed in the next iteration.  By
 computing the value of the objective function for each of the speculative
 positions at the same time the algorithm evaluates the objective function for
 the current position, it is possible to know the objective function values for
-both the current and the next iteration at the same time.  We demonstrate this
-principle by implementation and show that it produces exactly the same results
-as standard PSO, but two iterations at a time.  The resulting implementation
+both the current and the next iteration at the same time.
+The resulting implementation
 runs efficiently on large clusters where the number of processors is much
 larger than a typical or reasonable number of particles, producing better
 results in less ``wall-clock'' time.
@@ -203,11 +202,10 @@ presents a comparison of the speculative algorithm with the original PSO.  In
 \label{sec:pso}
 
 Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
-Eberhart~\cite{kennedy-1995-particle-swarm-optimization}.  The algorithm is
-used to intelligently search a multi-dimensional space by mimicking the
-swarming and flocking behavior of birds and other animals. It is a social
-algorithm that depends on interaction between particles to quickly and
-consistently approximate the optimal solution to a given objective function.
+Eberhart~\cite{kennedy-1995-particle-swarm-optimization}.  This social
+algorithm, inspired by the flocking behavior of birds, is used to quickly and
+consistently find the global optimum of a given objective function in a
+multi-dimensional space.
 
 The motion of particles through the search space has three components: an
 inertial component that gives particles momentum as they move, a cognitive
@@ -237,8 +235,8 @@ have seen~\cite{bratton-2007-defining-a-standard-for-pso}.  The parameters \(
 required to ensure convergence (2.05, 2.05, and .73,
 respectively)~\cite{clerc-2002-constricted-pso}. 
 
-Changing the way neighbors are defined (often called the ``topology'' in the
-literature) has a significant effect on the performance of the algorithm.  In
+Changing the way neighbors are defined, usually called the ``topology,''
+has a significant effect on the performance of the algorithm.  In
 the Ring topology, each particle has one neighbor to either side of it; in the
 Complete topology, every particle is a neighbor to every other
 particle~\cite{bratton-2007-defining-a-standard-for-pso}.  In all topologies a
@@ -259,21 +257,22 @@ Random topologies, all particles have three neighbors.
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
 
-The PSO algorithm can be trivially parallelized by distributing the processing
-needed for each particle on across processors.  But as we have seen in
-\fig{evals-sphere}, for some functions, and for large numbers of
-processors, just adding particles reaches a point of diminishing returns.
-That is, adding processors does not help us reach any given level of fitness
-appreciably faster.  Instead of adding particles we employ a speculative
-evaluation approach that allows us to perform iterations two at a time.
+The PSO algorithm can be trivially parallelized by distributing the computation
+needed for each particle across processors.  But
+for some functions, as shown in \fig{evals-sphere},
+adding particles yields diminishing returns.
+That is, adding processors does not help reach any given level of fitness
+appreciably faster.  Instead of adding particles, speculative
+evaluation performs iterations two at a time.
 
-To do so we must first refactor PSO such that the determination of the value
-of the objective function is separate from the rest of the computation.  For
+Speculative evaluation is made possible by refactoring
+PSO such that evaluating the
+the objective function is separate from the rest of the computation.  For
 simplicity, this discussion will describe the case where PSO is performing
 function minimization using the Ring topology.  In this example, each particle
 has two neighbors, the ``right neighbor'' and ``left neighbor,'' whose
 positions are represented as $\rightn$ and $\leftn$ respectively.  Though we
-will only describe the case of the Ring topology, this method can easily be
+will only describe the case of the Ring topology, this method is easily
 extended to arbitrary topologies.
 
 The refactoring hinges on the idea that once the random coefficients $\pURand_{t}$ and $\pURand_{t}$ are
