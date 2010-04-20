@@ -16,6 +16,9 @@
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
 \newcommand{\alg}[1]{Algorithm~\ref{alg:#1}}
 
+% Mathy help
+\newcommand{\parens}[1]{\!\left(#1\right)}
+
 % Algorithmic changes
 \renewcommand{\algorithmicforall}{\textbf{for each}}
 
@@ -319,17 +322,26 @@ $\indic_{t+1}^{\casegen}$ evaluates to 1; otherwise it evaluates to 0.  We can
 then sum over all of the cases, and the indicator function will make all of the
 terms drop to zero except for the case that actually occurs.  For example, the
 indicator function for the specific case $\casexn$ can be written as follows:
-
+$f(x)$
 \begin{align}
   \nonumber
-	\indic_{t+1}^{\casexn} & (\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
-	\ofunc(\rightn_{t}) ,\ofunc(\pbest_{t-1}) ,\ofunc(\nbest_{t-1}))= \\
-  \label{eq:deficasexn}
-	&\begin{cases}
-	   1 & \text{if} \ [ \ofunc(\ppos_{t}) < \ofunc(\pbest_{t-1}) ]
-	    \wedge [ \ofunc(\nbest_{t-1}) < \ofunc(\ppos_{t}) ] \\
-	   &\quad \wedge \quad [ \ofunc(\nbest_{t-1}) < \ofunc(\leftn_{t}) ]
-	    \wedge [ \ofunc(\nbest_{t-1}) < \ofunc(\rightn_{t}) ] \\
+	&\indic_{t+1}^{\casexn}\parens{
+	  \ofunc\parens{\ppos_{t}},
+	  \ofunc\parens{\leftn_{t}},
+	  \ofunc\parens{\rightn_{t}},
+	  \ofunc\parens{\pbest_{t-1}},
+	  \ofunc\parens{\nbest_{t-1}}
+	  } \\
+  &\hspace{15pt}= \label{eq:deficasexn}
+	\begin{cases}
+	  1 & \text{if}~
+		\ofunc\parens{\ppos_{t}} < \ofunc\parens{\pbest_{t-1}}
+	    \,\text{and}\,
+		\ofunc\parens{\nbest_{t-1}} < \min\parens{
+		  \ofunc\parens{\ppos_{t}},
+		  \ofunc\parens{\leftn_{t}},
+		  \ofunc\parens{\rightn_{t}}
+		} \\
 	   0 & \text{otherwise}
 	\end{cases}
 \end{align}
@@ -343,13 +355,13 @@ position, and $\nbest_{t}=\nbest_{t-1}$, as $\nbest$ was not updated at
 iteration $t$:
 \begin{align}
 \nonumber
-	\specvel_{t+1}^{\casexn} & (\pvel_t, \ppos_{t}, \leftn_{t}, \rightn_{t},
-	\pbest_{t-1}, \nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
+	\specvel_{t+1}^{\casexn} & \parens{\pvel_t, \ppos_{t}, \leftn_{t}, \rightn_{t},
+	\pbest_{t-1}, \nbest_{t-1}, \pURand_{t}, \nURand_{t}} \\
 \label{eq:defvcasexn}
-		&= \constriction \bigl[ \pvel_{t} +
-			\pcoeff\pURand_{t}\otimes(\ppos_{t} - \ppos_{t})
-			+ \ncoeff\nURand_{t}\otimes(\nbest_{t-1} -
-			\ppos_{t}) \bigr]
+		&= \constriction \left[ \pvel_{t} +
+			\pcoeff\pURand_{t}\otimes\parens{\ppos_{t} - \ppos_{t}}
+			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t-1} -
+			\ppos_{t}} \right]
 \end{align}
 
 In the same way we can create notation for the position update function by
@@ -358,8 +370,8 @@ parameters to $\specvel_{t+1}^{\casegen}$ since they can be inferred from the
 subscripts.
 \begin{align}
 \label{eq:defpcasegen}
-	\specpos_{t+1}^{\casegen} & (\ppos_{t}, \pvel_{t}, \leftn_{t},
-	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t})
+	\specpos_{t+1}^{\casegen} & \parens{\ppos_{t}, \pvel_{t}, \leftn_{t},
+	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t}}
 	 = \ppos_{t} + \specvel_{t+1}^{\casegen}
 \end{align}
 
@@ -371,14 +383,14 @@ functions without the parameters for compactness.  The equation becomes:
 \nonumber
 	\pvel_{t+1} &=
 		\constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t})
-			+ \ncoeff\nURand_{t}\otimes(\nbest_{t} -
-			\ppos_{t}) \bigr] \\
+			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
+			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
+			\ppos_{t}} \bigr] \\
 \nonumber
 	&= \sum_{c \in \caseset} \indic_{t+1}^{c} \ \constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t})
-			+ \ncoeff\nURand_{t}\otimes(\nbest_{t} -
-			\ppos_{t}) \bigr]  \\
+			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
+			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
+			\ppos_{t}} \bigr]  \\
 \label{eq:vel2update}
 	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specvel_{t+1}^{c} 
 \end{align}
@@ -396,11 +408,24 @@ above, we obtain:
 \begin{align}
 \nonumber
   \ppos_{t+1} &= \sum_{c \in \caseset} \bigl[
-	\indic_{t+1}^{c}(\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
-	\ofunc(\rightn_{t}) ,\ofunc(\pbest_{t-1}) ,\ofunc(\nbest_{t-1})) \\
+	\indic_{t+1}^{c}\parens{
+	  \ofunc\parens{\ppos_{t}},
+	  \ofunc\parens{\leftn_{t}},
+	  \ofunc\parens{\rightn_{t}},
+	  \ofunc\parens{\pbest_{t-1}},
+	  \ofunc\parens{\nbest_{t-1}}
+	  } \\
 \label{eq:val2updatelong}
-	& \quad \quad \quad \specpos_{t+1}^{c}(\ppos_{t},\pvel_{t},\leftn_{t},\rightn_{t},
-	\pbest_{t-1},\nbest_{t-1},\pURand_{t}, \nURand_{t}) \bigr]
+	& \quad \quad \quad \specpos_{t+1}^{c}\parens{
+	  \ppos_{t},
+	  \pvel_{t},
+	  \leftn_{t},
+	  \rightn_{t},
+	  \pbest_{t-1},
+	  \nbest_{t-1},
+	  \pURand_{t},
+	  \nURand_{t}
+	  }\bigr]
 \end{align}
 
 In this form the important point to notice is that there are only $7$ values
