@@ -131,72 +131,55 @@ of this paper.
 
 These previous parallel techniques distribute the computation needed by the
 particles in the swarm over the available processors.  If more processors are
-available, these techniques increase the number of particles in the swarm,
-either by adding individual particles or by adding entire new sub-swarms, but
-in all cases the number of processors does not exceed the number of particles.
-The number of iterations of PSO that the algorithms can perform is thus
-inherently limited by the time it takes to evaluate the objective
-function---additional processors add more particles, but do not make the
-iterations go any faster.
+available, these techniques increase the number of particles in the swarm.  The
+number of iterations of PSO that the algorithms can perform is thus inherently
+limited by the time it takes to evaluate the objective function---additional
+processors add more particles, but do not make the iterations go any faster.
 
 For many functions there comes a point of diminishing returns with respect to
-adding particles.  In \fig{evals-sphere} we show the value obtained after
-50,000 function evaluations (not iterations) as a function of swarm size for
-the well-know benchmark function Sphere (20 dimensions, reporting the average
-of twenty runs).  Increasing the swarm size from 5 to 10 has a significant
-effect on the value obtained.  However, increasing the swarm size from 16 to 30
-makes the algorithm less efficient, that is, it reduces the progress the
-algorithm makes per evaluation.  Other functions show similar trends, though
-often the optimal swarm size is larger.  For this reason, previous
-work has recommended the use of a swarm size of 50 for
+adding particles.  Very small swarms do not produce enough exploration to
+consistently find good values, while large swarms result in more exploration
+than is necessary and waste computation.  For this reason, previous work has
+recommended the use of a swarm size of 50 for
 PSO~\cite{bratton-2007-defining-a-standard-for-pso}.  Thus, in at least some
 cases, adding particles indefinitely will not yield an efficient
 implementation. 
 
-\begin{figure}
-  \centering
-  \includegraphics[width=.45\columnwidth]{evals_sphere}
-  \caption{Function Sphere with various swarm sizes. Error bars show median and
-  10th and 90th percentiles.}
-  \label{fig:evals-sphere}
-\end{figure}
-
 In this paper we consider PSO parallelization strategies for clusters of
-hundreds of processors and functions for which a single evaluation will take
-at least several seconds.  Our purpose
-is to explore the question of what to do with hundreds of processors when 50 or
-100 particles is the ideal swarm size, and simply adding particles
-yields diminishing returns.
+hundreds of processors and functions for which a single evaluation will take at
+least several seconds.  Our purpose is to explore the question of what to do
+with hundreds of processors when 50 or 100 particles is the ideal swarm size,
+and simply adding particles yields diminishing returns.
 
 To solve this problem, we propose a method for performing two iterations of PSO
 at the same time in parallel that we call speculative evaluation.  The name
 comes from an analogy to speculative execution (also known as branch
-prediction) a technique commonly used in processors.  Modern processors, when
+prediction), a technique commonly used in processors.  Modern processors, when
 faced with a branch on which they must wait (e.g., a memory cache miss), guess
-which way the branch will go and start executing, ensuring that any changes
-can be undone.  If the processor guesses right, execution is
-much farther ahead than if it had idly waited on the memory reference.  If
-it guesses wrong, execution restarts where it would have been anyway.  
+which way the branch will go and start executing, ensuring that any changes can
+be undone.  If the processor guesses right, execution is much farther ahead
+than if it had idly waited on the memory reference.  If it guesses wrong,
+execution restarts where it would have been anyway.  
 
-In this paper we show that the results of standard PSO can be reproduced
-\emph{exactly}, two iterations at a time, using a speculative approach similar
-to speculative execution. We prove that the standard PSO equation can be
-factored such that a set of speculative positions can be found which will
-\emph{always} include the position computed in the next iteration.  By
-computing the value of the objective function for each of the speculative
-positions at the same time the algorithm evaluates the objective function for
-the current position, it is possible to know the objective function values for
-both the current and the next iteration at the same time.
-The resulting implementation
-runs efficiently on large clusters where the number of processors is much
-larger than a typical or reasonable number of particles, producing better
-results in less ``wall-clock'' time.
+We show that the results of standard PSO can be reproduced \emph{exactly}, two
+iterations at a time, using a speculative approach similar to speculative
+execution. We prove that the standard PSO equation can be factored such that a
+set of speculative positions can be found which will \emph{always} include the
+position computed in the next iteration.  By computing the value of the
+objective function for each of the speculative positions at the same time the
+algorithm evaluates the objective function for the current position, it is
+possible to know the objective function values for both the current and the
+next iteration at the same time.  The resulting implementation runs efficiently
+on large clusters where the number of processors is much larger than a typical
+or reasonable number of particles, producing better results in less
+``wall-clock'' time.
 
 The balance of this paper is organized as follows. \sec{pso} describes the
 particle swarm optimization algorithm.  \sec{sepso} describes how speculative
-evaluation can be done in parallel PSO to perform two iterations at once, then
-presents a comparison of the speculative algorithm with the original PSO.  In
-\sec{conclusion} we conclude.
+evaluation can be done in parallel PSO to perform two iterations at once.
+\sec{extra} then introduces a variant of the speculative algorithm that in some
+cases performs better.  In \sec{results} and \sec{conclusion} we present our
+results and conclude.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -258,12 +241,10 @@ Random topologies, all particles have three neighbors.
 \label{sec:sepso}
 
 The PSO algorithm can be trivially parallelized by distributing the computation
-needed for each particle across processors.  But
-for some functions, as shown in \fig{evals-sphere},
-adding particles yields diminishing returns.
-That is, adding processors does not help reach any given level of fitness
-appreciably faster.  Instead of adding particles, speculative
-evaluation performs iterations two at a time.
+needed for each particle across processors.  But for some functions adding
+particles yields diminishing returns.  That is, adding processors does not help
+reach any given level of fitness appreciably faster.  Instead of adding
+particles, speculative evaluation performs iterations two at a time.
 
 Speculative evaluation is made possible by refactoring
 PSO such that evaluating the
@@ -444,13 +425,13 @@ computations $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$
 ``speculative children'' because only one of them will be needed.
 
 To see the value of this refactoring, suppose that $800$ processors are
-available, and that the evaluation of the function to be optimized takes one
-hour.  If we only want a swarm of $100$ particles, $700$ of the processors
-would be sitting idle for an hour at every iteration, and it would take two
-hours to run two iterations.  If instead we perform speculative evaluation,
-sending each of the $\ofunc(\specpos_{t+1}^{c})$ to be computed at the same
-time as $\ofunc(\ppos_{t})$, we could create a swarm of size 100, each particle
-with $7$ speculative evaluations ($700$ processors dedicated to speculative
+available, and that the evaluation of the objective function takes one hour.
+If we only want a swarm of $100$ particles, $700$ of the processors would be
+sitting idle for an hour at every iteration, and it would take two hours to run
+two iterations.  If instead we perform speculative evaluation, sending each of
+the $\ofunc(\specpos_{t+1}^{c})$ to be computed at the same time as
+$\ofunc(\ppos_{t})$, we could create a swarm of size 100, each particle with
+$7$ speculative evaluations ($700$ processors dedicated to speculative
 evaluation), thus using all $800$ processors and performing two iterations in
 one hour.
 
@@ -567,25 +548,23 @@ non-speculative.  The speculative algorithm actually performs two iterations of
 PSO at each ``iteration,'' so we instead call each ``iteration'' a round of
 evaluations.  For benchmark functions with very fast evaluations this may not
 be the best use of parallelism in PSO.  But for many real-world applications,
-the objective function takes on the order of at least seconds (or more) to evaluate; in
-such cases our assumption is perfectly reasonable.
+the objective function takes on the order of at least seconds (or more) to
+evaluate; in such cases our assumption is perfectly reasonable.
 
-In each set of experiments we keep the number of processors for each algorithm constant.
-In all of our SEPSO experiments each particle has
-two neighbors in addition to itself.
-As shown in
-Table~\ref{tab:evals}, this results in $7$ speculative evaluations per
-particle.  With one evaluation needed for the original, non-speculative
-particle, we have a total of $8p_s$ evaluations for every two iterations, where $p_s$ is
-the number of particles in the speculative swarm.
-We run these experiments on $8p_s$ processors.
-In the base-line experiments, standard pso the same number of processors and thus enjoys the
-benefit of $8p_s$ particles running on 
-$8p_s$ processors.
-At least in benchmark functions, extra particles only accelerate
-the performance of PSO~\cite{mcnabb-2009-large-particle-swarms}. They generally have diminishing value, as
-seen earlier in \fig{evals-sphere}, but these extra particles give standard PSO the best possible
-context and full access to the same resources as SEPSO.
+In each set of experiments we keep the number of processors for each algorithm
+constant.  In all of our SEPSO experiments each particle has two neighbors in
+addition to itself.  As shown in Table~\ref{tab:evals}, this results in $7$
+speculative evaluations per particle.  With one evaluation needed for the
+original, non-speculative particle, we have a total of $8p_s$ evaluations for
+every two iterations, where $p_s$ is the number of particles in the speculative
+swarm.  We run these experiments on $8p_s$ processors.  In the base-line
+experiments, standard pso the same number of processors and thus enjoys the
+benefit of $8p_s$ particles running on $8p_s$ processors.  At least in
+benchmark functions, extra particles only accelerate the performance of
+PSO~\cite{mcnabb-2009-large-particle-swarms}. They generally have diminishing
+value, as seen earlier in \fig{evals-sphere}, but these extra particles give
+standard PSO the best possible context and full access to the same resources as
+SEPSO.
 
 As discussed in \sec{implementation},
 where the Complete topology would normally be used, we use a Random topology in
