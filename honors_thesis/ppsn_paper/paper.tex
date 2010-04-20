@@ -378,33 +378,26 @@ subscripts.
 With this notation we can re-write the original PSO velocity
 equation~\eqref{eq:velupdate}, introducing our sum over cases with the
 indicator functions.  Again, we represent the indicator functions and velocity
-functions without the parameters for compactness.  The equation becomes:
+functions without the parameters for compactness.
+The velocity update from~\eqref{eq:velupdate} becomes:
 \begin{align}
-\nonumber
-	\pvel_{t+1} &=
-		\constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
-			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
-			\ppos_{t}} \bigr] \\
-\nonumber
-	&= \sum_{c \in \caseset} \indic_{t+1}^{c} \ \constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
-			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
-			\ppos_{t}} \bigr]  \\
 \label{eq:vel2update}
+%\nonumber
+	\pvel_{t+1} 
+%		\constriction \bigl[ \pvel_t
+%			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
+%			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
+%			\ppos_{t}} \bigr] \\
+%\nonumber
+%	&= \sum_{c \in \caseset} \indic_{t+1}^{c} \ \constriction \bigl[ \pvel_t
+%			+ \pcoeff\pURand_{t}\otimes\parens{\pbest_{t} - \ppos_{t}}
+%			+ \ncoeff\nURand_{t}\otimes\parens{\nbest_{t} -
+%			\ppos_{t}} \bigr]  \\
 	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specvel_{t+1}^{c} 
 \end{align}
 
-Similarly, the position update equation~\eqref{eq:posupdate} becomes:
-\begin{align}
-\label{eq:pos2update}
-	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1}
-	= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specpos_{t+1}^{c} 
-\end{align}
-
-Returning our attention to the computation of $\ppos_{t+1}$ in
-\eqref{eq:pos2update} and writing it with the parameters which were omitted
-above, we obtain:
+Similarly, the position update from~\eqref{eq:posupdate}
+can also be rewritten using the indicator functions, now with the parameters reinserted:
 \begin{align}
 \nonumber
   \ppos_{t+1} &= \sum_{c \in \caseset} \bigl[
