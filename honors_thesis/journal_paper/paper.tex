@@ -978,24 +978,26 @@ to compare the different branching possibilities on various functions.
 \label{sec:results}
 
 We present results for five common benchmark problems: Rastrigin, Sphere,
-Schwefel 2.21, Griewank, and Bohachevsky.  Rastrigin is defined as:
+Schwefel 2.21, Griewank, and Bohachevsky.  
+
+Rastrigin is initialized in $[-5.12,5.12]^D$ and defined as:
 \[f(\Vec{x}) = \sum_{i=1}^D\left(z_i^2 - 10\cos\left(2\pi z_i\right) +
 10\right), z=x-c\]
-initialized in $[-5.12,5.12]^D$.
-Sphere is defined as:
+
+Sphere is initialized in $[-50,50]^D$ and defined as:
 \[f(\Vec{x}) = \sum_{i=1}^D z_i^2, z=x-c\]
-initialized in $[-50,50]^D$.
-Schwefel 2.21 is defined as:
+
+Schwefel 2.21 is initialized in $[-500,500]^D$ and defined as:
 \[f(\Vec{x}) = \max_i{|z_i|, 1 \leq i \leq D}, z=x-c\]
-initialized in $[-500,500]^D$.
-Griewank is defined as:
+
+Griewank is initialized in $[-600,600]^D$ and defined as:
 \[f(\Vec{x}) = \frac{1}{4000}\sum_{i=1}^D z_i^2 - \Pi_{i=1}^D
 \cos\left(\frac{z_i}{\sqrt{i}} \right) + 1, z=x-c\]
-initialized in $[-600,600]^D$
-And Bohachevsky is defined as:
+
+And Bohachevsky is initialized in $[-15,15]^D$ and defined as:
 \[f(\Vec{x}) = \sum_{i=1}^D(x_i^2+2x_{i+1}^2-.3\cos(3\pi x_i)-.4\cos(4\pi
 x_{i+1})+.7)\]
-initialized in $[-15,15]^D$.
+
 
 The $c$ in the function definitions is a shifted center, in order to avoid
 origin-seeking bias in the PSO algorithm and its
