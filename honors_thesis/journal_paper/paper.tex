@@ -216,12 +216,12 @@ possible by pruning the number of speculative evaluations.
 
 The balance of this paper is organized as follows. \sec{pso} describes the
 particle swarm optimization algorithm.  \sec{sepso} describes how speculative
-evaluation can be done in parallel PSO to perform two iterations at once, then
-presents a comparison of the speculative algorithm with the original PSO.  In
+evaluation can be done in parallel PSO to perform two iterations at once.  In
 \sec{relax}, we discuss various methods of improving the performance of
 speculative evaluation in PSO, all of which break the requirement of strictly
-reproducing the behavior of the original algorithm.  In \sec{conclusion} and
-\sec{future} we conclude and discuss future work.
+reproducing the behavior of the original algorithm.  \sec{results} presents the
+results of using our methods in comparison with standard PSO.  In
+\sec{conclusion} and \sec{future} we conclude and discuss future work.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -717,134 +717,17 @@ $\noeval{\nset}_{t+2}$ before calculating the next possible positions for
 $\noeval{\sset}_{t+3}$, there are still only $2n+1$ possible next positions,
 and the problem is avoided.
 
-\subsection{Comparison with Standard PSO}
-\label{sec:results}
-
-We ran experiments to compare our speculative PSO algorithm to the standard PSO
-algorithm.  At each iteration of the algorithms, we use one processor to
-perform one function evaluation for one particle, be it speculative or
-non-speculative.  We acknowledge that for benchmark functions with very fast
-evaluations this may not be the best use of parallelism in PSO.  But for many
-real-world applications, the objective function takes on the order of minutes
-or more to evaluate; in such cases our choice of framework is reasonable.
-
-The speculative algorithm actually performs two iterations of PSO at each
-``iteration,'' so we instead call each ``iteration'' a ``round of
-evaluations''.
-
-To use the same number of processors (and hence evaluations) for each
-algorithm, speculative evaluation must use a smaller swarm size than standard
-PSO.  For each of the topologies we used, a particle has three neighbors
-including itself.  As shown in Table~\ref{tab:evals}, this results in $7$
-speculative evaluations per particle.  With one evaluation needed for the
-original, non-speculative particle, we have $8p$ evaluations for every two
-iterations, where $p$ is the number of particles in the speculative swarm.
-The extra evaluations done in speculative evaluation would instead be particles
-in regular PSO, so we compare swarms of size $p$ in speculative evaluation
-with swarms of size $8p$ in regular PSO.
-
-Where the Complete topology would normally be used, we use a Random topology in
-our speculative algorithm, as Complete leads to an explosion in the number of
-speculative evaluations.  If speculative evaluation were not being performed,
-it is possible that the Complete topology would be used.  However, the Complete
-topology also requires a very large amount of interprocessor communication in
-distributed PSO, so it is still quite possible that Random would be used even
-with standard PSO.  But, to be fair in our comparisons, we compare to the
-standard PSO algorithm using both the Random topology with two neighbors and
-the Complete topology.  All functions have 20 dimensions, and all results shown
-are averages over 20 runs.  We use 240 processors in our experiments (except
-where otherwise noted), so our speculative algorithm uses 30 particles and
-standard PSO uses 240 particles.  For ease of labeling, we call our speculative
-algorithm SEPSO and standard PSO just PSO, with the topology following.
-
-First we look at the function Sphere, the simplest of common benchmark
-functions.  Its equation is $f(\Vec{x}) = \sum_{i=1}^D x_i^2$.  The function
-has no local optima and is best optimized in terms of function evaluations with
-a small swarm using a Complete topology.  Accordingly, we show results for a
-Complete swarm in \fig{basic-sphere}.  We can see that when both SEPSO and PSO
-are using a Random topology, SEPSO clearly outperforms PSO.  However, the
-comparison between SEPSO and PSO Complete is not as encouraging---PSO Complete
-performs slightly better.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{sphere}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations.  Our speculative algorithm has a swarm of 30 particles and does
-  two iterations per round, while standard PSO algorithms use 240 processors
-  and do one iteration per round.}
-  \label{fig:basic-sphere}
-\end{figure}
-
-Next we look at the function Griewank, defined by the equation $f(\Vec{x}) =
-\frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D \cos\left(\frac{x_i}{\sqrt{i}}
-\right) + 1$.  It is generally recommended to use the Ring topology when
-optimizing the Griewank function, as Complete is prone to premature convergence
-on a local optimum~\cite{bratton-2007-defining-a-standard-for-pso}.  Griewank
-has a global optimum with a value of 0, and sometimes the swarm finds the
-optimum and sometimes it doesn't.  Instead of showing average function value at
-each iteration, a more informative plot for Griewank shows the percent of runs
-that have found the global optimum by each iteration.  We show results in
-\fig{basic-griewank2} for swarms of size 30 and 240 using the Ring topology.
-One can see in the figure that the SEPSO algorithm finds the optimum faster
-than the original PSO.  However, because the swarm size is so small, SEPSO gets
-stuck a little less than half of the time.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{griewank2}
-  \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations.  Instead of showing average function value, we show the
-  percentage of runs that have found the global optimum by each iteration.}
-  \label{fig:basic-griewank2}
-\end{figure}
-
-Because the speculative algorithm got stuck with such a small swarm size, we
-ran a set of experiments on Griewank with 800 processors, giving swarms of size
-100 and 800 instead of 30 and 240.  \fig{basic-griewank3} shows the results.
-\fig{basic-griewank3} is very similar to \fig{basic-griewank2}, except that
-speculative evaluation finds the global optimum essentially 100\% of the time.
-Thus with a few more processors, our algorithm finds the optimum twice as fast
-as the original PSO without a significant loss of accuracy.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{griewank3}
-  \caption{Function Griewank with a swarm that uses 800 processors per round of
-  evaluations.}
-  \label{fig:basic-griewank3}
-\end{figure}
-
-Lastly we look at a function that does not show any kind of improvement with
-this method.  The function Rastrigin is defined as $f(\Vec{x}) = \sum_{i=1}^D
-\left(x_i^2 - 10\cos\left(2\pi x_i\right) + 10\right)$.  It has been shown that
-with Rastrigin, the more particles there are in the swarm, the lower function
-value it finds, up to at least 4000
-particles~\cite{mcnabb-2009-large-particle-swarms}.  Smaller swarms get caught
-in local optima.  Because our speculative algorithm has a significantly smaller
-swarm size, it gets stuck at higher values while the larger swarms performing
-regular PSO continue to improve the best value found.  \fig{rastrigin} shows
-the results graphically.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{rastrigin}
-  \caption{Function Rastrigin with a swarm that uses 240 processors per round
-  of evaluations.}
-  \label{fig:rastrigin}
-\end{figure}
-
 \section{Relaxing the Requirements}
 \label{sec:relax}
 
 While the idea of speculative evaluation in particle swarm optimization is
-intriguing, the results of the previous section show that in many cases it
-requires too many extra evaluations to produce competitive results.  On most
-functions, the larger swarm size that can be used in regular PSO leads to
-better performance than is found by trying to do speculative evaluation.
-However, if we keep the idea of speculative evaluation while relaxing the
-requirement of exactly reproducing the behavior of the original PSO algorithm,
-we see some impressive results.
+intriguing, the results in \sec{results} show that in many cases it requires
+too many extra evaluations to produce competitive results.  On most functions,
+the larger swarm size that can be used in regular PSO leads to better
+performance than is found by trying to do speculative evaluation.  However, if
+we keep the idea of speculative evaluation while relaxing the requirement of
+exactly reproducing the behavior of the original PSO algorithm, we see some
+impressive results.
 
 We outline three main improvements to speculative evaluation.  First, in
 \sec{pickbest} we describe a method that uses all of the information found in
@@ -876,38 +759,6 @@ are kept.  It seems this modification to PSO would produce more exploitation,
 decreasing the amount of exploration.  With functions that are less deceptive
 we would expect this method to work well, while performance on more deceptive
 functions would probably be hurt.
-
-We show in \fig{sphere-pickbest} the results of using this modification on the
-function Sphere.  For ease of labeling, we call the modified algorithm Pick
-Best.  As can be seen, where SEPSO did not manage to perform as well as PSO
-Complete, Pick Best handily outperforms it with the same number of processors.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{sphere2}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations, comparing Pick Best with previous results.}
-  \label{fig:sphere-pickbest}
-\end{figure}
-
-Sphere is a function for which very little exploration needs to be done, so
-always keeping the best speculative position found makes intuitive sense.  A
-less intuitive result occurs when using Pick Best with the function Griewank.
-Griewank is a highly deceptive function prone to premature convergence.  Our
-intuition on the behavior of picking the best speculative child is that it
-would tend to prematurely converge more often than the original PSO.  However,
-as seen in \fig{griewank-pickbest}, Pick Best increases the chance of finding
-the optimum while also reducing the number of iterations required to converge.
-Perhaps Pick Best encourages local exploitation, while the sparse communication
-of the Ring topology still allows for global exploration.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{griewank4}
-  \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations, comparing Pick Best with previous results.}
-  \label{fig:griewank-pickbest}
-\end{figure}
 
 \subsection{Pruning the Speculative Evaluations}
 \label{sec:pruning}
@@ -1094,6 +945,220 @@ matter, because we simply accept the child that had the best value.  In most of
 the experiments that we ran, it turned out that picking the best child
 performed better than keeping the particle back an iteration.
 
+\subsection{More than one iteration ahead}
+\label{sec:manyiters}
+
+We need not simply produce speculative children for the next iteration.  We can
+view all possible speculative evaluations for a particle as an infinite tree
+with branching factor $2n+1$.  As we have already seen that doing one full
+level of the tree produces too many extra evaluations to be profitable, it is
+incredibly unlikely that doing two full iterations would produce decent
+results.  But, if the idea of speculating more than one iteration ahead is
+combined with wisely pruning the possible evaluations based on branch
+statistics, we can use just a few extra evaluations to go two or more
+iterations ahead on the most likely branches.
+
+When speculating more than one iteration ahead, the idea of Social Promotion
+cannot feasibly be implemented, as we can only determine correct branches for
+the first iteration.  Thus in this case we always pick the child that has the
+highest value.
+
+The question of which branches to take in this infinite tree is an intriguing
+one that we can only begin to explore here.  If the branch corresponding to
+stagnation has a 75\% chance of being taken, as in the Random topology with
+most functions, we could speculate three iterations ahead on that branch and
+still have a 42\% chance of predicting correctly.  However, intuition would say
+that perhaps it is better to hope that the particle is productive instead of
+stagnant, so a branch where the particle updates its personal best might be
+more fruitful to try.  In our experiments we try just one of the countless
+possibilities, but one that turns out to work very well.  More work is needed
+to compare the different branching possibilities on various functions.
+
+\section{Results}
+\label{sec:results}
+
+We present results for five common benchmark problems: Rastrigin, Sphere,
+Schwefel 2.21, Griewank, and Bohachevsky.  Rastrigin is defined as:
+\[f(\Vec{x}) = \sum_{i=1}^D\left(z_i^2 - 10\cos\left(2\pi z_i\right) +
+10\right), z=x-c\]
+initialized in $[-5.12,5.12]^D$.
+Sphere is defined as:
+\[f(\Vec{x}) = \sum_{i=1}^D z_i^2, z=x-c\]
+initialized in $[-50,50]^D$.
+Schwefel 2.21 is defined as:
+\[f(\Vec{x}) = \max_i{|z_i|, 1 \leq i \leq D}, z=x-c\]
+initialized in $[-500,500]^D$.
+Griewank is defined as:
+\[f(\Vec{x}) = \frac{1}{4000}\sum_{i=1}^D z_i^2 - \Pi_{i=1}^D
+\cos\left(\frac{z_i}{\sqrt{i}} \right) + 1, z=x-c\]
+initialized in $[-600,600]^D$
+And Bohachevsky is defined as:
+\[f(\Vec{x}) = \sum_{i=1}^D(x_i^2+2x_{i+1}^2-.3\cos(3\pi x_i)-.4\cos(4\pi
+x_{i+1})+.7)\]
+initialized in $[-15,15]^D$.
+
+The $c$ in the function definitions is a shifted center, in order to avoid
+origin-seeking bias in the PSO algorithm and its
+variants~\cite{monson-2005-origin-seeking-bias}.  We move the center of the
+shifted functions (all except Bohachevsky) to be halfway between the center and
+the boundary of the initialization region.  For example, if the initialization
+region is $[-50,50]^D$, the center is $(25)^D$.
+
+Lastly we look at a function that does not show any kind of improvement with
+this method.  The function Rastrigin is defined as 
+It has been shown that
+with Rastrigin, the more particles there are in the swarm, the lower function
+value it finds, up to at least 4000
+particles~\cite{mcnabb-2009-large-particle-swarms}.  Smaller swarms get caught
+in local optima.  Because our speculative algorithm has a significantly smaller
+swarm size, it gets stuck at higher values while the larger swarms performing
+regular PSO continue to improve the best value found.  \fig{rastrigin} shows
+the results graphically.
+\subsection{Comparison with Standard PSO}
+
+We ran experiments to compare our speculative PSO algorithm to the standard PSO
+algorithm.  At each iteration of the algorithms, we use one processor to
+perform one function evaluation for one particle, be it speculative or
+non-speculative.  We acknowledge that for benchmark functions with very fast
+evaluations this may not be the best use of parallelism in PSO.  But for many
+real-world applications, the objective function takes on the order of minutes
+or more to evaluate; in such cases our choice of framework is reasonable.
+
+The speculative algorithm actually performs two iterations of PSO at each
+``iteration,'' so we instead call each ``iteration'' a ``round of
+evaluations''.
+
+To use the same number of processors (and hence evaluations) for each
+algorithm, speculative evaluation must use a smaller swarm size than standard
+PSO.  For each of the topologies we used, a particle has three neighbors
+including itself.  As shown in Table~\ref{tab:evals}, this results in $7$
+speculative evaluations per particle.  With one evaluation needed for the
+original, non-speculative particle, we have $8p$ evaluations for every two
+iterations, where $p$ is the number of particles in the speculative swarm.
+The extra evaluations done in speculative evaluation would instead be particles
+in regular PSO, so we compare swarms of size $p$ in speculative evaluation
+with swarms of size $8p$ in regular PSO.
+
+Where the Complete topology would normally be used, we use a Random topology in
+our speculative algorithm, as Complete leads to an explosion in the number of
+speculative evaluations.  If speculative evaluation were not being performed,
+it is possible that the Complete topology would be used.  However, the Complete
+topology also requires a very large amount of interprocessor communication in
+distributed PSO, so it is still quite possible that Random would be used even
+with standard PSO.  But, to be fair in our comparisons, we compare to the
+standard PSO algorithm using both the Random topology with two neighbors and
+the Complete topology.  All functions have 20 dimensions, and all results shown
+are averages over 20 runs.  We use 240 processors in our experiments (except
+where otherwise noted), so our speculative algorithm uses 30 particles and
+standard PSO uses 240 particles.  For ease of labeling, we call our speculative
+algorithm SEPSO and standard PSO just PSO, with the topology following.
+
+First we look at the function Sphere, the simplest of common benchmark
+functions.  Its equation is $f(\Vec{x}) = \sum_{i=1}^D x_i^2$.  The function
+has no local optima and is best optimized in terms of function evaluations with
+a small swarm using a Complete topology.  Accordingly, we show results for a
+Complete swarm in \fig{basic-sphere}.  We can see that when both SEPSO and PSO
+are using a Random topology, SEPSO clearly outperforms PSO.  However, the
+comparison between SEPSO and PSO Complete is not as encouraging---PSO Complete
+performs slightly better.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{sphere}
+  \caption{Function Sphere with a swarm that uses 240 processors per round of
+  evaluations.  Our speculative algorithm has a swarm of 30 particles and does
+  two iterations per round, while standard PSO algorithms use 240 processors
+  and do one iteration per round.}
+  \label{fig:basic-sphere}
+\end{figure}
+
+Next we look at the function Griewank, defined by the equation $f(\Vec{x}) =
+\frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D \cos\left(\frac{x_i}{\sqrt{i}}
+\right) + 1$.  It is generally recommended to use the Ring topology when
+optimizing the Griewank function, as Complete is prone to premature convergence
+on a local optimum~\cite{bratton-2007-defining-a-standard-for-pso}.  Griewank
+has a global optimum with a value of 0, and sometimes the swarm finds the
+optimum and sometimes it doesn't.  Instead of showing average function value at
+each iteration, a more informative plot for Griewank shows the percent of runs
+that have found the global optimum by each iteration.  We show results in
+\fig{basic-griewank2} for swarms of size 30 and 240 using the Ring topology.
+One can see in the figure that the SEPSO algorithm finds the optimum faster
+than the original PSO.  However, because the swarm size is so small, SEPSO gets
+stuck a little less than half of the time.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{griewank2}
+  \caption{Function Griewank with a swarm that uses 240 processors per round of
+  evaluations.  Instead of showing average function value, we show the
+  percentage of runs that have found the global optimum by each iteration.}
+  \label{fig:basic-griewank2}
+\end{figure}
+
+Because the speculative algorithm got stuck with such a small swarm size, we
+ran a set of experiments on Griewank with 800 processors, giving swarms of size
+100 and 800 instead of 30 and 240.  \fig{basic-griewank3} shows the results.
+\fig{basic-griewank3} is very similar to \fig{basic-griewank2}, except that
+speculative evaluation finds the global optimum essentially 100\% of the time.
+Thus with a few more processors, our algorithm finds the optimum twice as fast
+as the original PSO without a significant loss of accuracy.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{griewank3}
+  \caption{Function Griewank with a swarm that uses 800 processors per round of
+  evaluations.}
+  \label{fig:basic-griewank3}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{rastrigin}
+  \caption{Function Rastrigin with a swarm that uses 240 processors per round
+  of evaluations.}
+  \label{fig:rastrigin}
+\end{figure}
+
+
+
+\subsection{Pick Best}
+
+We show in \fig{sphere-pickbest} the results of using this modification on the
+function Sphere.  For ease of labeling, we call the modified algorithm Pick
+Best.  As can be seen, where SEPSO did not manage to perform as well as PSO
+Complete, Pick Best handily outperforms it with the same number of processors.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{sphere2}
+  \caption{Function Sphere with a swarm that uses 240 processors per round of
+  evaluations, comparing Pick Best with previous results.}
+  \label{fig:sphere-pickbest}
+\end{figure}
+
+Sphere is a function for which very little exploration needs to be done, so
+always keeping the best speculative position found makes intuitive sense.  A
+less intuitive result occurs when using Pick Best with the function Griewank.
+Griewank is a highly deceptive function prone to premature convergence.  Our
+intuition on the behavior of picking the best speculative child is that it
+would tend to prematurely converge more often than the original PSO.  However,
+as seen in \fig{griewank-pickbest}, Pick Best increases the chance of finding
+the optimum while also reducing the number of iterations required to converge.
+Perhaps Pick Best encourages local exploitation, while the sparse communication
+of the Ring topology still allows for global exploration.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{griewank4}
+  \caption{Function Griewank with a swarm that uses 240 processors per round of
+  evaluations, comparing Pick Best with previous results.}
+  \label{fig:griewank-pickbest}
+\end{figure}
+
+
+\subsection{Pruning}
+
 There are a large number of ways to prune speculative evaluations.  We
 experimented with several, but present results only for one possible pruning.
 The pruning we present uses only the two most probable branches in the Random
@@ -1137,34 +1202,8 @@ faster than the original PSO.
   \label{fig:griewank-pruned}
 \end{figure}
 
-\subsection{More than one iteration ahead}
-\label{sec:manyiters}
 
-We need not simply produce speculative children for the next iteration.  We can
-view all possible speculative evaluations for a particle as an infinite tree
-with branching factor $2n+1$.  As we have already seen that doing one full
-level of the tree produces too many extra evaluations to be profitable, it is
-incredibly unlikely that doing two full iterations would produce decent
-results.  But, if the idea of speculating more than one iteration ahead is
-combined with wisely pruning the possible evaluations based on branch
-statistics, we can use just a few extra evaluations to go two or more
-iterations ahead on the most likely branches.
-
-When speculating more than one iteration ahead, the idea of Social Promotion
-cannot feasibly be implemented, as we can only determine correct branches for
-the first iteration.  Thus in this case we always pick the child that has the
-highest value.
-
-The question of which branches to take in this infinite tree is an intriguing
-one that we can only begin to explore here.  If the branch corresponding to
-stagnation has a 75\% chance of being taken, as in the Random topology with
-most functions, we could speculate three iterations ahead on that branch and
-still have a 42\% chance of predicting correctly.  However, intuition would say
-that perhaps it is better to hope that the particle is productive instead of
-stagnant, so a branch where the particle updates its personal best might be
-more fruitful to try.  In our experiments we try just one of the countless
-possibilities, but one that turns out to work very well.  More work is needed
-to compare the different branching possibilities on various functions.
+\subsection{Many Iters}
 
 The combination of branches we tried uses seven speculative evaluations per
 particle, matching the swarm size of the original speculative algorithm.  The
@@ -1207,6 +1246,7 @@ are required.  The results are shown in \fig{griewank-manyiters}.
   results.}
   \label{fig:griewank-manyiters}
 \end{figure}
+
 
 \section{Conclusions}
 \label{sec:conclusion}
