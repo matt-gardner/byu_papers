@@ -974,49 +974,8 @@ more fruitful to try.  In our experiments we try just one of the countless
 possibilities, but one that turns out to work very well.  More work is needed
 to compare the different branching possibilities on various functions.
 
-\section{Results}
-\label{sec:results}
-
-We present results for five common benchmark problems: Rastrigin, Sphere,
-Schwefel 2.21, Griewank, and Bohachevsky.  
-
-Rastrigin is initialized in $[-5.12,5.12]^D$ and defined as:
-\[f(\Vec{x}) = \sum_{i=1}^D\left(z_i^2 - 10\cos\left(2\pi z_i\right) +
-10\right), z=x-c\]
-
-Sphere is initialized in $[-50,50]^D$ and defined as:
-\[f(\Vec{x}) = \sum_{i=1}^D z_i^2, z=x-c\]
-
-Schwefel 2.21 is initialized in $[-500,500]^D$ and defined as:
-\[f(\Vec{x}) = \max_i{|z_i|, 1 \leq i \leq D}, z=x-c\]
-
-Griewank is initialized in $[-600,600]^D$ and defined as:
-\[f(\Vec{x}) = \frac{1}{4000}\sum_{i=1}^D z_i^2 - \Pi_{i=1}^D
-\cos\left(\frac{z_i}{\sqrt{i}} \right) + 1, z=x-c\]
-
-And Bohachevsky is initialized in $[-15,15]^D$ and defined as:
-\[f(\Vec{x}) = \sum_{i=1}^D(x_i^2+2x_{i+1}^2-.3\cos(3\pi x_i)-.4\cos(4\pi
-x_{i+1})+.7)\]
-
-
-The $c$ in the function definitions is a shifted center, in order to avoid
-origin-seeking bias in the PSO algorithm and its
-variants~\cite{monson-2005-origin-seeking-bias}.  We move the center of the
-shifted functions (all except Bohachevsky) to be halfway between the center and
-the boundary of the initialization region.  For example, if the initialization
-region is $[-50,50]^D$, the center is $(25)^D$.
-
-Lastly we look at a function that does not show any kind of improvement with
-this method.  The function Rastrigin is defined as 
-It has been shown that
-with Rastrigin, the more particles there are in the swarm, the lower function
-value it finds, up to at least 4000
-particles~\cite{mcnabb-2009-large-particle-swarms}.  Smaller swarms get caught
-in local optima.  Because our speculative algorithm has a significantly smaller
-swarm size, it gets stuck at higher values while the larger swarms performing
-regular PSO continue to improve the best value found.  \fig{rastrigin} shows
-the results graphically.
-\subsection{Comparison with Standard PSO}
+\section{Experimental Setup}
+\label{sec:setup}
 
 We ran experiments to compare our speculative PSO algorithm to the standard PSO
 algorithm.  At each iteration of the algorithms, we use one processor to
@@ -1028,7 +987,7 @@ or more to evaluate; in such cases our choice of framework is reasonable.
 
 The speculative algorithm actually performs two iterations of PSO at each
 ``iteration,'' so we instead call each ``iteration'' a ``round of
-evaluations''.
+evaluations.''
 
 To use the same number of processors (and hence evaluations) for each
 algorithm, speculative evaluation must use a smaller swarm size than standard
@@ -1049,30 +1008,142 @@ topology also requires a very large amount of interprocessor communication in
 distributed PSO, so it is still quite possible that Random would be used even
 with standard PSO.  But, to be fair in our comparisons, we compare to the
 standard PSO algorithm using both the Random topology with two neighbors and
-the Complete topology.  All functions have 20 dimensions, and all results shown
-are averages over 20 runs.  We use 240 processors in our experiments (except
-where otherwise noted), so our speculative algorithm uses 30 particles and
-standard PSO uses 240 particles.  For ease of labeling, we call our speculative
-algorithm SEPSO and standard PSO just PSO, with the topology following.
+the Complete topology.  
 
-First we look at the function Sphere, the simplest of common benchmark
-functions.  Its equation is $f(\Vec{x}) = \sum_{i=1}^D x_i^2$.  The function
+We experimented with five common benchmark problems defined
+in~\cite{herrera-2010-test-suite}: Rastrigin, Sphere, Schwefel 2.21, Griewank,
+and Bohachevsky.  
+
+Rastrigin is initialized in $[-5.12,5.12]^D$ and is defined as:
+\[f(\Vec{x}) = \sum_{i=1}^D\left(z_i^2 - 10\cos\left(2\pi z_i\right) +
+10\right), z=x-c\]
+
+Sphere is initialized in $[-50,50]^D$ and is defined as:
+\[f(\Vec{x}) = \sum_{i=1}^D z_i^2, z=x-c\]
+
+Schwefel 2.21 is initialized in $[-500,500]^D$ and is defined as:
+\[f(\Vec{x}) = \max_i{|z_i|, 1 \leq i \leq D}, z=x-c\]
+
+Griewank is initialized in $[-600,600]^D$ and is defined as:
+\[f(\Vec{x}) = \frac{1}{4000}\sum_{i=1}^D z_i^2 - \Pi_{i=1}^D
+\cos\left(\frac{z_i}{\sqrt{i}} \right) + 1, z=x-c\]
+
+And Bohachevsky is initialized in $[-15,15]^D$ and is defined as:
+\[f(\Vec{x}) = \sum_{i=1}^D(x_i^2+2x_{i+1}^2-.3\cos(3\pi x_i)-.4\cos(4\pi
+x_{i+1})+.7)\]
+
+The $c$ in the function definitions is a shifted center, in order to avoid
+origin-seeking bias in the PSO algorithm and its
+variants~\cite{monson-2005-origin-seeking-bias}.  We move the center of the
+shifted functions (all except Bohachevsky) to be halfway between the center and
+the boundary of the initialization region.  For example, if the initialization
+region is $[-50,50]^D$, the center is $(25)^D$.  For all of these functions we
+used 20 dimensions.
+
+There are a large number of ways to prune speculative evaluations.  We
+experimented with several, but present results for only one possible pruning.
+The pruning we present uses only the two most probable branches in the Random
+topology.  As seen in Table~\ref{tab:stats}, these are the two branches where
+the $\nbest$ value was not updated: \casepn\ and \casexn.  Those branches are
+also convenient in that no messages are needed from neighbors in order to
+produce the positions of the speculative particles---in distributed frameworks
+using several rounds of communication (see \sec{distributed}), one of the
+rounds of communication can be dropped entirely.
+
+Because pruning only requires two speculative evaluations per particle (along
+with evaluating the original particle), we can use swarms of size $3p$ to
+compare to a swarm of size $p$ with standard PSO, instead of $8p$ with other
+techniques.
+
+There are also many ways to speculate several iterations ahead, and we again
+only show results for one of them.  The combination of branches we tried uses
+seven speculative evaluations per particle, matching the swarm size of the
+original speculative algorithm.  The seven evaluations we used corresponded to
+several iterations of branches \casepn\ and \casexn.  Two of the evaluations
+were just one iteration ahead, four were two iterations ahead, and one was
+three iterations ahead.  The evaluations that were one iteration ahead were
+branches \casepn\ and \casexn; those that went two iterations ahead were formed
+by taking either branch \casepn\ or \casexn and then branch \casepn\ or
+\casexn; and the evaluation going three iterations ahead followed branch
+\casepn\ on all three iterations.
+
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Rastrigin}
+
+First we look at Rastrigin.  Rastrigin is a multi-modal function that is best
+optimized with a large, Complete swarm.  It has been shown that with Rastrigin,
+the more particles there are in the swarm, the lower function value it finds,
+up to at least 4000 particles~\cite{mcnabb-2009-large-particle-swarms}.
+Smaller swarms get caught in local optima.  Because our speculative algorithms
+require significantly smaller swarm sizes, we would expect to not perform very
+well on functions such as Rastrigin.  Our experiments show our intuition to be
+correct.  In this experiment we used 240 processors, so SEPSO and Pick Best
+each had 30 particles, and the standard PSO algorithms had 240 particles.  As
+expected, SEPSO and Pick Best converge quickly to worse local optima than
+standard PSO does.  \fig{rastrigin} shows the results graphically.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{rastrigin}
+  \caption{Function Rastrigin with a swarm that uses 240 processors per round
+  of evaluations.}
+  \label{fig:rastrigin}
+\end{figure}
+
+\subsection{Sphere}
+
+Next we go to Sphere, the simplest of common benchmark functions.  The function
 has no local optima and is best optimized in terms of function evaluations with
-a small swarm using a Complete topology.  Accordingly, we show results for a
-Complete swarm in \fig{basic-sphere}.  We can see that when both SEPSO and PSO
-are using a Random topology, SEPSO clearly outperforms PSO.  However, the
-comparison between SEPSO and PSO Complete is not as encouraging---PSO Complete
-performs slightly better.
+a small swarm using a Complete topology.  We expect our methods to be perfect
+for such functions, and our results show this intuition again to be correct.
+First we compare the basic SEPSO algorithm to standard PSO.  In
+\fig{basic-sphere} we can see that when both SEPSO and PSO are using a Random
+topology, SEPSO clearly outperforms PSO.  However, the comparison between SEPSO
+and PSO Complete is not as encouraging---PSO Complete performs slightly better.
 
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{sphere}
   \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations.  Our speculative algorithm has a swarm of 30 particles and does
-  two iterations per round, while standard PSO algorithms use 240 processors
-  and do one iteration per round.}
+  evaluations.}
   \label{fig:basic-sphere}
 \end{figure}
+
+When we introduce Pick Best, we see more impressive results.  As can be seen in
+\fig{sphere-pickbest}, where SEPSO did not manage to perform as well as PSO
+Complete, Pick Best handily outperforms it with the same number of processors.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{sphere2}
+  \caption{Function Sphere with a swarm that uses 240 processors per round of
+  evaluations, comparing Pick Best with previous results.}
+  \label{fig:sphere-pickbest}
+\end{figure}
+
+Still more impressive with Sphere are the results of pruning and speculating
+several iterations ahead.  Pick Best Pruned outperforms Pick Best, and Many
+Iters by far outperforms every other algorithm on this function.  Many Iters on
+average finds values that are more than 40 orders of magnitude better than
+standard PSO using the same number of processors.  This is shown in
+\fig{sphere-manyiters}.  Social Promotion Pruned performed comparably with
+SEPSO, and we do not clutter the graph with a line for it.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{sphere3}
+  \caption{Function Sphere with a swarm that uses 240 processors per round of
+  evaluations, comparing speculating several iterations ahead with previous
+  results.}
+  \label{fig:sphere-manyiters}
+\end{figure}
+
+\subsection{Schwefel 2.21}
+
+\subsection{Griewank}
 
 Next we look at the function Griewank, defined by the equation $f(\Vec{x}) =
 \frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D \cos\left(\frac{x_i}{\sqrt{i}}
@@ -1113,32 +1184,6 @@ as the original PSO without a significant loss of accuracy.
   \label{fig:basic-griewank3}
 \end{figure}
 
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{rastrigin}
-  \caption{Function Rastrigin with a swarm that uses 240 processors per round
-  of evaluations.}
-  \label{fig:rastrigin}
-\end{figure}
-
-
-
-\subsection{Pick Best}
-
-We show in \fig{sphere-pickbest} the results of using this modification on the
-function Sphere.  For ease of labeling, we call the modified algorithm Pick
-Best.  As can be seen, where SEPSO did not manage to perform as well as PSO
-Complete, Pick Best handily outperforms it with the same number of processors.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{sphere2}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations, comparing Pick Best with previous results.}
-  \label{fig:sphere-pickbest}
-\end{figure}
-
 Sphere is a function for which very little exploration needs to be done, so
 always keeping the best speculative position found makes intuitive sense.  A
 less intuitive result occurs when using Pick Best with the function Griewank.
@@ -1158,37 +1203,6 @@ of the Ring topology still allows for global exploration.
   \label{fig:griewank-pickbest}
 \end{figure}
 
-
-\subsection{Pruning}
-
-There are a large number of ways to prune speculative evaluations.  We
-experimented with several, but present results only for one possible pruning.
-The pruning we present uses only the two most probable branches in the Random
-topology.  As seen in Table~\ref{tab:stats}, these are the two branches where
-the $\nbest$ value was not updated: \casepn\ and \casexn.  Those branches are
-also convenient in that no messages are needed from neighbors in order to
-produce the positions of the speculative particles---in distributed frameworks
-using several rounds of communication (see \sec{distributed}), one of the
-rounds of communication can be dropped entirely.
-
-Because we are now only doing two speculative evaluations per particle (along
-with evaluating the original particle), with 240 processors we can have a swarm
-of size 80, instead of the 30 particles in previous experiments.  
-
-In \fig{sphere-pruned}, we show the results of this simple pruning on the
-function Sphere.  As can be seen, the larger number of particles that pruning
-allows leads to better results when picking the best speculative child.  When
-using Social Promotion no real improvement is seen over the original PSO
-algorithm.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{sphere3}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations, comparing pruning with previous results.}
-  \label{fig:sphere-pruned}
-\end{figure}
-
 When looking at the function Griewank, presented in \fig{griewank-pruned}, we
 see different results.  Our intuition about picking the best child is more
 correct in this case; while adding 50 more particles to the swarm, Pick Best
@@ -1202,34 +1216,6 @@ faster than the original PSO.
   \caption{Function Griewank with a swarm that uses 240 processors per round of
   evaluations, comparing pruning with previous results.}
   \label{fig:griewank-pruned}
-\end{figure}
-
-
-\subsection{Many Iters}
-
-The combination of branches we tried uses seven speculative evaluations per
-particle, matching the swarm size of the original speculative algorithm.  The
-seven evaluations we used corresponded to several iterations of branches
-\casepn\ and \casexn.  Two of the evaluations were just one iteration ahead,
-four were two iterations ahead, and one was three iterations ahead.  The
-evaluations that were one iteration ahead were branches \casepn\ and \casexn;
-those that went two iterations ahead were formed by taking either branch
-\casepn\ or \casexn and then branch \casepn\ or \casexn; and the evaluation
-going three iterations ahead followed branch \casepn\ on all three iterations.
-
-The results when optimizing the function Sphere, presented in
-\fig{sphere-manyiters}, are rather astounding.  When 240 processors are
-available for use, performing speculative evaluation several iterations ahead
-finds values an average of 46 orders of magnitude better than using the
-processors to perform the standard PSO algorithm with 240 particles.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{sphere4}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations, comparing speculating several iterations ahead with previous
-  results.}
-  \label{fig:sphere-manyiters}
 \end{figure}
 
 With the function Griewank, the premature convergence problems inherent in
@@ -1248,6 +1234,9 @@ are required.  The results are shown in \fig{griewank-manyiters}.
   results.}
   \label{fig:griewank-manyiters}
 \end{figure}
+
+
+\subsection{Bohachevksy}
 
 
 \section{Conclusions}
