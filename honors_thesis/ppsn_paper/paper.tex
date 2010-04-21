@@ -85,19 +85,19 @@
 
 \date{}
 
-%\author{Matthew Gardner, Andrew McNabb, and Kevin Seppi}
-\author{Author names omitted for review}
+\author{Matthew Gardner, Andrew McNabb, and Kevin Seppi}
+\institute{Department of Computer Science, Brigham Young University}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
 
-Particle swarm optimization (PSO) has previously been parallelized only by 
+Particle swarm optimization (PSO) has previously been parallelized only by
 adding more particles to the swarm or by parallelizing the evaluation of the
-objective function.  However, some functions are more efficiently optimized with more
-iterations and fewer particles.  Accordingly, we take inspiration from 
-speculative execution performed in modern processors and propose
+objective function.  However, some functions are more efficiently optimized
+with more iterations and fewer particles.  Accordingly, we take inspiration
+from speculative execution performed in modern processors and propose
 speculative evaluation in PSO (SEPSO).  Future positions of the particles are
 speculated and evaluated in parallel with current positions, performing two
 iterations of PSO at once.
@@ -122,9 +122,11 @@ computationally intensive problems, PSO needs to run in parallel.
 Within the last few years, researchers have begun to recognize the need to
 develop parallel implementations of PSO, publishing many papers on the subject.
 The methods they have used include various synchronous algorithms
-\cite{chu-2006-intelligent-parallel-pso,
+\cite{belal-2004-parallel-models-for-pso,
 schutte-2004-parallel-global-optimization-with-pso} and asynchronous algorithms
-\cite{venter-2005-parallel-pso-asynchronous-evaluations}.  Parallelizing the
+\cite{mostaghim-2006-multi-objective-pso-on-grids,
+venter-2005-parallel-pso-asynchronous-evaluations,
+koh-2006-parallel-asynchronous-pso}.  Parallelizing the
 evaluation of the objective function can also be done in some cases, though
 that is not an adaption of the PSO algorithm itself and thus is not the focus
 of this paper.
@@ -163,7 +165,7 @@ execution restarts where it would have been anyway.
 
 We show that the results of standard PSO can be reproduced \emph{exactly}, two
 iterations at a time, using a speculative approach similar to speculative
-execution. We prove that the standard PSO equation can be factored such that a
+execution. We prove that the standard PSO equations can be factored such that a
 set of speculative positions can be found which will \emph{always} include the
 position computed in the next iteration.  By computing the value of the
 objective function for each of the speculative positions at the same time the
@@ -176,10 +178,8 @@ or reasonable number of particles, producing better results in less
 
 The balance of this paper is organized as follows. \sec{pso} describes the
 particle swarm optimization algorithm.  \sec{sepso} describes how speculative
-evaluation can be done in parallel PSO to perform two iterations at once.
-\sec{extra} then introduces a variant of the speculative algorithm that in some
-cases performs better.  In \sec{results} and \sec{conclusion} we present our
-results and conclude.
+evaluation can be done in parallel PSO to perform two iterations at once.  In
+\sec{results} and \sec{conclusion} we present our results and conclude.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -213,10 +213,9 @@ numbers drawn from a standard uniform distribution, the \( \otimes \) operator
 is an element-wise vector multiplication, $\pbest$ (called personal best) is
 the best position the current particle has seen, and $\nbest$ (called
 neighborhood best) is the best position the neighbors of the current particle
-have seen~\cite{bratton-2007-defining-a-standard-for-pso}.  The parameters \(
-\ncoeff \), \( \pcoeff \), and \( \constriction \) are given prescribed values
-required to ensure convergence (2.05, 2.05, and .73,
-respectively)~\cite{clerc-2002-constricted-pso}. 
+have seen.  The parameters \( \ncoeff \), \( \pcoeff \), and \( \constriction
+\) are given prescribed values required to ensure convergence (2.05, 2.05, and
+.73, respectively)~\cite{clerc-2002-constricted-pso}. 
 
 Changing the way neighbors are defined, usually called the ``topology,''
 has a significant effect on the performance of the algorithm.  In
@@ -417,12 +416,12 @@ computed.  Once the evaluation of $f(\ppos_{t})$ is completed for all particles
 only one of the indicator functions $\indic_{t+1}^{\casegen}$ will be set to 1;
 hence only one of the positions $\specpos_{t+1}^\casegen$ will be kept.
 
-Although this speculative approach computes
-$\ofunc(\specpos_{t+1}^{\casegen})$ for all $\casegen \in \caseset$, even those
-for which $\indic_{t+1}^{\casegen} = 0$, these extra computations will be
-ignored, and might just as well never have been computed.  We call the set of
-computations $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$
-``speculative children'' because only one of them will be needed.
+Although this speculative approach computes $\ofunc(\specpos_{t+1}^{\casegen})$
+for all $\casegen \in \caseset$, even those for which $\indic_{t+1}^{\casegen}
+= 0$, these extra computations will be ignored, and might just as well never
+have been computed.  We call the set $\{\ofunc(\specpos_{t+1}^{c}) : \casegen
+\in \caseset\}$ ``speculative children'' because only one of them will be
+needed.
 
 To see the value of this refactoring, suppose that $800$ processors are
 available, and that the evaluation of the objective function takes one hour.
@@ -440,9 +439,9 @@ there are particles in the swarm.  If these processors were not performing
 speculative evaluation, they might instead be used for function evaluation
 needed to support a large swarm.  This raises the question of whether a swarm
 of 100 particles doing twice as many iterations outperforms a swarm of 800
-particles.  We show in the rest of this paper that in many, instances, a
-smaller swarm performing more iterations does in fact outperform a larger
-swarm.  We acknowledge that both intuition and prior
+particles.  We show in the rest of this paper that in many instances a smaller
+swarm performing more iterations does in fact outperform a larger swarm.  We
+acknowledge that both intuition and prior
 research~\cite{mcnabb-2009-large-particle-swarms} indicate that the
 optimization of deceptive functions benefits greatly from large and even very
 large swarm sizes. Thus this work will focus on less deceptive functions.
@@ -470,7 +469,7 @@ particles are given by $\pset$, $\sset$, or $\nset$, whereas single particles
 are simply $\p$, $\s$, or $\n$.
 
 A particle at iteration $t-1$ that has been moved to iteration $t$ using
-\eqref{eq:velupdate}~and~\eqref{eq:posupdate}, but whose position has not yet
+\eqref{eq:velupdate} and \eqref{eq:posupdate}, but whose position has not yet
 been evaluated, is denoted as $\noeval{\p}_t$.  Once its position has been
 evaluated, but it has still not yet received information from its neighbors, it
 is denoted as $\nonbest{\p}_t$.  Only when the particle has updated its
@@ -507,36 +506,24 @@ The outline of the speculative evaluation in PSO (SEPSO) algorithm is given in
   \end{algorithmic}
 \end{algorithm}
 
-\section{Using All Speculative Evaluations}
+\subsection{Using All Speculative Evaluations}
 \label{sec:extra}
 
 In performing speculative evaluation as we have described it, $2n+1$
 speculative evaluations are done per particle, while all but one of them are
-completely ignored.  It seems reasonable to try to make use of the
-information obtained through those evaluations instead of ignoring it
-Making use of this information changes the
-behavior of PSO, instead of reproducing it exactly as the above method
-explains, but the change turns out to be an improvement in our context.
+completely ignored.  It seems reasonable to try to make use of the information
+obtained through those evaluations instead of ignoring it.  Making use of this
+information changes the behavior of PSO, instead of reproducing it exactly as
+the above method explains, but the change turns out to be an improvement in our
+context.
 
-To make better use of the speculative evaluations, instead of choosing the speculative
-child that matches that branch that the original PSO would have taken, we take
-the child that has the best value.  The methodology is exactly the same as
-above except for the process of choosing which speculative child to accept.
-The branch that PSO would have taken is ignored, but $\p_t$ must still be
-created so it can give the right personal best and neighborhood best values and
-positions to $\p_{t+1}$.  The only change needed in \alg{centralized} is in
-step 7, where the $\noeval{\s}_{t+1}$ with the best value is chosen from
-$\noeval{\sset}_{t+1}$ instead of with the matching branch. We call this
-varient ``Pick Best''.
-
-This can be thought of as drawing a number of samples from the next iteration
-and accepting the best one.  Speculative particles that move in good directions
-are kept.  It seems this modification to PSO would contribute local exploration,
-having knowledge of all of the speculative children, but more global exploitation,
-since Pick Best only considers the best of these alternatives.
-With functions that are less deceptive, or only locally deceptive,
-Pick Best works well, while performance on more deceptive
-functions would probably be hurt.
+To make better use of the speculative evaluations, instead of choosing the
+speculative child that matches that branch that the original PSO would have
+taken, we take the child that has the best value.  The methodology is exactly
+the same as above except for the process of choosing which speculative child to
+accept.  The only change needed in \alg{centralized} is in step 7, where the
+$\noeval{\s}_{t+1}$ with the best value is chosen from $\noeval{\sset}_{t+1}$
+instead of with the matching branch. We call this variant ``Pick Best''.
 
 \section{Results}
 \label{sec:results}
@@ -545,103 +532,101 @@ In our experiments we compared our speculative PSO algorithm to the standard
 PSO algorithm.  At each iteration of the algorithms, we use one processor to
 perform one function evaluation for one particle, be it speculative or
 non-speculative.  The speculative algorithm actually performs two iterations of
-PSO at each ``iteration,'' so we instead call each ``iteration'' a round of
-evaluations.  For benchmark functions with very fast evaluations this may not
+PSO at each ``iteration,'' so we instead call each ``iteration'' a ``round of
+evaluations.''  For benchmark functions with very fast evaluations this may not
 be the best use of parallelism in PSO.  But for many real-world applications,
 the objective function takes on the order of at least seconds (or more) to
-evaluate; in such cases our assumption is perfectly reasonable.
+evaluate; in such cases our framework is reasonable.
 
 In each set of experiments we keep the number of processors for each algorithm
-constant.  In all of our SEPSO experiments each particle has two neighbors in
-addition to itself.  As shown in Table~\ref{tab:evals}, this results in $7$
-speculative evaluations per particle.  With one evaluation needed for the
-original, non-speculative particle, we have a total of $8p_s$ evaluations for
-every two iterations, where $p_s$ is the number of particles in the speculative
-swarm.  We run these experiments on $8p_s$ processors.  In the base-line
-experiments, standard pso the same number of processors and thus enjoys the
-benefit of $8p_s$ particles running on $8p_s$ processors.  At least in
-benchmark functions, extra particles only accelerate the performance of
-PSO~\cite{mcnabb-2009-large-particle-swarms}. They generally have diminishing
-value, as seen earlier in \fig{evals-sphere}, but these extra particles give
-standard PSO the best possible context and full access to the same resources as
-SEPSO.
+constant.  In all of our experiments SEPSO uses topologies in which each
+particle has two neighbors in addition to itself.  As shown in
+Table~\ref{tab:evals}, this results in $7$ speculative evaluations per
+particle.  With one evaluation needed for the original, non-speculative
+particle, we have a total of $8p$ evaluations for every two iterations, where
+$p$ is the number of particles in the speculative swarm.  In order to use the
+same resources for each algorithm, we compare swarms of size $p$ in the
+speculative algorithms with swarms of size $8p$ in standard PSO.
 
-As discussed in \sec{implementation},
-where the Complete topology would normally be used, we use a Random topology in
-our speculative algorithm, as Complete leads to an explosion of speculative
-evaluations.
-For the standard PSO baseline we have included experiments with the
-ring and the random topologies, both with two neighbors, as well as for the complete topology.
-It is important to note however, that in many cases the complete topology is not a
-practical alternative in the context of large
-swarms on large cluster where where the messaging complexity is $O(n^2)$ and can
-overwhelm the system.
+As discussed in \sec{implementation}, where the Complete topology would
+normally be used, we use a Random topology in our speculative algorithm, as
+Complete leads to an explosion of speculative evaluations.  For the standard
+PSO baseline we have included experiments with the Ring and the Random
+topologies, both with two neighbors, as well as for the Complete topology.  It
+is important to note however, that in many cases the Complete topology is not a
+practical alternative in the context of large swarms on large clusters where
+where the messaging complexity is $O(p^2)$ and can overwhelm the system.
 
-We follow the experimental set up proposed by Bratton, et.al.~\cite{bratton-2007-defining-a-standard-for-pso}. 
-All functions have 20 dimensions, and all results shown
-are averages over 20 runs.  We use 240 processors in our experiments, so
-speculative algorithms use 30 particles and standard PSO uses 240 particles.
-For ease of labeling, we call our speculative algorithm SEPSO, the variant
-SEPSO Pick Best, and standard PSO just PSO and identify the topology in a suffix,
-``PSO Ring'' for example.
+We follow the experimental setup used
+in~\cite{bratton-2007-defining-a-standard-for-pso}.  All functions have 20
+dimensions, and all results shown are averages over 20 runs.  For ease of
+labeling, we call our speculative algorithm SEPSO, the variant SEPSO Pick Best,
+and standard PSO just PSO and identify the topology in a suffix, ``PSO Ring''
+for example.
 
-The benchmark function Sphere ($f(\Vec{x}) = \sum_{i=1}^D x_i^2$)
-has no local optima and is most efficiently optimized using
-a small swarm but many iterations.
-In \fig{sphere1}, we can see
-that SEPSO clearly beats PSO with a Random topology or a ring topology.
-
-SEPSO approaches the performance of PSO with the complete topology, even though
-PSO with the complete topology requires $O(n^2)$ communication.
-SEPSO Pick Best handily outperforms all other algorithms
-in this problem.
+The benchmark function Sphere ($f(\Vec{x}) = \sum_{i=1}^D x_i^2$) has no local
+optima and is most efficiently optimized using a small swarm but many
+iterations.  In our experiments with Sphere, we use 240 processors; thus 30
+particles for SEPSO and 240 for PSO.  In \fig{sphere}, we can see that SEPSO
+clearly beats PSO with a Random topology or a Ring topology.  SEPSO approaches
+the performance of PSO with the Complete topology, even though PSO with the
+Complete topology requires $O(p^2)$ communication.  SEPSO Pick Best handily
+outperforms all other algorithms in this problem.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.45\columnwidth]{sphere1}
+  \includegraphics[width=.45\columnwidth]{sphere}
   \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations.  Speculative algorithms have a swarm of 30 particles and do two
-  iterations per round, while standard PSO algorithms use 240 processors and do
-  one iteration per round. Note that PSO Complete requires $O(n^2)$ messaging
-  and may not be practical in many cases.}
-  \label{fig:sphere1}
+  evaluations.  We show 10th and 90th percentiles every 100 iterations.  Note
+  that PSO Complete requires $O(p^2)$ messaging and may not be practical in
+  many cases.}
+  \label{fig:sphere}
 \end{figure}
 
-The benchmark function Griewank, defined by the equation $f(\Vec{x}) =
-\frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D \cos\left(\frac{x_i}{\sqrt{i}}
-\right) + 1$.  It is generally best solved in pso using the Ring topology,
-as Complete is prone to premature convergence
-on a local optimum.  Griewank has a global optimum with a value of 0, and
-sometimes the swarm finds the optimum and sometimes it does not.  Instead of
-showing average function value at each iteration, a more enlightening plot for
-Griewank shows the percent of runs that have found the global optimum by each
-iteration~\cite{bratton-2007-defining-a-standard-for-pso}. 
+The benchmark function Griewank is defined by the equation $f(\Vec{x}) =
+\frac{1}{4000}$ $\sum_{i=1}^D x_i^2 - \Pi_{i=1}^D
+\cos\left(\frac{x_i}{\sqrt{i}} \right) + 1$.  It is best solved in PSO using
+the Ring topology, as Complete is prone to premature convergence on local
+optima.  Griewank has a global optimum with a value of 0, and sometimes the
+swarm finds the optimum and sometimes it does not.  Instead of showing average
+function value at each iteration, a more enlightening plot for Griewank shows
+the percent of runs that have found the global optimum by each iteration.
 
-PSO and SEPSO get caught in local minima with small swarm sizes so
-we show results in \fig{griewank1} for swarms of size 100 (SEPSO) and 800 (standard)
-using the Ring topology 
-\fig{griewank2} shows that SEPSO quickly finds
-the global optimum essentially 100\% of the time.
+PSO and SEPSO get caught in local minima with small swarm sizes so we show
+results in \fig{griewank} for swarms of size 100 (SEPSO) and 800 (standard)
+using the Ring topology. \fig{griewank} shows that SEPSO quickly finds the
+global optimum, between two and three times faster than running standard PSO.
+
+In \fig{griewank} we also show results for the Bohachevsky function, defined as
+$f(\Vec{x}) = \sum_{i=1}^D(x_i^2+2x_{i+1}^2-.3\cos(3\pi x_i)-.4\cos(4\pi
+x_{i+1})+.7)$.  Bohachevsky is a unimodal function best optimized with a
+Complete swarm.  It is similar to Griewank in that there is a global optimum
+with a value of 0, and swarms either find the optimum or get stuck.  Both SEPSO
+algorithms find the optimum much faster than PSO Random, though only SEPSO Pick
+Best beats PSO Complete.  Also, while the smaller swarm size of SEPSO gets
+stuck 75\% of the time, when using SEPSO Pick Best with the same swarm size,
+the algorithm finds the optimum every time.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.45\columnwidth]{griewank2}
+  \includegraphics[width=.45\columnwidth]{griewank}
+  \includegraphics[width=.45\columnwidth]{bohachevsky}
   \caption{Function Griewank with a swarm that uses 800 processors per round of
-  evaluations.}
-  \label{fig:griewank2}
+  evaluations, and function Bohachevsky with a swarm that uses 480 processors
+  per round of evaluations.}
+  \label{fig:griewank}
 \end{figure}
 
-As noted in the introduction previous work has shown that the optimization of highly
-deceptive functions like Rastrigin
-($f(\Vec{x}) = \sum_{i=1}^D \left(x_i^2 - 10\cos\left(2\pi x_i\right) + 10\right)$)
-benefit greatly from the addition of particles. 
-Smaller swarms get caught
-in local optima.  Because our speculative algorithms have a significantly
-smaller swarm size, they get stuck at higher values while the larger swarms
-performing regular PSO continue to improve the best value found.
-Our experiments with SEPSO on Rastrigin were predicable lack luster,
-yielding a vaerage value of xxx after x evaluations, as compared to y for 
-standard PSO.
+Previous work has shown that the optimization of highly deceptive functions
+like Rastrigin ($f(\Vec{x}) = \sum_{i=1}^D \left(x_i^2 - 10\cos\left(2\pi
+x_i\right) + 10\right)$) benefit greatly from the addition of particles.
+Smaller swarms get caught in local optima, up to swarms of at least 4000
+particles~\cite{mcnabb-2009-large-particle-swarms}.  Because our speculative
+algorithms have a significantly smaller swarm size, they get stuck at higher
+values while the larger swarms performing regular PSO continue to improve the
+best value found.  Our experiments with SEPSO on Rastrigin were predicably lack
+luster, yielding an average value of 31 after 1000 evaluations, as compared to
+10 for standard PSO.
 
 \section{Conclusions}
 \label{sec:conclusion}
@@ -649,50 +634,30 @@ standard PSO.
 We have described how parallel implementations of particle swarm optimization
 can be modified to allow additional processors to increase the number of
 iterations of the algorithm performed, instead of merely adding more particles
-to the swarm.  We have detailed several different implementations of the
-algorithm, depending on the parallel PSO framework being used.  Using our
-modifications, the original PSO algorithm is exactly reproduced two iterations
-at a time.  This technique requires more function evaluations per iteration
-than regular PSO, but for some functions still performs better when run in a
-parallel environment.
-
-We have also described a method for making use of extra speculative evaluations
-that performs incredibly well on some functions.
-
-Though space has limited our presentation of results to a very small sample of
-the interesting and relevant applications of our technique, we believe the
-results shown are sufficient motivation for the further exploration of
-speculative evaluation in PSO.
-
-Our results show that performing speculative evaluation instead of increasing
-swarm size is only beneficial for some functions at the swarm sizes we used.
-However, we would venture that for all functions there is some point at which
-increasing the swarm size provides relatively little benefit.  At that point,
-additional processors should be used to speed up the algorithm instead of add
-additional particles.
+to the swarm.  Using our modifications, the original PSO algorithm is exactly
+reproduced two iterations at a time.  This technique requires more function
+evaluations per iteration than regular PSO, but for some functions still
+performs better when run in a parallel environment.  We have also described a
+method for making use of extra speculative evaluations that performs very well
+on some functions.
 
 There are some functions for which very little exploration needs to be done;
 Sphere is an example of such a function.  For such functions the best use of
 processors is to have a small swarm performing speculative evaluation with our
-second method, where all speculative evaluations are used.
+Pick Best method, where all speculative evaluations are used.
 
-There are other functions for which there is a point where the algorithm has
-done ``enough'' exploration and consistently finds the global optimum.  Adding
-additional particles to the swarm is akin to increasing its capacity for
-exploration.  We have seen that for a 20-dimensional Griewank function, 30
-particles is not ``enough'' exploration, but 100 is.  For these functions, one
-should use processors to increase the swarm size until enough exploration has
-been reached, then use additional processors to increase the number of
-iterations performed.
+There are other functions for which it seems there is never enough exploration,
+such as the Rastrigin function.  It has been shown that up to 4000 particles
+there is no point at which ``enough'' exploration has been
+done~\cite{mcnabb-2009-large-particle-swarms}.  With such functions, the
+smaller swarm size required by speculative evaluation is not able to produce
+enough exploration to perform better than standard PSO.
 
-There are still other functions for which it seems there is never enough
-exploration, such as the Rastrigin function.  It has been shown that up to 4000
-particles there is no point at which ``enough'' exploration has been
-done~\cite{mcnabb-2009-large-particle-swarms}.  For those functions the correct
-use of processors cannot be easily prescribed and depends largely on the
-desired outcome and how many processors are available.  It is likely that the
-best thing to do with those functions is to use all processors to add particles
-to the swarm and do no speculative evaluation.
+Griewank and Bohachevsky are functions between Sphere and Rastrigin.  They are
+deceptive and prone to premature convergence, but by adding particles to the
+swarm a point is reached where ``enough'' exploration is done, and the algorithm finds the optimum essentially all of the time.  For such functions, the best approach seems to be to increase the swarm size until ``enough'' exploration is reached, then use extra processors to perform speculative evaluation and increase the number of iterations performed.  Sphere and Rastrigin can be thought of as special cases fo these types of functions; Sphere simply needs a very small swarm size to produce ``enough'' exploration, and Rastrigin requires a very large swarm.  We expect that for all functions there is a swarm size for which additional particles are less useful than additional iterations.
+
+Large parallel clusters are often required to successfully optimize practical modern problems.  To properly use PSO with such clusters, a balance needs to be made between using processors to increase the swarm size and using them to increase the speed of the algorithm.  This work is a first step in that direction.
 
 \bibliographystyle{unsrt}
 \bibliography{%
