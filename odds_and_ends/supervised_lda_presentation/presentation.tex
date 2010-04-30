@@ -1,0 +1,123 @@
+\documentclass{beamer}
+\usepackage{beamerthemeshadow}
+\beamertemplatetransparentcovereddynamic
+\usepackage{graphicx}
+\usepackage{psfrag}
+
+\psfrag{b}[C][C]{$\beta$}
+\psfrag{bt}[C][C]{$\beta_t$}
+\psfrag{a}[C][C]{$\alpha$}
+\psfrag{t}[C][C]{$\theta$}
+\psfrag{f}[C][C]{$\phi$}
+\psfrag{ft}[C][C]{$\phi_t$}
+\psfrag{e}[C][C]{$\eta$}
+\psfrag{g}[C][C]{$\gamma$}
+\psfrag{ps}[C][C]{$\psi$}
+\psfrag{l}[C][C]{$\lambda$}
+\psfrag{m}[C][C]{$\mu$}
+\psfrag{x}[C][C]{$\chi$}
+\psfrag{Y}[C][C]{$\Upsilon$}
+\psfrag{s2}[C][C]{$\sigma^2$}
+\psfrag{w}[C][C]{$w$}
+\psfrag{wt}[C][C]{$t$}
+\psfrag{z}[C][C]{$z$}
+\psfrag{N}[C][C]{$N$}
+\psfrag{k}[C][C]{$k$}
+\psfrag{Nw}[C][C]{$N_w$}
+\psfrag{Nt}[C][C]{$N_t$}
+\psfrag{M}[C][C]{$M$}
+\psfrag{K}[C][C]{$K$}
+\psfrag{A}[C][C]{$A$}
+\psfrag{KxF}[C][C]{$KxF$}
+
+\author{Matthew Gardner}
+\title{Supervised Topic Models}
+\date{April 29, 2010}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{LDA}
+
+\begin{frame}
+  \frametitle{LDA}
+  \includegraphics[height=.5\linewidth]{lda_model}
+  \parbox[b]{.7\linewidth}{
+  \begin{align*} 
+	M &= \mathrm{Number\ of\ documents} \\
+	N &= \mathrm{Number\ of\ words\ in\ a\ document} \\
+	K &= \mathrm{Number\ of\ topics} \\
+	w &= \mathrm{Word\ in\ a\ document} \\
+	z &= \mathrm{Topic\ corresponding\ to\ word\ } w \\
+	w_i|z_i,\phi^{(z_i)} &\sim \mathrm{Categorical}(\phi^{(z_i)}) \\
+	\phi &\sim \mathrm{Dirichlet}(\beta) \\
+	z_i|\theta^{(d_i)} &\sim \mathrm{Categorical}(\theta^{(d_i)}) \\ 
+	\theta &\sim \mathrm{Dirichlet}(\alpha) 
+  \end{align*}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{LDA}
+  \begin{itemize}
+	\item Find a number of topics in the documents
+	  \pause
+	\item But what if there is some metadata or other information that should
+	  inform our topics?
+	  \pause
+	\item Author-Topic LDA, Topics over Time, etc.
+	  \pause
+	\item These are all some sort of ``supervised'' LDA.
+  \end{itemize}
+\end{frame}
+
+\section{Supervised LDA}
+
+\begin{frame}
+  \frametitle{Supervised LDA}
+  \begin{itemize}
+	\item A bunch of different models for various kinds of supervised LDA have
+	  been proposed.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Author-Topic LDA}
+  \begin{center}
+	\includegraphics[height=.65\linewidth]{author_topic_vertical}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Supervised LDA}
+  \begin{center}
+	\includegraphics[height=.65\linewidth]{slda_model}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Tag LDA}
+  \begin{center}
+	\includegraphics[height=.65\linewidth]{tag_lda}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dirichlet-multinomial Regression (DMR) Topic Model}
+  \begin{center}
+	\includegraphics[height=.5\linewidth]{dmr_lda_model}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{My idea (no name yet)}
+  \begin{center}
+	\includegraphics[height=.65\linewidth]{my_lda}
+  \end{center}
+\end{frame}
+
+\end{document}
