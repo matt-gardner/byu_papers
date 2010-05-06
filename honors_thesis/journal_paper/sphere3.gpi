@@ -1,4 +1,4 @@
-set xlabel "Iterations"
+set xlabel "Rounds of Evaluations"
 set ylabel "Best Function Value"
 set logscale y 10
 #set key bottom left

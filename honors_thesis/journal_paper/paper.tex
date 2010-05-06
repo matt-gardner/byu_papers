@@ -477,7 +477,7 @@ as there are particles in the swarm.  If we were not performing speculative
 evaluation, those processors might very well be used to add particles to the
 swarm.  This then raises the question of whether a swarm of 100 particles doing
 twice as many iterations outperforms a swarm of 800 particles.  We show in the
-rest of this paper that in many, though not all, instances, a smaller swarm
+\sec{results} that in many, though not all, instances, a smaller swarm
 performing more iterations does in fact outperform a larger swarm.
 
 The number of speculative evaluations needed per particle depends on the number
@@ -1143,101 +1143,164 @@ SEPSO, and we do not clutter the graph with a line for it.
 
 \subsection{Schwefel 2.21}
 
+Schwefel 2.21 is a function similar to Sphere, but Schwefel 2.21 is benefited 
+more by larger swarms than Sphere is.  Thus our speculative algorithms often
+fail to perform as well as standard PSO because of their smaller swarm size.
+In comparing SEPSO to standard PSO in \fig{schwefel1}, we can see that SEPSO
+fails to perform any better than PSO with a Random topology, and it is by far
+outperformed by PSO with a Complete topology.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{schwefel1}
+  \caption{Function Schwefel with a swarm that uses 240 processors per round of
+  evaluations.}
+  \label{fig:schwefel1}
+\end{figure}
+
+As can be seen in \fig{schwefel2}, almost all of the speculative algorithms
+perform worse than PSO Complete, with Many Iterations performing comparably to
+PSO.  The only algorithm that performed better than PSO was Pick Best Pruned,
+likely because of the larger swarm size available to it.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{schwefel2}
+  \caption{Function Schwefel with a swarm that uses 240 processors per round of
+  evaluations, comparing all speculative algorithms.}
+  \label{fig:schwefel2}
+\end{figure}
+
 \subsection{Griewank}
 
-Next we look at the function Griewank, defined by the equation $f(\Vec{x}) =
-\frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D \cos\left(\frac{x_i}{\sqrt{i}}
-\right) + 1$.  It is generally recommended to use the Ring topology when
-optimizing the Griewank function, as Complete is prone to premature convergence
-on a local optimum~\cite{bratton-2007-defining-a-standard-for-pso}.  Griewank
-has a global optimum with a value of 0, and sometimes the swarm finds the
-optimum and sometimes it doesn't.  Instead of showing average function value at
-each iteration, a more informative plot for Griewank shows the percent of runs
-that have found the global optimum by each iteration.  We show results in
-\fig{basic-griewank2} for swarms of size 30 and 240 using the Ring topology.
+Next we look at the function Griewank.  It is generally recommended to use the
+Ring topology when optimizing the Griewank function, as Complete is prone to
+premature convergence on a local
+optimum~\cite{bratton-2007-defining-a-standard-for-pso}.  Griewank has a global
+optimum with a value of 0, and sometimes the swarm finds the optimum and
+sometimes it doesn't.  Instead of showing average function value at each
+iteration, a more informative plot for Griewank shows the percent of runs that
+have found the global optimum by each iteration.  We ran 50 trials of each
+experiment with Griewank, so that the curves are more smooth.  We show results
+in \fig{basic-griewank1} for swarms of size 30 and 240 using the Ring topology.
 One can see in the figure that the SEPSO algorithm finds the optimum faster
 than the original PSO.  However, because the swarm size is so small, SEPSO gets
 stuck a little less than half of the time.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\columnwidth]{griewank2}
+  \includegraphics[width=.8\columnwidth]{griewank1}
   \caption{Function Griewank with a swarm that uses 240 processors per round of
   evaluations.  Instead of showing average function value, we show the
   percentage of runs that have found the global optimum by each iteration.}
-  \label{fig:basic-griewank2}
+  \label{fig:basic-griewank1}
 \end{figure}
 
 Because the speculative algorithm got stuck with such a small swarm size, we
 ran a set of experiments on Griewank with 800 processors, giving swarms of size
-100 and 800 instead of 30 and 240.  \fig{basic-griewank3} shows the results.
-\fig{basic-griewank3} is very similar to \fig{basic-griewank2}, except that
+100 and 800 instead of 30 and 240.  \fig{basic-griewank2} shows the results.
+\fig{basic-griewank2} is very similar to \fig{basic-griewank1}, except that
 speculative evaluation finds the global optimum essentially 100\% of the time.
-Thus with a few more processors, our algorithm finds the optimum twice as fast
-as the original PSO without a significant loss of accuracy.
+Thus with a few more processors, our algorithm finds the optimum on average
+twice as fast as the original PSO without a significant loss of accuracy.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{griewank2}
+  \caption{Function Griewank with a swarm that uses 800 processors per round of
+  evaluations.}
+  \label{fig:basic-griewank2}
+\end{figure}
+
+In order to show the premature convergence properties of the various algorithms
+we have presented, we will show results first with swarms using 240 processors,
+where these are more visible.  Then we will present an overall result for 800
+processors, where using our techniques is generally more successful.
+
+When we look at the performance of our Pick Best algorithm, a less intuitive
+result occurs with Griewank than with Sphere.  Because Sphere needs very little
+exploration, the seemingly greedy approach of Pick Best does very well.  But it
+also greatly improves performance on Griewank.  In \fig{griewank-pickbest} we
+see that Pick Best improves accuracy over SEPSO by 20\%, while at the same time
+finding the optimum over 100 rounds of evaluation sooner on average.  It seems
+that while Pick Best is locally greedy, there is enough exploration in the
+seven speculative evaluations to overcome the inherent greediness of the
+algorithm.
 
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank3}
-  \caption{Function Griewank with a swarm that uses 800 processors per round of
-  evaluations.}
-  \label{fig:basic-griewank3}
-\end{figure}
-
-Sphere is a function for which very little exploration needs to be done, so
-always keeping the best speculative position found makes intuitive sense.  A
-less intuitive result occurs when using Pick Best with the function Griewank.
-Griewank is a highly deceptive function prone to premature convergence.  Our
-intuition on the behavior of picking the best speculative child is that it
-would tend to prematurely converge more often than the original PSO.  However,
-as seen in \fig{griewank-pickbest}, Pick Best increases the chance of finding
-the optimum while also reducing the number of iterations required to converge.
-Perhaps Pick Best encourages local exploitation, while the sparse communication
-of the Ring topology still allows for global exploration.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.8\columnwidth]{griewank4}
   \caption{Function Griewank with a swarm that uses 240 processors per round of
   evaluations, comparing Pick Best with previous results.}
   \label{fig:griewank-pickbest}
 \end{figure}
 
-When looking at the function Griewank, presented in \fig{griewank-pruned}, we
-see different results.  Our intuition about picking the best child is more
-correct in this case; while adding 50 more particles to the swarm, Pick Best
-with pruning still gets stuck more often than the original Pick Best.  However,
-Social Promotion does well in this case, finding the optimum every time and
-faster than the original PSO.
+When we introduce pruning, our intuition about Pick Best turns out to be more
+correct.  While adding 50 more particles to the swarm, Pick Best with pruning
+still gets stuck just as often as the original Pick Best.  However, Social
+Promotion does well with pruning; it increases the success rate to close to
+100\%, while still finding the optimum on average much faster than the original
+PSO.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\columnwidth]{griewank5}
+  \includegraphics[width=.8\columnwidth]{griewank4}
   \caption{Function Griewank with a swarm that uses 240 processors per round of
   evaluations, comparing pruning with previous results.}
   \label{fig:griewank-pruned}
 \end{figure}
 
-With the function Griewank, the premature convergence problems inherent in
-picking the best child are exacerbated when speculating several iterations
-ahead.  When the algorithm finds the optimum, it finds it quicker than any
-other method we tried.  However, it also gets stuck and fails to find the
-optimum more than any other method.  In order for this method to be
-consistently useful on functions like Griewank, it seems that more processors
-are required.  The results are shown in \fig{griewank-manyiters}.
+With Griewank, the premature convergence problems inherent in picking the best
+child are exacerbated when speculating several iterations ahead.  When Many
+Iterations finds the optimum, it finds it quicker than any other method we
+tried, on average four times faster than standard PSO.  However, it also gets
+stuck and fails to find the optimum more than any other method.  The results
+are shown in \fig{griewank-manyiters}. (TODO: Rerun Many Iterations with the
+right swarm size)
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\columnwidth]{griewank6}
+  \includegraphics[width=.8\columnwidth]{griewank5}
   \caption{Function Griewank with a swarm that uses 240 processors per round of
   evaluations, comparing speculating several iterations ahead with previous
   results.}
   \label{fig:griewank-manyiters}
 \end{figure}
 
+Now that we have seen the effect that the various algorithms have on speed of
+convergence and success rates, we show a result for using 800 processors, where
+most of the algorithms have a 100\% success rate.  In this case, the best
+algorithm to use is the one which finds the optimum the fastest.  As can be
+seen in \fig{griewank-800}, with 800 processors the best choice is Pick Best.
 
-\subsection{Bohachevksy}
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{griewank6}
+  \caption{Function Griewank with a swarm that uses 800 processors per round of
+  evaluations.}
+  \label{fig:griewank-800}
+\end{figure}
 
+\subsection{Bohachevsky}
+
+Bohachevsky is a unimodal function best optimized with a Complete swarm.  It is
+similar to Griewank in that there is a global optimum with a value of 0, and
+the swarm sometimes finds it and sometimes doesn't.  Since we have already
+demonstrated the convergence properties of the various algorithms with
+Griewank, for Bohachevsky we merely present the best results.  In
+\fig{bohachevsky} we can see that all of the speculative algorithms found the
+optimum much quicker than PSO with a Random topology.  However, SEPSO was
+slower than PSO Complete and got stuck around 15\% of the time.  Using Pick
+Best, Pick Best Pruned, and Many Iterations all outperformed PSO Complete,
+though Many Iterations only almost reached a 100\% success rate.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\columnwidth]{bohachevsky}
+  \caption{Function Bohachevsky with a swarm that uses 800 processors per round
+  of evaluations.}
+  \label{fig:bohachevsky}
+\end{figure}
 
 \section{Conclusions}
 \label{sec:conclusion}
@@ -1257,6 +1320,15 @@ we allow ourselves some freedom with the algorithm we see great improvements
 over previous methods.  We have shown results that conclusively demonstrate the
 superiority of our techniques for several functions over naively adding
 particles to the swarm when extra processors are available.
+
+We have given five different variants of speculative evaluation, each of which
+has different properties.  The variants of the algorithm perform differently on
+different functions and at different swarm sizes, as would be expected by the
+No Free Lunch Theorem~\cite{wolpert-1997-nfl-for-optimization}.  We have given
+a brief evaluation of the premature convergence properties of these variants on
+deceptive functions.  Though there is no one variant that performs best across
+all functions, for all but one of the functions we looked at \emph{some} kind
+of speculative evaluation outperforms standard PSO, often dramatically.
 
 Though our methods show great improvements on some functions, they do not work
 for all functions.  As is commonly known, in PSO there is a trade-off between
@@ -1278,17 +1350,18 @@ algorithm.  With such functions, the smaller swarm size required by speculative
 evaluation does not produce enough exploration to perform better than standard
 PSO at the swarm sizes we were able to experiment with.
 
-Griewank is a function in between Sphere and Rastrigin.  It is highly deceptive
-and is prone to premature convergence, but by adding particles to the swarm a
-point is reached where ``enough'' exploration is done, and the algorithm finds
-the optimum essentially all of the time.  For such functions, the best approach
-seems to be to increase the swarm size until ``enough'' exploration is reached,
-then use extra processors to perform speculative evaluation and increase the
-number of iterations performed.  Sphere and Rastrigin can be thought of as
-special cases of these types of functions; Sphere simply needs a very small
-swarm size to produce ``enough'' exploration, and Rastrigin requires a very
-large swarm.  We expect that for all functions there is a swarm size for which
-additional particles are less useful than additional iterations.
+Griewank is a function in between Sphere and Rastrigin (as are Bohachevsky and
+Schwefel 2.21).  It is highly deceptive and is prone to premature convergence,
+but by adding particles to the swarm a point is reached where ``enough''
+exploration is done, and the algorithm finds the optimum essentially all of the
+time.  For such functions, the best approach seems to be to increase the swarm
+size until ``enough'' exploration is reached, then use extra processors to
+perform speculative evaluation and increase the number of iterations performed.
+Sphere and Rastrigin can be thought of as special cases of these types of
+functions; Sphere simply needs a very small swarm size to produce ``enough''
+exploration, and Rastrigin requires a very large swarm.  We expect that for all
+functions there is a swarm size for which additional particles are less useful
+than additional iterations.
 
 Large parallel clusters are often required to successfully optimize practical
 modern problems.  To properly use PSO with such clusters, a balance needs to be
@@ -1298,11 +1371,6 @@ direction.
 
 \section{Future Work}
 \label{sec:future}
-
-This work represents the first attempt of which we are aware at using
-additional processors in parallel with PSO to do something other than either
-add particles to the swarm or parallelize the evaluation of the objective
-function.  We anticipate that many future advancements can be made.
 
 We have speculated that our Pick Best method simply draws a number of samples
 from the next iteration of the sampling distribution of PSO and keeps one of
@@ -1541,6 +1609,7 @@ performed in those circumstances.
 \bibliographystyle{unsrt}
 \bibliography{%
 ../../../bib/aml/bib,%
+../../../bib/nfl/bib,%
 ../../../bib/pso/general/bib,%
 ../../../bib/pso/parallel/bib,%
 ../../../bib/pso/topology/bib,%
