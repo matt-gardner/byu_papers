@@ -74,7 +74,8 @@
 %Other math
 \providecommand{\prob}{\ensuremath{\mathrm{Pr}}}
 
-\title{\ \\ \LARGE\bf Speculative Evaluation in Particle Swarm Optimization%
+\title{\ \\ \LARGE\bf A Speculative Approach to Parallelization in Particle
+Swarm Optimization%
 \thanks{Matthew Gardner, Andrew McNabb, and Kevin Seppi are with the Department
 of Computer Science, Brigham Young University, 3361 TMCB, Provo, UT 84602
 (phone: 801-422-8717; email: \{mjg82,a,k\}@cs.byu.edu).}%
@@ -1174,7 +1175,7 @@ outperformed by PSO with a Complete topology.
 
 As can be seen in \fig{schwefel2}, almost all of the speculative algorithms
 perform worse than PSO Complete, with Many Iterations performing comparably to
-PSO.  However, one of the speculative algorithms did perform better than PSO,
+PSO.  However, one of the speculative algorithms did perform better than PSO:
 Pick Best Pruned.  It seems that the larger swarm size available because of
 pruning was the cause of the improved performance.
 
@@ -1274,7 +1275,10 @@ child are exacerbated when speculating several iterations ahead.  When Many
 Iterations finds the optimum, it finds it quicker than any other method we
 tried, on average four times faster than standard PSO.  However, it also gets
 stuck and fails to find the optimum more than any other method.  The results
-are shown in \fig{griewank-manyiters}. 
+are shown in \fig{griewank-manyiters}.   \fig{griewank-manyiters} is also
+interesting in that it highlights the trade-off between accuracy and speed in
+the various algorithms at this swarm size.  The faster the algorithm finds the
+optimum, the less likely it is to be successful.
 
 \begin{figure}
   \centering
@@ -1289,7 +1293,8 @@ Now that we have seen the effect that the various algorithms have on speed of
 convergence and success rates, we show a result for using 800 processors, where
 most of the algorithms have a 100\% success rate.  In this case, the best
 algorithm to use is the one which finds the optimum the fastest.  As can be
-seen in \fig{griewank-800}, with 800 processors the best choice is Pick Best.
+seen in \fig{griewank-800}, with 800 processors the best choice is Pick Best,
+which finds the optimum on average three times as fast as standard PSO.
 
 \begin{figure}
   \centering
@@ -1308,9 +1313,9 @@ demonstrated the convergence properties of the various algorithms with
 Griewank, for Bohachevsky we merely present the best results.  In
 \fig{bohachevsky} we can see that all of the speculative algorithms found the
 optimum much quicker than PSO with a Random topology.  However, SEPSO was
-slower than PSO Complete and got stuck around 15\% of the time.  Using Pick
-Best, Pick Best Pruned, and Many Iterations all outperformed PSO Complete,
-though Many Iterations only almost reached a 100\% success rate.
+slower than PSO Complete and got stuck around 15\% of the time.  Pick Best,
+Pick Best Pruned, and Many Iterations all outperformed PSO Complete, though
+Many Iterations only almost reached a 100\% success rate.
 
 \begin{figure}
   \centering
