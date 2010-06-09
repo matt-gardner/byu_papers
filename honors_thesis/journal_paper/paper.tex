@@ -268,8 +268,12 @@ respectively)~\cite{clerc-2002-constricted-pso}.
 
 Changing the way neighbors are defined, usually called the ``topology,'' has a
 significant effect on the performance of the algorithm.  In the Ring topology,
-each particle has one neighbor to either side of it; in the Complete topology,
-every particle is a neighbor to every other
+each particle has one neighbor to either side of it; in the Complete
+topology\footnote{The Complete topology has often been unfortunately named Star
+in the literature, which in graph theory refers to a completely different
+topology.  Other names have also been used, including ``global topology'' or
+gbest.  We use the graph theory term ``Complete'' in this paper.}, every
+particle is a neighbor to every other
 particle~\cite{bratton-2007-defining-a-standard-for-pso}.  In all topologies a
 particle is also a neighbor to itself in that its own position and value are
 considered when updating the particle's neighborhood best, $\nbest$.  Thus with
@@ -288,13 +292,13 @@ Random topologies, all particles have three neighbors.
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
 
-The PSO algorithm can be trivially parallelized by distributing the computation
-needed for each particle on across processors.  But as we have seen in
-\fig{evals-sphere}, for some functions, and for large numbers of processors,
-just adding particles reaches a point of diminishing returns.  That is, adding
-processors does not help the algorithm reach any given level of fitness
-appreciably faster.  Instead of adding particles we employ a speculative
-approach that allows us to perform iterations two at a time.
+PSO can be trivially parallelized by assigning each particle's computation to
+an individual processor.  But as we have seen in \fig{evals-sphere}, for some
+functions, and for large numbers of processors, just adding particles reaches a
+point of diminishing returns.  That is, adding processors does not help the
+algorithm reach any given level of fitness appreciably faster.  Instead of
+adding particles we employ a speculative approach that allows us to perform
+iterations two at a time.
 
 To do so we must first refactor PSO such that the determination of the value
 of the objective function is separate from the rest of the computation.  For
@@ -687,13 +691,13 @@ $\nonbest{\p}_{t+1}$ can be updated to $\p_{t+1}$.  Two iterations have then
 been completed with only one round of evaluations, and the next iteration can
 start again with the first round of message passing.
 
-In some distributed frameworks, like the MapReduce framework that we used in
-our experiments, rounds of message passing can be expensive.  The method just
-described uses three rounds of message passing for every two iterations
-(corresponding to steps 2, 5 and 10 in \alg{centralized}).  It is possible to
-perform speculative evaluation in PSO with only one round of communication per
-two iterations.  However, the methodology is tedious and is not the focus of
-this paper, so we defer its description to the Appendix.
+In distributed frameworks, sychronizing all of the machines for a round of
+message passing can be expensive.  The method just described uses three rounds
+of message passing for every two iterations (corresponding to steps 2, 5 and 10
+in \alg{centralized}).  It is possible to perform speculative evaluation in PSO
+with only one round of communication per two iterations.  However, the
+methodology is tedious and is not the focus of this paper, so we defer its
+description to the Appendix.
 
 \subsection{Dynamic Topologies}
 
@@ -757,14 +761,14 @@ taken, we take the child that has the best value.  The methodology is exactly
 the same as above except for the process of choosing which speculative child to
 accept.  The only change needed in \alg{centralized} is in step 7, where
 $\noeval{\s}_{t+1}$ with the best value is chosen from $\noeval{\sset}_{t+1}$
-instead of with the matching branch.
+instead of with the matching branch.  We call this technique Pick Best.
 
 This can be thought of as drawing a number of samples from the next iteration
 and accepting the best one.  Speculative particles that move in good directions
-are kept.  It seems this modification to PSO would produce more exploitation,
-decreasing the amount of exploration.  With functions that are less deceptive
-we would expect this method to work well, while performance on more deceptive
-functions would probably be hurt.  We call this technique Pick Best.
+are kept.  Intuition says that this technique favors exploitation over
+exploration, but as we will show in \sec{results}, that is not always the case.
+
+
 
 \subsection{Pruning the Speculative Evaluations}
 \label{sec:pruning}
