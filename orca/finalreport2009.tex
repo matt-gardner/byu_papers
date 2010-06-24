@@ -1,0 +1,110 @@
+\documentclass[onecolumn, 12pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{cite}
+
+\title{A Speculative Approach to Parallelization in Particle Swarm Optimization}
+\author{Matthew Gardner\\Mentor: Kevin Seppi, Computer Science}
+\date{}
+
+\begin{document}
+\maketitle
+
+Optimization problems are ubiquitous in our modern world.  Businesses such as
+Google need to decide where to place ads, scientists need to fit models to
+data, and airlines need to schedule their flights.  All of these problems are
+optimization problems, and optimization techniques can be used to find
+solutions.  Particle swarm optimization (PSO) is a relatively new optimization
+technique that draws on ideas from the sociology of flocking birds.  It was
+originally developed for use on a single machine, and attempts at modifying the
+algorithm to run in parallel are still quite preliminary.  However, the
+problems people want to solve are getting bigger, and larger problems require
+more computation power than is available on any single computer.  To
+effectively solve those problems, optimization algorithms need to be improved
+to better use parallel clusters of machines.  This project addressed that
+issue.
+
+Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
+Eberhart~\cite{kennedy-1995-particle-swarm-optimization}.  The algorithm is
+used to intelligently search a multi-dimensional space by mimicking the
+swarming and flocking behavior of birds and other animals. It is a social
+algorithm that depends on interaction between particles to quickly and
+consistently find the optimal solution to some objective function.
+
+The motion of particles through the search space has three components: an
+inertial component that gives particles momentum as they move, a cognitive
+component where particles remember the best solution they have found and are
+attracted back to that place, and a social component by which particles are
+attracted to the best solution that any of their neighbors have found.
+
+Within the last few years, researchers have begun to recognize the need to
+develop parallel implementations of PSO.  The methods they have used include
+various synchronous algorithms and asynchronous algorithms.  Parallelizing the
+evaluation of the objective function can also be done in some cases, though
+that is not an adaption of the PSO algorithm and thus was not the focus of this
+work.
+
+These previous parallel techniques distribute the computation needed by the
+particles in the swarm over the available processors.  If more processors are
+available, these techniques increase the number of particles in the swarm,
+either by adding individual particles or by adding entire new sub-swarms.  In
+almost all cases, adding additional particles produces better results in the
+same amount of time.  However, indefinitely increasing the swarm size produces
+only incremental benefit; performance improves, but not by very much.  The
+reason for this is that there comes a point of diminishing returns with respect
+to adding particles.
+
+In this work we considered PSO parallelization strategies for clusters of
+hundreds or thousands of processors and functions for which a single evaluation
+will take at least tens of seconds, but probably minutes or perhaps hours.  Our
+purpose is to explore the question of what to do with a thousand processors
+when 50 or 100 particles is the most efficient swarm size, and simply adding
+particles results in only incremental improvement.
+
+In previous work (my honors thesis, which was also sponsored by an ORCA grant)
+we developed an algorithm we called Speculative Evaluation in PSO.  The
+algorithm works by finding all possible positions of particles at future
+iterations, then evaluating them in parallel.  That work resulted in a
+publication in the proceedings of \emph{Parallel Problem Solving in Nature,} a
+prestigious conference in parallelizing nature-based algorithms.
+
+However, that work left us many open questions, and the results we presented
+were decent, but not spectacular.  In this work we expanded greatly on the
+results of our previous paper, exploring in much more depth the possibilities
+of speculative computation in PSO.
+
+Our original algorithm reproduced the PSO algorithm exactly, two iterations at
+a time, in parallel, so that the algorithm could be run more quickly on
+functions that took a long time to evaluate.  But exactly reproducing PSO
+required us to use eight times as many processors as standard PSO, while those
+processors could have been used to increase the swarm size of the standard
+algorithm.  Our algorithm thus required too much computation to be competitive
+in very many instances.
+
+To solve this problem, we relaxed the requirement that our algorithm exactly
+reproduce the behavior of standard PSO.  Thus we were able to save some
+computation costs and increase the swarm size of our algorithm, and our results
+greatly improved.  After introducing some of these cost-saving measures, we
+were able to also speculate several iterations ahead, instead of just one, and
+that led to further performance improvements in many instances.
+
+The result of this work was an expanded version of our original paper that was
+twice as long.  We submitted this more thorough treatment of speculative
+evaluation in PSO to the journal \emph{Transactions on Evolutionary
+Computation}, one of the premier journals treating research on evolution- and 
+nature-inspired algorithms, such as PSO.  We hope to hear a response from the
+journal soon.
+
+As is typical of research projects, we were left again with many open
+questions.  One of the most intriguing is how to most effectively allocate
+speculative evaluations to available processors.  Our approaches treat every
+particle equally, giving the same number of extra evaluations to both poorly
+performing particles and those that are performing very well.  Perhaps a better
+approach would be to draw on ideas from the multi-robot task allocation
+literature and dynamically allocate extra processors to particles that could
+best make use of them.
+
+\bibliographystyle{plain}
+\bibliography{../../bib/pso/general/bib}
+
+\end{document}
