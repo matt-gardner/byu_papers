@@ -217,10 +217,10 @@ have seen.  The parameters \( \ncoeff \), \( \pcoeff \), and \( \constriction
 \) are given prescribed values required to ensure convergence (2.05, 2.05, and
 .73, respectively)~\cite{clerc-2002-constricted-pso}. 
 
-Changing the way neighbors are defined, usually called the ``topology,''
-has a significant effect on the performance of the algorithm.  In
-the Ring topology, each particle has one neighbor to either side of it; in the
-Complete topology, every particle is a neighbor to every other
+Changing the way neighbors are defined, usually called the ``topology,'' has a
+significant effect on the performance of the algorithm.  In the Ring topology,
+each particle has one neighbor to either side of it; in the Complete topology,
+every particle is a neighbor to every other
 particle~\cite{bratton-2007-defining-a-standard-for-pso}.  In all topologies a
 particle is also a neighbor to itself in that its own position and value are
 considered when updating the particle's neighborhood best, $\nbest$.  Thus with
@@ -245,8 +245,7 @@ particles yields diminishing returns.  That is, adding processors does not help
 reach any given level of fitness appreciably faster.  Instead of adding
 particles, speculative evaluation performs iterations two at a time.
 
-Speculative evaluation is made possible by refactoring
-PSO such that evaluating the
+Speculative evaluation is made possible by refactoring PSO such that evaluating
 the objective function is separate from the rest of the computation.  For
 simplicity, this discussion will describe the case where PSO is performing
 function minimization using the Ring topology.  In this example, each particle
@@ -255,18 +254,19 @@ positions are represented as $\rightn$ and $\leftn$ respectively.  Though we
 will only describe the case of the Ring topology, this method is easily
 extended to arbitrary topologies.
 
-The refactoring hinges on the idea that once the random coefficients $\pURand_{t}$ and $\pURand_{t}$ are
-determined, there are only a few possible updates to $\nbest$ and $\pbest$.
-For the Ring topology there are 7 possible update cases, identified in
-Table~\ref{tab:evals}.  We label each case with an identifier referring to the
-source of the update: a minus sign ($-$) represents no update, $L$ represents
-an update to $\nbest$ coming from the left neighbor, $R$ represents an update
-to $\nbest$ coming from the right neighbor, and $S$ represents an update to
-either $\pbest$ or $\nbest$ coming from the particle itself.  As an example,
-$\casexn$ refers to the case that the particle finds a new personal best, but
-neither it nor its neighbors found a position that updated its neighborhood
-best.  In the equations that follow, we refer to an unspecified update case as
-$\casegen$, and to the set of cases collectively as $\caseset$.
+The refactoring hinges on the idea that once the random coefficients
+$\pURand_{t}$ and $\pURand_{t}$ are determined, there are only a few possible
+updates to $\nbest$ and $\pbest$.  For the Ring topology there are 7 possible
+update cases, identified in Table~\ref{tab:evals}.  We label each case with an
+identifier referring to the source of the update: a minus sign ($-$) represents
+no update, $L$ represents an update to $\nbest$ coming from the left neighbor,
+$R$ represents an update to $\nbest$ coming from the right neighbor, and $S$
+represents an update to either $\pbest$ or $\nbest$ coming from the particle
+itself.  As an example, $\casexn$ refers to the case that the particle finds a
+new personal best, but neither it nor its neighbors found a position that
+updated its neighborhood best.  In the equations that follow, we refer to an
+unspecified update case as $\casegen$, and to the set of cases collectively as
+$\caseset$.
 
 \begin{table}
   \caption{All possible updates for a particle with two neighbors}
@@ -407,7 +407,7 @@ The velocity~\eqref{eq:velupdate} and position~\eqref{eq:posupdate} equations be
 In this form the important point to notice is that there are only $7$ values
 (for this Ring topology) in the set $\{\specpos_{t+1}^{\casegen}: \casegen \in
 \caseset\}$ and that none of them depend upon $f(\ppos_t)$ or any other
-objective function evaluation at iteration $t$. Note also that while there are
+objective function evaluation at iteration $t$.  Note also that while there are
 random numbers in the equation, they are assumed fixed once drawn for any
 particular particle at a specific iteration.  Thus PSO has been refactored such
 that the algorithm can begin computing all $7$ of the objective function
@@ -660,11 +660,5 @@ swarm a point is reached where ``enough'' exploration is done, and the algorithm
 Large parallel clusters are often required to successfully optimize practical modern problems.  To properly use PSO with such clusters, a balance needs to be made between using processors to increase the swarm size and using them to increase the speed of the algorithm.  This work is a first step in that direction.
 
 \bibliographystyle{unsrt}
-\bibliography{%
-../../../bib/aml/bib,%
-../../../bib/pso/general/bib,%
-../../../bib/pso/parallel/bib,%
-../../../bib/pso/topology/bib,%
-../../../bib/sim-anneal/parallel/bib,%
-../../../bib/ga/bib}
+\bibliography{ppsn}
 \end{document}
