@@ -6,8 +6,12 @@ Admission to Bachelors degree at BYU: accepted (2004)
 
 National Merit Scholarship: accepted (2004)
 
+ORCA Grant application: accepted (2008)
+
 "An Exploration of Topologies and Communication in Large Particle Swarms"
 (second author) submitted to CEC: accepted (2009)
+
+ORCA Grant application: accepted (2009)
 
 "Automatic Topic Discovery in 100 Years of General Conference Talks" sent to
 BYU Studies Symposium: accepted as a poster (2010)
@@ -22,6 +26,7 @@ NAACL Scholarship to Johns Hopkins NLP Summer School: accepted (2010)
 ==============
 Rejected:
 ==============
+
 Hinckley Scholarship at BYU: finalist, but rejected (2004)
 
 Barry M. Goldwater Undergraduate Research Scholarship: BYU nominee (one of 4),
@@ -39,6 +44,9 @@ Phi Kappa Phi Graduate Fellowship: rejected (2010)
 ==============
 Waiting:
 ==============
+
+"A Speculative Approach to Particle Swarm Optimization" submitted to
+Transactions on Evolutionary Computation: waiting (2010)
 
 
 
