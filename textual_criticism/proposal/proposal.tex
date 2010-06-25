@@ -1,0 +1,107 @@
+\documentclass[onecolumn, 11pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+
+\title{Automated Textual Criticism}
+\author{Matthew Gardner}
+\date{June 25, 2010}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Textual criticism can be loosely described as the analysis of a series of
+manuscripts of a document (generally an ancient document) in an attempt to
+reconstruct the original text produced by the author(s) of the document.
+Because of the importance of religious documents and the proliferation of their
+manuscripts, textual criticism has grown into a very large field, though its
+use has not been confined solely to religious documents.
+
+The process of textual criticism involves laboring over differing manuscripts
+searching for discrepancies, recording them by hand and sifting through the
+various manuscripts in order to come to some conclusion about the manuscripts'
+origins.  Much of the work of textual criticism seems like it could be
+automated, greatly reducing the workload on scholars and perhaps even producing
+better results, by finding things that scholars miss.
+
+\section{Objectives}
+
+The main objective of this project is to explore the possibility of using
+computers, especially statistical methods in natural language processing and
+computational biology, to completely automate the process of textual criticism.
+Were automated textual criticism possible, the resultant system would take as
+input a collection of manuscripts and output a critical edition of the work
+(with variant readings, probabilities that each of the readings was the
+original reading, a history of changes to the manuscript, and so forth).  Such
+a system is much too ambitious a project for a 598R project; I will seek only
+to explore the feasibility of such a system, and to what extent people have
+tried to build them already.
+
+I will also try to build some portion of such a system, though what portion
+that would be has yet to be determined, and will likely be influenced by my
+initial research.  My efforts to build a system may also be hampered by a lack
+of data to use; I do not yet know what the availability of manuscripts in
+digital form is like.  So while building part of a system for automated textual
+criticism is a desired objective, the main objective is the exploration of the
+space to determine feasibility.
+
+\section{Outline of proposed work}
+
+The bulk of the work of this project will be reading, to familiarize myself
+with the field and see what has been done before.  In particular, the reading
+will include at least the following:
+
+\begin{itemize}
+  \item \emph{Misquoting Jesus}, by Bart Ehrman
+  \item \emph{The Text of the New Testament}, by Bruce Metzger and Bart Ehrman
+  \item \emph{How the New Testament Came to Be}, the proceedings of the Sperry
+	Symposium in 2006
+\end{itemize}
+
+These books will give me an idea of the process of textual criticism and what
+exactly it involves.  Understanding how modern textual critics do their work is
+essential to automating the process.
+
+I will also search what literature I can find about automating the process of
+textual criticism.  Some has already been done, called cladistics (the
+application of computational biology to textual criticism); this section of my
+reading will explore to what extent such attempts have been made and how
+successful they are.
+
+Another important part of my work will be contacting individuals who work in
+the field, to discuss the idea of automated textual criticism with them and to
+see what access there is to relevant data sources.  If none of the manuscripts
+are available digitally, automated methods are not possible.  I will talk at
+least to BYU professors in the field, including Thomas Wayment, Don Parry,
+David R. Seely, and Stephen Bay.
+
+Finally, assuming that I find some amount of data to be available, I will try
+to implement some part of an automated system for textual criticism.  Exactly
+what part of the system that might be depends a lot on what I find in my
+reading.  In the absence of any available data in digital form, I can at least
+produce simulated data and test the results of my system on that.
+
+I will also meet weekly with my faculty mentor, on Fridays at 11:00 AM, to
+discuss my progress and get further direction.
+
+\section{Deliverables}
+
+The main deliverable of this project will be a paper summarizing my findings.
+At the very least this will be a survey of the various parts of textual
+criticism, what knowledge sources are required to accomplish each aspect of it,
+my ideas about the feasibility of automating each of those parts, and what work
+has already been done to automate them.  It is possible that such a survey
+could be submitted for publication to a conference or journal, but I do not
+know yet what conferences or journals are published in the field.
+
+Assuming some part of the processes can be automated and I can find data to
+use, a secondary deliverable is code that does some amount of automated textual
+criticism.  Along with such code would go a paper describing the code, and if
+it is deemed interesting enough, that paper could be submitted for publication
+to some venue for textual criticism.  It seems to me, though, that producing a
+publishable paper on top of all of the research and code writing that would be
+involved might take a little longer than a term.  A reasonable deliverable to
+me seems to be at least the beginnings of a paper that could be published.
+
+\end{document}
