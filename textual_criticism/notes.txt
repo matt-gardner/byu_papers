@@ -1,4 +1,4 @@
-MJ p. 61-62: There is some question as to what it even means to reconstruct the
+MJ pp. 61-62: There is some question as to what it even means to reconstruct the
 "original" text of a document.  Do you reconstruct the parts that probably were
 not there originally, but show up in all of our manuscripts?  Do you
 reconstruct the sources of the document?  Or just the earliest manuscript?
@@ -6,3 +6,19 @@ reconstruct the sources of the document?  Or just the earliest manuscript?
 MJ p. 84: Textual criticism has been practiced for thousands of years
 (wikipedia), but the first major work of Greek New Testament textual criticism
 was published in 1707 by John Mill.
+
+Types of variants (see MJ pp. 90-98):
+- spelling errors
+- periblepsis
+- misunderstanding of abbreviations
+- substitution of homophones
+- changes in word order
+- "fixing" factual errors
+- "fixing" doctrinal/interpretive errors
+- "harmonizing" the gospels
+
+
+
+
+
+
