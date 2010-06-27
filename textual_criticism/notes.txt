@@ -17,7 +17,27 @@ Types of variants (see MJ pp. 90-98):
 - "fixing" doctrinal/interpretive errors
 - "harmonizing" the gospels
 
+MJ p. 111: "The more difficult reading is preferable to the easier one."
 
+MJ pp. 111-112: family trees of documents
+
+A book to read: Westcott and Hort, "The New Testament in the Original Greek,"
+1881.  (summarized in Metzger and Ehrman, so it might suffice just to read
+that)
+
+Evidence used to do textual criticism (see MJ pp. 128-132):
+External evidence:
+- Which manuscripts attest the reading?
+- Are those manuscripts reliable?
+- Why are they reliable?
+- Age of manuscript
+- Location of manuscript
+- Readings disambiguated in other ways show reliability
+Internal evidence:
+- Intrinsic probabilities - what the author was likely to have written (style,
+vocabulary, theology)
+- Transcriptional probabilities - the probability that a scribe changed from
+one reading to the other reading
 
 
 
