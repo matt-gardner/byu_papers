@@ -1,3 +1,6 @@
+Notes on methods in textual criticism in general:
+-------------------------------------------------
+
 MJ pp. 61-62: There is some question as to what it even means to reconstruct the
 "original" text of a document.  Do you reconstruct the parts that probably were
 not there originally, but show up in all of our manuscripts?  Do you
@@ -41,4 +44,53 @@ one reading to the other reading
 
 
 
+
+Previous work in automated methods:
+-----------------------------------
+
+"Recent Advances in Computational Linguistics and their Application to Biblical
+Studies," by J.J. Alviar, in "New Testament Studes," 2008.  He talks mostly
+about stylometry and its application to determining authorship.  It goes into a
+lot of detail about different methods for automated stylometry.  This would go
+into textual criticism when judging between variants on stylistic grounds.  The
+paper also has references (on page 3, footnote 2) to journals and societies
+dedicated to using computers in Biblical studies.  [Already in my bib.bib file]
+
+"From New Testament Manuscripts to a Central Electronic Database," by David
+Trobisch, in "Bible and Computer: the Stellenbosch AIBI-6 Conference:
+proceedings of the Association Internationale Bible et Informatique "From Alpha
+to Byte", 2000.  He says that it would be a dream to have images of all of the
+New Testament manuscripts available on the internet.
+
+"The Use of Computers in New Testament Textual Criticism," by Robert A. Kraft,
+in "The Text of the New Testament in Contemporary Research: Essays on the
+Status Quaestionis," edited by Bart D. Ehrman and Michael W. Holmes.  Talks
+about a lot of the history, says that one big problem is entering the data.
+"We have, in short, not come very far in realizing the promise offered by
+computer-assisted research for NT textual criticism, although much of the
+groundwork ahs been laid."
+
+"Beyond the Interlude? Developments and Directions in New Testament Textual
+Criticism," by L.W. Hurtado, in "Studies in the Early Text of the Gospels and
+Acts," by D.G.K. Taylor.  Section 5 talks of "Computerisation," and says, "To
+date, major obstacles remain in the way of these aims, especially the necessity
+to transcribe the witnesses into machine-readable form (a highly
+labour-intensive process and fraught with the danger of introducing additional
+variants inherent in any copying process!) and the need for fully adequate
+software able to collate and in some level classify variants."  And later,
+"Any significant uses of computer technology for the work of textual criticism
+of the New Testament, uses that would materially simplify, expedite and improve upon more traditional measures, are still unfortunately the stuff of dreams."
+
+"Multivariate Statistical Analysis for Manuscript Classification," by J.C.
+Thorpe, in "TC: A Journal of Biblical Textual Criticism," 2002.  He uses
+clustering methods to come up with manuscript similarities, even trees in a
+dendrogram.
+
+"Principal Component Analysis of Manuscripts of the Gospel of John," by Wieland
+Willker.  http://www-user.uni-bremen.de/~wie/pub/Analysis-PCA.html.  Cited by
+the previous paper, just a website that does PCA to show similarity of
+manuscripts.  Does a good job reproducing the work of scholars of grouping the
+manuscripts by "family."
+
+There is a large body of literature on cladistics, or automated stemmatology.
 
