@@ -34,7 +34,7 @@ various manuscripts in order to come to some conclusion about the manuscripts'
 origins.  After deciding which manuscripts are most trustworthy, the textual
 critic produces a text that he or she believes most closely matches the
 original text, along with a ``critical apparatus'' containing variant readings
-and justification for the editorial desicions made.
+and justification for the editorial decisions made.
 
 For hundreds of years, the methodology used by the textual critic was
 painstaking and tedious, often involving travel to several countries to examine
@@ -43,7 +43,7 @@ Metzger, a prominent New Testament textual critic, described part of the
 process as ``such an enormous amount of labor, out of all proportion to the
 importance of the results, that scholars are content'' to make textual
 decisions considering only a subset of the data available to
-them~\cite[179]{metzger-1992-text-of-the-new-testament}.
+them~\cite[p. 179]{metzger-1992-text-of-the-new-testament}.
 
 With the advent of the computer, the work of textual criticism has started to
 change.  A computer can now catalogue discrepancies in manuscripts, and even
@@ -52,15 +52,15 @@ manuscripts.  But while some work has been done in automating the process of
 textual criticism, there are many areas in which computing resources and ideas
 from computer science seem completely untapped.
 
-This work attempts to document the current extent of the use automated methods 
-in the field of textual criticism.  We start in \secref{methods} with an
+This work attempts to document the current extent of the use automated methods
+in the field of textual criticism.  I start in \secref{methods} with an
 overview of the basic methods of the textual critic, for without a basic
-understanding of the methods one cannot proceed to automate them.  We then move
+understanding of the methods one cannot proceed to automate them.  I then move
 in \secref{previous-work} to a discussion of previous work and the state of the
-field in automating textual criticism.  In \secref{proposed-ideas} we discuss
-our own ideas for how to automate parts of the process that have not yet been
-automated.  \secref{experiments} then presents some preliminary results of
-experiments testing some of our ideas, and in \secref{conclusion} we conclude.
+field in automating textual criticism.  In \secref{proposed-ideas} I discuss my
+own ideas for how to automate parts of the process that have not yet been
+automated, and some preliminary results of experiments testing some of my
+ideas.  In \secref{conclusion} I conclude.
 
 \section{Methods of Textual Criticism}
 \label{sec:methods}
@@ -79,16 +79,16 @@ implications of the uncertainty in the textual tradition of the New Testament.
 \subsection{Rules for Textual Criticism}
 
 Aland, in his book, gives ``twelve basic rules for textual
-criticism''~\cite[280--282]{aland-text-of-the-new-testament}.  Not all of his
-rules are relevant to our present discussion, so we will summarize only eight
-of them here, giving them new numbers:
+criticism''~\cite[pp. 280--282]{aland-text-of-the-new-testament}.  Not all of
+his rules are relevant to the present discussion, so I will summarize only
+eight of them here, giving them new numbers:
 
 \begin{enumerate}
   \item Only one reading can be original (i.e., the author did not produce two
 	versions of the same text; an assumption which may in some cases be
 	erroneous).
   \item In determining the original text, external evidence should be
-	considered before internal evidence (we will discuss each type of evidence
+	considered before internal evidence (I will discuss each type of evidence
 	shortly).
   \item Texts in the original language are the primary authority; translations
 	and quotations in other works are of less importance, especially when the
@@ -118,27 +118,37 @@ but demands that we proceed on the premise that in every instance of textual
 variation it is possible to determine the form of the original text \ldots
 assuming a proper understanding of the textual tradition.  The vast number of
 witnesses to the text is not simply a burden---it is also a positive
-aid.~\cite[294]{aland-text-of-the-new-testament}
+aid.~\cite[p. 294]{aland-text-of-the-new-testament}
 \end{quotation}
-Thus according to Aland, to obtain the original text we merely
-need to list every place of variation and decide which of the extant variants
+Thus according to Aland, to obtain the original text one merely
+needs to list every place of variation and decide which of the extant variants
 is the original.  No postulation of missing readings is necessary.
 
 The rules make reference to external and internal evidence.  External evidence
-is evidence that is outside of the text of the document itself.  For example,
+is evidence that is outside of the text of the manuscript itself.  For example,
 which manuscripts attest a given reading, the reliability of those manuscripts,
 and the age and location of the manuscript are all external criteria.  Internal
-evidence includes considerations based on the text of the document, such as
-what the author was likely to have written (based on stylistic and theological
-considerations), and the probability that a scribe changed the reading from one
-variant to another.
+evidence includes considerations based on the text of the document (both the
+manuscript in question and the likely original text), such as what the author
+was likely to have written (based on stylistic and theological considerations),
+and the probability that a scribe changed the reading from one variant to
+another.
+
+It should also be noted that textual critics often use the word ``probability''
+when describing their rules, such as in saying that ``the shorter reading is
+more probable,'' or ``more likely.''  When they use those terms, however, they
+do not refer to actual probabilities in the strict, mathematical sense of the
+word.  In building an automated system, it might be fruitful to build a
+statistical model using the rules mentioned here as guidelines, and then the
+nebulous use of the word ``probability'' would be translated into something
+more concrete.
 
 \subsection{Kinds of Variation in the Text}
 
 Another important thing to understand in deciding between textual variants is
 the manner in which variations creep into the manuscript tradition.  Ehrman
 lists several different types of variants, categorized broadly into intentional
-and non-intentional variations~\cite[90--98]{ehrman-2005-misquoting-jesus}.
+and non-intentional variations~\cite[pp. 90--98]{ehrman-2005-misquoting-jesus}.
 Among the non-intentional kind of variations he lists the following:
 
 \begin{itemize}
@@ -156,10 +166,11 @@ Among the non-intentional kind of variations he lists the following:
 His list of intentional variations includes:
 
 \begin{itemize}
-  \item ``fixing'' factual errors in the text (we put ``fixing'' in quotation
-	marks, because the scribe may think he is correcting the document, but he
-	is in fact changing the original text; the textual critic is interested in
-	the original text, whether or not there were factual errors in it)
+  \item ``fixing'' factual errors in the text (I put ``fixing'' in quotation
+	marks because the scribe may think he is correcting or improving the text
+	of the manuscript he is copying, but he is in fact changing the original
+	text; the textual critic is interested in the original text, whether or not
+	there were factual errors in it)
   \item ``fixing'' doctrinal or interpretive errors
   \item ``harmonizing'' similar passages in the text (this is especially
 	applicable to the Gospels in the New Testament textual tradition)
@@ -169,9 +180,11 @@ His list of intentional variations includes:
 
 In order to obtain the evidence required for determining the original reading
 of a passage, there are several sources of knowledge that must be consulted.
-If we are to automate the process of textual criticism, those knowledge sources
-must be available to and interpretable by a computer.  Thus we discuss here all
+If one is to automate the process of textual criticism, those knowledge sources
+must be available to and interpretable by a computer.  Thus I discuss here all
 of the kinds of knowledge that are necessary to the work of the textual critic.
+
+\subsubsection{Sources of ``External'' Evidence}
 
 The most basic knowledge source is the manuscript itself.  Each manuscript has
 a date, a location, and text.  The location of the manuscript is trivially
@@ -180,12 +193,12 @@ archaeologists.  The text of the manuscript may be in dispute, if the
 manuscript is incredibly corrupted or is incomplete, or if the text has been
 written over, as in some of our oldest manuscripts (the uncial manuscript known
 as 04 or C is called the ``Codex Ephraemi Syri Rescriptus,'' where the word
-``rescriptus'' is added for that very
-reason~\cite[109]{aland-text-of-the-new-testament}).  As far as computers
-performing the work of textual criticism, it seems reasonable to assume a
-faithful transcription for each manuscript, with the date and location as
-metadata.  This knowledge source, then, contains almost all of the information
-listed as ``external evidence.''
+``rescriptus'' is added for that very reason~\cite[p.
+109]{aland-text-of-the-new-testament}).  As far as computers performing the
+work of textual criticism, it seems reasonable to assume a faithful
+transcription for each manuscript, with the date and location as meta data.
+This knowledge source, then, contains almost all of the information listed as
+``external evidence.''
 
 The one part of the external evidence not immediately apparent from the above
 description of the manuscript is the reliability of the manuscript.  A
@@ -200,12 +213,14 @@ iterative process.
 Another item that should be mentioned is that manuscripts were often corrected
 by a hand not belonging to the original scribe.  Those corrections provide more
 evidence that can be used in textual criticism.  One must decide how to encode
-that evidence.  The approach taken by all critical apparati that we observed
+that evidence.  The approach taken by all critical apparati that I observed
 was to superscript the symbol for the corrected manuscript with a ``c'' for the
 corrected version, and an asterisk for the original.  The two versions of the
 manuscript could then be used as two separate manuscripts in an automated
 system, though care would have to be taken to not double count their evidence
 in passages where there was no correction.
+
+\subsubsection{Sources of ``Internal'' Evidence}
 
 The knowledge sources needed to judge the ``internal'' criteria are much more
 complicated.  Determining what the author was likely to have written is not a
@@ -216,16 +231,40 @@ drastic and unreasonable approximations than those a human makes, though some
 parts of the knowledge source seem at least approachable in an automated
 fashion, such as style and vocabulary.
 
+A possibility for using computers to make theological decisions is to create
+extensive markup about the theology contained in a text, so the computer would
+not have to automatically detect the theology.  Then the computer could decide
+if any particular variant agreed theologically with the rest of the text in
+question.  However, determining what kind of markup is sufficient and creating
+the markup for every text (and possibly every manuscript of the text) seems
+like far more work than simply having the human make the theological decision
+himself.
+
 Determining the probability with which a scribe introduces a variant reading
 requires further knowledge, including an understanding of the way scribes
-operated (which is why we included a section on the kinds of variations that
-exist in the text).  Much of this information could be encoded into an
-automated system without too much difficulty by simply specifying a prior
+operated (which is why I included a section on the kinds of variations that
+exist in the text).  Much of this information could be encoded for processing
+by an automated system without too much difficulty by simply specifying a prior
 probability of each type of error occurring.  However, when considering whether
 a scribe introduced a variant, the concept of an ``easier'' reading is referred
 to, for scribes are more likely to make the reading easier than more difficult.
 Those types of considerations seem at present beyond the capacity of automated
 methods.
+
+For instance, a prime example of a scribe making the reading easier is found in
+Mark 1:41~\cite[pp. 133--139]{ehrman-2005-misquoting-jesus}.  In the passage, a
+leper comes to Jesus seeking to be healed.  The majority of manuscripts
+available to us today say that Jesus had compassion on the man and healed him.
+However, there are some significant, very old manuscripts that instead say that
+Jesus became angry with the man, then healed him.  It is very easy to
+understand that Jesus had compassion, but much more difficult to explain anger.
+It is much more likely, then, the textual critic would say, that a scribe
+changed Jesus from being angry to showing compassion, not the other way around.
+How to get a computer to understand and use the knowledge required to make
+these judgments is beyond the current understanding of natural language
+processing.
+
+\subsubsection{Other Knowledge Sources}
 
 There are also other kinds of knowledge sources involved in the process of
 textual criticism that are more analogous to algorithms than to data in the
@@ -236,13 +275,14 @@ system in the way the system is built.
 
 Lastly, if one wants to use quotations of the text in writings of other
 authors, or translations of the work into other languages, still more knowledge
-sources are required.  For the simple case of a quotation, the extract text as
-quoted could be considered its own ``manuscript.''  To use other-language
-texts, translation back into the original is necessary, or some other way to
-use the foreign-language text to aid in the decision between variant readings.
-Perhaps the use of a bilingual dictionary would be useful.  It seems more
-difficult, however, to propose a new variant reading from a translated version
-of the text.
+sources are required.  For the simple case of a quotation, the extracted text
+as quoted could be considered its own ``manuscript,'' though certainly it
+should hold less weight than a real manuscript.  To use other-language texts,
+translation back into the original is necessary, or some other way to use the
+foreign-language text to aid in the decision between variant readings.  Perhaps
+the use of a bilingual dictionary would be useful.  It seems more difficult,
+however, to propose a new variant reading from a translated version of the
+text.
 
 \section{Previous Work in Automating Textual Criticism}
 \label{sec:previous-work}
@@ -251,40 +291,61 @@ An early survey of the history of computers in textual criticism was published
 in 1994 by Robert
 Kraft~\cite{kraft-1994-computers-in-new-testament-textual-criticism}.  For the
 reader interested in the history, his is a good survey to read.  However, in
-our current discussion we are interested in the present use of computers in
-textual criticism, so we will defer further description of the history of the
-field to that survey.  One line, however, seems germaine to the topic at hand:
+the current discussion I am interested in the present use of computers in
+textual criticism, so I will defer further description of the history of the
+field to that survey.  One line, however, seems germane to the topic at hand:
 ``We have, in short, not come very far in realizing the promise offered by
 computer-assisted research for NT textual criticism, although much of the
 groundwork has been laid.''
 
 Since 1994 significant progress has been made, though the vast majority of that
 work has been in one small part of the process of textual criticism, that of
-trying to produce a hierarchical relationship between each of the manuscripts
-of a given text.  There is a very broad literature on the topic of constructing
-trees of manuscripts, normally called either stemmatology or cladistics.  For
-an example of how broad the field is, see
-\cite{spencer-2002-exploring-textual-genealogy} and
-\cite{van-reenen-2004-studies-in-stemmatology-ii}, including the articles they
-cite.
+trying to produce a hierarchical relationship among the manuscripts of a given
+text.  There is a very broad literature on the topic of constructing trees of
+manuscripts, normally called either stemmatology or cladistics.  For an example
+of how broad the field is, see \cite{spencer-2002-exploring-textual-genealogy}
+and \cite{van-reenen-2004-studies-in-stemmatology-ii}, including the articles
+they cite.
 
 The purpose of research into stemmatology seems to be to establish the
 reliability of each manuscript.  If one can establish which manuscripts are
 earliest in the tree, one can come to some conclusion about which manuscripts
-are the most reliable.  A survey of the current state of the art in manuscript
-stemmatology is beyond the scope of this paper; we suffice ourselves in noting
-that significant research has been done in that area and to which aspects of
-textual criticism the field applies.
+are the most reliable.  It seems that the method at the forefront of New
+Testament stemmatology is called the ``Coherence-Based Genealogical Method,''
+presented in detail in an essay called ``Problems of a highly contaminated
+tradition: the New Testament: Stemmata of variants as a source of a genealogy
+for witnesses''~\cite[pp. 13--87]{van-reenen-2004-studies-in-stemmatology-ii}.
+This method is currently being used by the Institute for New Testament Textual
+Research at the University of M\"{u}nster to aid in the production of the text
+for the Editio Critica Maior (ECM), an important critical edition of the New
+Testament.
+
+The general idea of the method is that in a single manuscript the variant
+readings could have different ages of origin.  Thus individual variants are
+treated separately, and stemmatological decisions are made on the basis of an
+understanding of how the variants came about.  The paper also recognizes the
+circular nature of the reliability of a manuscript, and uses an iterative
+method to establish that reliability~\cite[p.
+25]{van-reenen-2004-studies-in-stemmatology-ii}.  One of the key insights that
+can be gained from this method is that a manuscript perhaps should not have a
+single measure of reliability; different sections of the same manuscript can
+have different levels of reliability.
+
+There has been much more work in the field of New Testament stemmatology than
+we have room or time to present here.  A broad and detailed survey of the field
+could easily be longer than the current study.  It seems sufficient to
+mention one of the most prominent methods in the field and move on to other
+areas of work in the automation of textual criticism.
 
 There has also been some investigation into using clustering methods to group
 manuscripts by similar readings~\cite{willker-pca-of-manuscripts-of-john}.  One
-article we found even uses hierachical clustering to form trees of documents,
+article I found even uses hierarchical clustering to form trees of documents,
 instead of the more common techniques taken from computational
 biology~\cite{thorpe-2002-statistical-manuscript-classification}.  These
 methods seem to reproduce rather well the ``families'' of manuscripts created
 by textual critics to describe sections of the New Testament manuscript
-tradition (for a description of the manuscript families, see
-\cite[212--218]{metzger-1992-text-of-the-new-testament}).
+tradition (for a description of the manuscript families, see \cite[pp.
+212--218]{metzger-1992-text-of-the-new-testament}).
 
 A related, though somewhat distinct, use of computers in New Testament studies
 is the attempt to determine authorship of documents using automated stylometry.
@@ -296,7 +357,7 @@ considerations are often involved in the determination of an original reading.
 One would simply take the models that these methods produce and judge between
 two variant readings, instead of entire books.
 
-As far as we could tell, all previous work started with the digitized text of a
+As far as I could tell, all previous work started with the digitized text of a
 \emph{critical apparatus}, none of which are completely exhaustive, not the
 text of the manuscripts themselves.  Thus all previous studies have used only a
 subset of the possible data that they could have used; however, it is arguable
@@ -335,16 +396,22 @@ trace of the effort can be found today.
 However, in their book, \emph{Jesus Christ and the World of the New Testament},
 Holzapfel, Wayment and Huntsman mention that the majority of New Testament
 manuscripts would be transcribed and available online by the end of
-2010~\cite[?]{holzapfel-2006-jesus-christ-new-testament}.  Our extensive
-searching produced only the uncial manuscripts for the Gospel of John, in a
-format that was searchable, though not readily
-downloadable~\cite{igntp-gospel-of-john-online}.  The project behind that
-website, the International Greek New Testament Project (www.igntp.org), aims to
-create a critical edition of the New Testament, and the publishing of those
-manuscripts online seems to be merely incidental to their work.
+2010~\cite[p. 55]{holzapfel-2006-jesus-christ-new-testament}.  My extensive
+searching produced only two websites, both of which were difficult to use.  One
+contained the uncial manuscripts for the Gospel of John, in a format that was
+searchable, though not readily downloadable~\cite{igntp-gospel-of-john-online}.
+The project behind that website, the International Greek New Testament Project
+(www.igntp.org), aims to create a critical edition of the New Testament, and
+the publishing of those manuscripts online seems to be merely incidental to
+their work.  The other website was that of the The Institute for New Testament
+Research at the University of M\"{u}nster~\cite{munster-website}.   The site
+contains a large number of manuscripts, though not nearly all of them, and it
+is similarly difficult to download anything in bulk.  The website also states
+the intention of the institute to make available transcriptions of all of the
+manuscripts for which they have photographs, which is nearly all in existence.
 
 Upon contacting Thomas Wayment in reference to his statement
-in~\cite{holzapfel-2006-jesus-christ-new-testament}, we were informed that
+in~\cite{holzapfel-2006-jesus-christ-new-testament}, I was informed that
 BibleWorks, a company that has long produced software for those interested in
 biblical studies, is in the process of digitizing the manuscripts.  A thread on
 their user forums was of particular interest to the present
@@ -356,30 +423,39 @@ transcriptions will only be made available with the purchase of BibleWorks
 software initially, then ``eventually'' to ``organizations'' who will not
 profit from the transcriptions.
 
-Also in that thread we found the closest thing to what we are currently
+Also in that thread I found the closest thing to what I am currently
 investigating.  Twice Bushell mentions software that could ``generate apparati
 on the fly,'' though in both instances he is doubtful that he will live to see
 such software.  It would appear that at least one other person has the idea of
-completely automating the process of textual criticism.  We found that idea to
-be rather unique among everything we read; other authors spoke of automating
-some part of the process, but nowhere else did we find someone even considering
+completely automating the process of textual criticism.  I found that idea to
+be rather unique among everything I read; other authors spoke of automating
+some part of the process, but nowhere else did I find someone even considering
 generating an entire critical apparatus automatically.  Most authors seemed
 skeptical of automated methods at best.  Future work in this area should
 certainly involve contact with Michael Bushell.
 
-\section{Proposed Ideas for the Automation of Textual Criticism}
+\section{Proposed Ideas and Experiments}
 \label{sec:proposed-ideas}
 
-\section{Experiments}
-\label{sec:experiments}
+\subsection{Generating Critical Apparati}
 
-Our experiments involved sections of manuscripts of the Gospel of John
-downloaded from the internet, at this site~\cite{igntp-gospel-of-john-online}
-mentioned previously.  We aligned the text using a piece of software written
-for aligning DNA and protein sequences in computational
-biology~\cite{lee-2002-sequence-alignment-poa}.  This aligner performs a
-character-level alignment, showing insertions, substitutions, and deletions for
-each of the manuscripts.
+Michael Bushell mentioned a software tool that would generate a critical
+apparatus given some user-specified criteria.  Through some experimentation, I
+have concluded that this software is trivial to write if the ``user-specified
+criteria'' includes a critical text.  Using out-of-the-box alignment
+software\footnote{The aligner I used was written for DNA and protein sequences,
+but worked reasonably enough with Greek text represented using Beta Code.  The
+aligner was the result of a paper published in \emph{Bioinformatics}, and code
+is freely available on the internet~\cite{lee-2002-sequence-alignment-poa}.  I
+am indebted to Scott Lloyd, a PhD student in computer science at BYU, for
+pointing me to this software.  The aligner performs a character-level
+alignment, showing insertions, substitutions and deletions for each of the
+manuscripts.}, in a matter of days I was able to produce code that is the basis
+for generating a critical apparatus.  From an alignment of the manuscripts, one
+can easily find passages that differ across the manuscripts, and if one of them
+is labeled as the critical text to use, all that remains to do is format the
+output in some recognizable form (i.e., output the critical text with footnotes
+that describe which manuscripts contain variant readings).
 
 An important consideration in the use of the aligner is to keep track of the
 difference between an actual shorter reading in a text (perhaps because of a
@@ -390,17 +466,328 @@ lacuna), or gaps.  One does not want to consider a lacuna to be evidence for a
 shorter reading, nor ignore a legitimately shorter reading as if it were a
 lacuna.
 
-Given an alignment of the text, we can find locations where not all of the
-manuscripts agree.  The aligner only gives character-level differences, but we
-can easily extend the differences to word boundaries, and connect adjacent
-differing blocks.  Upon performing this post-processing, we discovered 181
+The output of the alignment software looked as follows\footnote{In using the
+software I substituted underscores for spaces, as the software did not allow
+spaces in the sequence.  I also removed all punctuation and diacritical marks,
+except those indicating abbreviations.  The spaces are restored here for easier
+interpretation of the output}:
+
+\begin{quotation}
+{\tt
+john/005.txt        ---------------------------------------------------
+
+john/003.txt        o pemyas me baptizein en ---udati ekeinos moi eipe-
+
+john/001.txt        o pemyas me baptizein en tw udati ek-inos moi eipen
+
+john/009.txt        o pemyas me baptizein en ---udati ekeinos moi eipen
+
+john/007.txt        o pemyas me baptizein en ---udati ekeinos moi eipen
+
+john/004.txt        o pemyas me baptizein en ---udati ekeinos moi eipen
+
+john/013.txt        o pemyas me baptizein en ---udati ekeinos moi eipen
+
+john/011.txt        o pemyas me baptizein en ---udati ekeinos moi eipen
+
+john/002.txt        o pemyas me baptizein en ---udati ekeinos moi eipen
+}
+\end{quotation}
+
+This is part of the text for John 1:33, translating roughly to ``he who sent me
+to baptize in water, that man said to me.''  The first column in each line is
+the name of the sequence that was given to the aligner; I just used the
+filename, where the filename was the number commonly given to the manuscript.
+Hyphens indicate a deletion in a manuscript, or an insertion in one of the
+other manuscripts.  In this section of text, we can see that manuscript 5 had a
+lacuna (the marker that I used for lacunae is found prior to this section,
+however), manuscript 1 had a word addition (``the water'' instead of ``water'')
+and misspelled \emph{ekeinos} (``that man''), manuscript 3 left out a nu on
+\emph{eipen} (``he said''), and all of the other manuscripts agreed on the
+text.
+
+Given this output, I wrote code that parsed it and presented lists of variant
+passages along with which manuscripts attested which readings.  An example
+passage follows.
+
+\begin{quotation}
+{\tt
+Location: (4731, 4737)
+
+uios: [`john/003.txt', `john/002.txt'] 
+
+us$\sim$: [`john/001.txt', `john/009.txt', `john/007.txt', `john/013.txt'] 
+
+xs$\sim$: [`john/011.txt'] 
+}
+\end{quotation}
+
+The location shows the character positions this reading spanned (it includes
+the spaces surrounding the word; thus there are six characters in the reading
+instead of four).  The $\sim$ symbol indicates that an abbreviation mark was
+found in the manuscript.  \emph{uios}, meaning ``son,'' was abbreviated as
+\emph{us} with an over-bar.  The abbreviation \emph{xs} means ``Christ.''  Thus
+manuscript 11 replaced the word son with the word Christ, and all other
+manuscripts that do not have a lacuna in this area contain the same reading,
+though some are abbreviated.  This particular substitution is not very
+surprising, because in capital Greek characters it is the change from a
+character much like our ``Y'' to a character much like our ``X''---a very small
+difference in appearance and a similarly small change in meaning.
+
+If one of the manuscripts were marked as the critical text to use, from this
+list of variants it is a simple task to output the critical text and mark all
+other readings as footnotes in a critical apparatus.
+
+It seems, then, that Michael Bushell's hope of automatically generated critical
+apparati is not very difficult, as I cannot imagine that he also intends to
+generate the critical text on the fly, unless there is some very serious markup
+added to the variant readings (including information on theology).  The main
+obstacle is the transcription of the manuscripts.  The main benefit of such an
+automatically generated apparatus is that it can be completely exhaustive.
+
+\subsection{Generating a Critical Text}
+
+If one could generate a critical text in a completely automated fashion, I have
+already shown that the critical text can be used to easily construct an
+apparatus.  Thus the work of textual criticism would be complete, with no more
+need for textual critics.  However, given the incredibly complicated nature of
+some of the knowledge sources needed for the work of textual criticism, it is
+extremely unlikely that a reliable critical text will be automatically
+generated any time in the foreseeable future.  As Dr. Eric Ringger, an
+assistant professor of computer science at BYU, put it, determining whether a
+passage matches the theology of an author is ``AI complete''---solving that
+problem amounts to solving all of artificial intelligence.  But we can make
+some faltering attempts.
+
+My experiments involved sections of manuscripts of the Gospel of John
+downloaded from the internet, at the site previously
+mentioned~\cite{igntp-gospel-of-john-online}.  I limited my exploration to the
+first chapter of John and the nine earliest manuscripts available on the site
+(this was because the website provided no bulk download of the data, so each
+chapter of each manuscript had to be copied and pasted and pre-processed by
+hand; another evidence of the sparsity of data available in this field).  I
+used the alignment software previously mentioned to discover where variant
+readings existed in the manuscripts.
+
+As mentioned previously, according to Aland, all one must do in order to
+establish the critical text of the New Testament is to decide between each of
+the extant readings for every passage in which there are variants.  Upon
+aligning the manuscripts and finding variant passages, I discovered 187
 passages in the first chapter of John alone that contained variant readings,
-consisting of 40\% of the text, with just nine manuscripts as evidence.  The
-vast majority of these differences were a spelling error or word order change
-introduced into one of the nine manuscripts, though some were more significant.
+consisting of 40\% of the text, with just nine manuscripts as evidence.  That
+gave me some idea of the enormity of this task, which I had not previously
+appreciated.  The vast majority of these differences were a spelling error or
+word order change introduced into one of the nine manuscripts, though some were
+more significant.  Having obtained a list of variants, there were several
+methods I experimented with to shorten the list.
+
+\subsubsection{Abbreviations, Spelling Errors and Shortest Readings}
+
+A simple place to start in identifying easy-to-correct variant passages is to
+look for words that are abbreviated.  In addition to the word for ``Son'' seen
+previously, there are many other places where abbreviations were commonly used,
+including the words for ``God,'' ``man,'' ``Jesus,'' and ``Israel.''  I made a
+list of those words and their abbreviations, and upon finding a variant whose
+only readings were abbreviations of the longer form of the same word, I marked
+it as ignorable.  However, such efforts only shortened the list of variants by
+6, to 181.
+
+A slightly more complicated type of variant to check for, but still relatively
+simple, is spelling errors.  I built a dictionary by using a parsed version of
+the Perseus project~\cite{perseus-project}.  I downloaded all of the text for
+some 120 classical Greek works, including such authors as Sophocles, Xenophon,
+and Homer.  To build the dictionary, I simply made a set containing all of the
+words those authors used.  I then checked every word in each reading against
+the dictionary and marked spelling errors.  If it was clear that there was only
+one variant that had correct spelling, I marked it as the correct text.  That
+effort took the number of variants to around 150.
+
+Grammatical checking is the next logical step, for frequently there are errors
+where the article in front of a word does not match the word's case in one of
+the manuscripts, among other simple errors.  However, I did not have access to
+a Greek grammatical parser or checker and am not proficient enough in ancient
+Greek to write one, so I was not able to try this method.  I am confident that
+it would greatly reduce the number of variant passages left to decide.
+
+Moving to methods less solidly grounded in knowledge sources available to a
+computer, one can also look for areas where words were added, applying the rule
+that the shorter reading is the more likely rule.  However, Aland is quick to
+say after stating the rule that it cannot be mechanically applied without
+consideration of other evidence; thus it gets very difficult for a computer to
+decide which reading is most likely to be correct.  Finding out which reading
+is shortest is trivial on a computer; deciding when to accept the shorter
+reading and when to accept the longer reading is much harder.  In my
+experiments I detected which variants looked like they had word additions,
+though I was unable to come to any automatic decision about which reading to
+keep.
+
+\subsubsection{Combining Manuscript Evidence}
+
+The biggest issue I encountered in trying to apply the ``shorter reading'' rule
+was that of combining the evidence from various manuscripts in some reasonable
+way.  As Aland's fourth rule listed above says, manuscripts should be weighed,
+not counted.  Thus some measure of reliability is required, along with a way to
+combine ``votes'' from various manuscripts and their reliabilities in order to
+come to a conclusion about the original reading.  As mentioned in the
+discussion of knowledge sources, the concept of reliability is somewhat
+circular, because manuscripts are reliable when they contain correct readings,
+and correct readings are in turn determined by the reliability of the
+manuscripts that attest them.  This lends itself naturally to some iterative
+process in an automated algorithm.
+
+However, even given a set of reliability scores, I was unable to determine a
+reasonable way to combine the evidence of the various manuscripts.  A simple
+majority vote weighted by reliability does not seem reasonable, as a poor
+manuscript could have hundreds of copies; even if those poor copies have very
+small weight, they could easily outweigh a single, much better manuscript.  A
+simple average also does not seem reasonable, for sometimes even the most
+reliable manuscripts are wrong; this method would fail miserably when the most
+reliable manuscript is the only manuscript attesting a particular incorrect
+reading.  Clearly there needs to be some more complicated way of combining the
+evidence, though exact methods for such a procedure are elusive to me.
+Perhaps a professional textual critic could give some insight that would be
+helpful in this area.
+
+\subsubsection{Establishing Reliability of Manuscripts}
+
+Even without a good method for combining manuscript evidence, one can still
+compute some initial reliability scores based on the critical decisions that
+have been made.  I calculated a simple score based on the spelling errors and
+word insertions I observed.  The values of the score were arbitrary; I started
+each manuscript with a base score of 100 and subtracted a small number of
+points for each spelling error, and a much larger number of points for each
+passage that had word insertions.  I weighted the number of points subtracted
+by the length of the manuscript, because some manuscripts contained only
+fractions of the text, and thus had less opportunity to lose reliability,
+leading to scores that were disproportionately high.
+
+The results of the initial reliability scores were somewhat interesting.  The
+manuscript commonly referred to as 5 had the highest score, largely because it
+only contained one fourth of the first chapter of John (I was not able to
+completely erase the higher score given to shorter manuscripts).  However, the
+next highest manuscript in reliability was 1 (Codex Sinaiticus), followed by 3
+(Codex Vaticanus); those two manuscripts are commonly considered by textual
+critics to be the most reliable manuscripts that we have, in that order.  So a
+simple reliability measure affected almost entirely by addition of words in
+just the first chapter of John reproduced to some extent the ordering
+determined by professional textual critics.
+
+The results I saw could very possibly be entirely accidental.  However, what
+one can observe is that given a set of critical decisions about passages in the
+text, a reliability score can easily be assigned to each manuscript.  There is
+some question about how best to calculate the score, but a textual critic could
+readily give some basic guidelines as to which kinds of variants affect
+reliability the most, or even mark for each individual variant how much a
+correct reading in that variant should matter in the reliability score.  That
+score could then be used in other parts of an automated system for textual
+criticism, including an iterative update to the reliability if a way of
+combining evidence is decided upon.
+
+\subsection{An Aid to the Textual Critic}
+\label{sec:aid-to-critic}
+
+Through my experiments in trying to produce a critical text, I came to the
+conclusion that at least at present the place for computers in the work of
+textual criticism is as an aid to, not a replacement of, the textual critic.
+There are several ways in which computers can aid in the process.
+
+The first and most obvious benefit is the automatic detection of variants in
+the manuscripts.  This is clearly feasible, given transcriptions of the
+manuscripts, as I demonstrated in my code.  The automatic detection of variants
+allows for completely exhaustive critical apparati, which as of yet do not
+exist.
+
+The second benefit that computers can bring to textual criticism is the
+filtering of variants, catching and marking easily decidable variants such as
+spelling errors.  With much of the noise removed, the textual critic could
+focus his attention on the important passages.  I was only able to filter
+spelling errors, but I imagine a grammatical check could detect other easily
+decidable errors, and a textual critic could probably list a few more
+possibilities.
+
+The third benefit that I see is the automated calculation of a reliability
+score.  Given some criteria specified by the textual critic, such as how to
+weight different types of variants, a computer could return a reliability for
+each manuscript which could be used in later decisions.  I can envision a
+system where a list of variants for a passage is presented on the screen,
+ordered by the reliability of the manuscripts that contain the variant (and
+perhaps some other criteria).  The critic would then select a variant as the
+correct one, and the computer would recompute reliability scores and show
+another variant.  Something related to active learning could even be used in
+the process, with the computer selecting which variant to show next.
+
+In short, I am convinced that while the automated generation of a critical text
+is currently far beyond our reach, automated methods could greatly reduce the
+workload on the textual critic.  What Metzger called ``an enormous amount of
+labor'' would all be done by the computer, leaving the text critic himself to
+focus on more important things.
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+The purpose of this project was to explore the current extent of automated
+methods in textual criticism, and what room there is for the increased use of
+automated methods.  In doing this project, I have learned a great deal about
+textual criticism itself, reading books and portions of books on the subject.
+I also have had an enlightening experience attempting to automate myself some
+of the processes involved in textual criticism.
+
+I have reviewed the literature extensively, and inquired of BYU professors
+involved in textual criticism, and come to the conclusion, along with many
+others in the field, that the field of textual criticism could be greatly
+enhanced by the more effective use of computing resources.  It has come a long
+way in recent years, particularly in the application of methods from
+computational biology to reconstructing manuscript trees.  But much more work
+can yet be done.
+
+Lastly, I have experimented with specific methods to aid in the work of the
+textual critic, and proposed some future work that I think would be very
+beneficial to textual criticism.  Computers can remove much of the mundane from
+current methodologies, allowing researchers to focus their efforts on critical
+tasks.
+
+\section{Future Work}
+
+One obvious next step in this work is to produce a system like that described
+in \secref{aid-to-critic}.  The code I produced could be a starting place, but
+significant work would need to be done on top of my code, including a mechanism
+for accepting input from a user, improvements to the reliability score
+calculation, the addition of some kind of grammatical checker to filter the
+variant list, and some kind of active-learning decision about which variants to
+show the user.  The output from a stemmatological analyzer could also likely be
+incorporated into the code, probably in the calculation of the reliability
+score.  Such work would best be done in conjunction with a professional textual
+critic, though who exactly would be most interested in such a project is
+unknown to me.  As mentioned previously, Michael Bushell of BibleWorks would
+likely be a good person to contact.
+
+The helpful input that could be had from a textual critic has been mentioned
+throughout this paper; in brief summary, it includes specific advice about how
+to determine how reliable a manuscript is, how to combine evidence from many
+manuscripts, and what other kinds of variants are easily decidable.  Certainly
+it would also be good to know if a tool such as the one described would be
+found useful.  In order to answer these questions, there are several professors
+at BYU who may be good to talk to.  I found it somewhat difficult to interview
+the faculty, as many of them are away for the summer.  I did receive responses
+to my emails from two faculty members (Thomas Wayment and Stephen Bay).  While
+both were helpful in answering my questions, neither seemed particularly
+excited about my project.  Perhaps seeing this report containing some concrete
+ideas for work in automating textual criticism may prove more effective in
+gaining interest.
+
+Future work could also more fully explore the ideas used in the
+``Coherence-Based Genealogical Method'' for stemmatology.  While the work
+focuses on producing a stemma of the text, they also are interested in
+producing a critical text in a semi-automated fashion, and some of their ideas
+are applicable to this work.  I came across the work too late in my project to
+allow for very much exploration.
+
+Another idea that could be explored in automating the process is that of
+creating some kind of statistical model for the copying process, then running
+inference in order to determine the original text.  Such a model would be very
+complicated, and I do not have many ideas on how to proceed in that area.  I
+suspect that the model would have severe deficiencies because of the difficulty
+of modeling the ``easiness'' of a reading.
 
 \bibliographystyle{plain}
 \bibliography{../../../bib/textual-criticism/bib}
