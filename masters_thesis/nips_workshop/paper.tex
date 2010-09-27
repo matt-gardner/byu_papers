@@ -1,0 +1,107 @@
+\documentclass{article}
+\usepackage{nips10submit_e,times}
+\usepackage{graphicx}
+
+\title{Improving the Visualization of Topic Models}
+\author{
+Matthew J. Gardner \\
+Department of Computer Science \\
+Brigham Young University \\
+Provo, UT 84604 \\
+\texttt{mjg82@byu.edu} \\
+\And
+Other authers\ldots \\
+Affiliation \\
+Address \\
+\texttt{email} \\
+}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\section{Introdcution}
+
+Topic modeling has shown to be an effective means of extracting semantic
+meaning from a collection of
+documents~\cite{blei-2003-latent-dirichlet-allocation}.  Topic models have been
+used as an inputs to other kinds of algorithms, such as classification and
+sentiment tasks (cite some papers here), but the usefulness of topic models as
+visualization tools in and of themselves has not been well established, and is
+even in question (cite more papers).  Some recent work has been done in an
+attempt to make corpus browsers using the results of LDA, and to make the
+results of LDA more easily interpretable, but there is much work yet to be done
+(still more citations).  
+
+Common approaches to using topic models to facilitate corpus browsing and
+visualization are limited mainly to showing the similarity between documents in
+the corpus in various ways.  Such methods are useful in their own right when
+one is individually scanning documents, but they are insufficient to answer
+broader questions about the corpus, like, ``What topics show up most in these
+documents?'' and, ``What does a particular author in the document talk about
+most frequently that is unique to that author?''  Those questions turn one away
+from analyzing individual documents to trying to get information out of the
+topics themselves.
+
+Upon looking at the topics one is confronted with tens or hundreds of lists of
+words, sorted by a number given to each list by the algorithm.  Sifting through
+those lists and trying to understand what they mean, and whether or not a
+particular topic is important, can be a daunting task, particularly to one not
+very familiar with the algorithm.  The common practice of cherry-picking good
+topics to present in a paper hides the fact that a large number of topics
+returned by topic models are very hard to interpret or even completely
+meaningless to humans.
+
+In order for topic models to be useful for corpus browsing, some sense has to
+be made out of the topics.  One recently proposed method is to assign to each
+topic a coherence value, so that the person can ignore topics that are likely
+to be meaningless~\cite{newman-2010-automatic-evaluation-of-topic-coherence}.
+While topic coherence is able to eliminate meaningless topics from
+consideration, it is not able to address many broader questions that a person
+browsing the corpus might have.
+
+In this paper we present the idea of using the distribution of documents for a
+given topic, $p(d|z)$, in order to answer questions about a corpus that
+previous visualization techniques are not able to answer.  The distribution of
+topics in a document, $p(z|d)$, has been widely used in all applications of
+topic modeling, from dimensionality reduction of document representations to
+showing similar documents in a corpus browser.  This is understandable, given
+that estimating the distribution $p(z|d)$ is one of the primary purposes of
+topic modeling.  However, $p(d|z)$ also contains interesting information that
+can be very useful for visualizing and understanding the output of the topic
+model.
+
+The rest of this paper is outlined as follows.  We first describe a corpus of
+campaign speeches from the 2008 presidential primaries and general election.
+Then we present questions that a person browsing through these campaign
+speeches may want to answer, and how one can use $p(d|z)$ to answer those
+questions where other methods fail.  Finally, we conclude.
+
+\section{Campaign Speeches}
+
+TODO
+
+\section{What topics were most prevelant during the 2008 campaign cycle?}
+
+TODO
+
+\section{What topics were most universal across candidates?}
+
+TODO
+
+\section{What did Barack Obama talk about most frequently?}
+
+TODO
+
+\section{Conclusion}
+
+TODO
+
+\bibliographystyle{unsrt}
+\bibliography{../../../bib/lda/bib}
+
+\end{document}

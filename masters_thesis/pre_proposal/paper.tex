@@ -1,0 +1,93 @@
+\documentclass[onecolumn, 12pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+
+\title{General Outline of Proposed Research}
+\author{Matthew Gardner}
+\date{Thursday, August 19, 2010}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+There are often occasions when people are confronted with tens or hundreds of
+thousands of documents to analyze, either to find something specific or to
+simply figure out what the documents contain.  Intelligence analysts routinely
+have 50,000 documents or more to go through in a
+year~\cite{washingtonpostarticle}.  Several recent controversies involving
+documents posted on WikiLeaks presented people with tens of thousands of
+documents to sift through.  Even with a specific purpose in mind, exploring
+such a large collection of documents can be entirely unmanageable.  An
+intelligence analyst simply looking for interesting subjects in the documents,
+without a particular query in mind, would have an even harder time.
+
+A journalist browsing through the Afghan war documents that were recently
+posted on WikiLeaks said he started with a query, then went where it led him,
+following his curiosity to still more queries, using search as his primary
+corpus-browsing tool.  Such methods are clearly very useful in many cases, but
+in the case of discovering the interesting aspects of a set of documents, they
+cannot be completely exhaustive.  One cannot query for something he has not
+thought of.
+
+Topic modeling, including latent Dirichlet allocation and its variations, is a
+tool that is well suited to capturing the semantic content in a set of
+documents~\cite{blei-2003-latent-dirichlet-allocation}.  Topic modeling has
+been used in many applications, including being coupled with sentiment
+classifiers, as a substitute for part of speech labels, and as an aid in
+information retrieval tasks.  However, its usefulness as a general tool for
+corpus browsing is not well established, and efforts to make it so are still
+very preliminary, though there has been good work in the last few years.
+
+This work seeks to make LDA more applicable to the task of discovering
+information in a corpus.  In particular, there are three points of interest in
+this work: how to effectively give a label to a topic, how to automatically
+discover which topics have important or interesting content and which contain
+merely fluff or function words, and how LDA can or should be modified to handle
+specific user queries.
+
+\section{Topic Labeling}
+
+Several recent papers have addressed the issue of how to automatically assign a
+coherent label to a topic~\cite{mei-2007-automatic-labeling-of-topic-models,
+lau-2010-best-topic-word-selection}.  These papers present ideas that are
+successful in some instances, but largely ignore hard cases.  It seems that by
+looking at the context of how the topic is used in the documents, a decent
+label should be found.
+
+\section{Labeling ``Interesting'' Topics}
+
+There are many topics in LDA that capture semantics whose relevance is
+immediately apparent to a person browsing the results.  There are other topics
+that are still quite relevant, but the relevance is not immediately apparent
+for poor visualization.  There are still other topics that simply contain
+function words, or formatting, or other uninteresting elements in the documents
+(that possibly should have been removed in a preprocessing step).
+
+Some work has been done in the automatic detection of the relevancy of a topic,
+including two recent papers on judging topic
+coherence~\cite{chang-2009-reading-tea-leaves,
+newman-2010-automatic-evaluation-of-topic-coherence}.  However, the lack of
+``coherence'' as judged from the top ten words of a topic and evaluated over
+Wikipedia does not necessarily imply lack of relevance in the corpus itself.
+There must be some way of judging the relevance of a particular topic, and such
+a result would make topic modeling a much more accessible tool for corpus
+browsing.
+
+\section{LDA with Queries}
+
+In some instances, a person does not have a particular query in mind when
+searching through a set of documents.  In many other cases, however, he does.
+There are a few published or obvious methods for using LDA to answer search
+queries, but to my knowledge they all involve a post-hoc analysis of the
+resultant topic model, not a modification to the algorithm in order to answer
+queries (granted, I have not done much searching yet in this area, so ``to my
+knowledge'' does not mean a lot).  The potential exists to modify the LDA
+algorithm to specifically handle queries.  Exactly what the implications of
+this would be are not yet clear to me (what does running LDA get you if you
+really just want to do a query, for instance?).
+
+\bibliographystyle{plain}
+\bibliography{../../../bib/lda/bib}
+
+\end{document}
