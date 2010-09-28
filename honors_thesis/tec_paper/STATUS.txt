@@ -1,0 +1,3 @@
+Submitted to Transactions on Evolutionary Computation in May of 2010 - soundly
+rejected, mostly because the reviewers didn't understand the point of what we
+were doing
