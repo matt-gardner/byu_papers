@@ -1,8 +1,11 @@
 set xlabel "Rounds of Evaluations"
 set ylabel "Best Function Value"
 set logscale y 10
+set logscale y2 10
+set y2range [1e-50:100000]
 #set key bottom left
 set clip two
+set y2tics
 plot [1:999] [1e-50:100000] '-' title "SEPSO" with lines lw 4, '-' title "PSO Random" with lines lw 4, '-' title "PSO Complete" with lines lw 4
 1 9885.80123509
 2 9814.93281714

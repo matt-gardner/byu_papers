@@ -2,6 +2,9 @@ set xlabel "Swarm Size"
 set ylabel "Best Function Value at 50000 Evaluations"
 set logscale x 10
 set logscale y 10
+set logscale y2 10
+set y2range [1e-13:100000]
+set y2tics
 set xtics ("160" 160, "1600" 1600, "" 100, "5" 5, "" 1000, "10" 10, "" 300, "16" 16, "5000" 5000, "50" 50, "500" 500, "" 3000, "30" 30)
 set clip two
 plot [5:5000] [1e-13:100000] '-' notitle with lines lw 4, '-' notitle with errorbars lw 4 ps 1.5

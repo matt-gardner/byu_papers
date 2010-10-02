@@ -2,6 +2,7 @@ set xlabel "Rounds of Evaluations"
 set ylabel "Percent of Swarms With a Best Near Zero"
 set key bottom right
 set clip two
+set y2tics
 plot [1:1000] [0:100] '-' title "Pick Best" with lines lw 4, '-' title "PSO" with lines lw 4, '-' title "Social Promotion Pruned" with lines lw 4, '-' title "Many Iterations" with lines lw 4
 1 0.0
 2 0.0
