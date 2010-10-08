@@ -5,7 +5,7 @@ set logscale y2 10
 set y2range [1e-12:100000]
 set clip two
 set y2tics
-plot [1:999] [1e-12:100000] '-' title "PSO Complete" with lines lw 4, '-' title "Pick Best" with lines lw 4, '-' title "Pick Best Pruned" with lines lw 4, '-' title "Social Promotion Pruned" with lines lw 4, '-' title "Many Iterations" with lines lw 4
+plot [1:999] [1e-12:100000] '-' title "Naive Complete" with lines lw 4, '-' title "Pick Best" with lines lw 4, '-' title "Pick Best Pruned" with lines lw 4, '-' title "Social Promotion Pruned" with lines lw 4, '-' title "Many Iterations" with lines lw 4
 1 374.694037588
 2 374.694037588
 3 367.383015132

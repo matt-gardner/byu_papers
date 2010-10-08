@@ -1,5 +1,4 @@
 Copied initially from tec_paper, as that paper was rejected and we are going to
 submit the work somewhere else.
 
-In preparation to be submitted to Swarm Intelligence with minor revisions from
-reviewer feedback.
+Submitted to Swarm Intelligence, awaiting response.
