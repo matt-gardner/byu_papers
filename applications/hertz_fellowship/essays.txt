@@ -1,12 +1,13 @@
 300 words:
 
 How did you choose your field and what are your primary expectations of your
-future career?
+future career? - Draft completed in choose_field.txt
 
 How do your proposed field of study and career constitute an application of the
-physical sciences or engineering?
+physical sciences or engineering? - Draft completed in physical_sciences.txt
 
-What are the considerations involved in your choice of graduate school?
+What are the considerations involved in your choice of graduate school? -
+Draft completed in grad_school_choice.txt
 
 A concise resume, in chronological order, recapitulating significant periods of
 technical and other creative activity since high school.
@@ -22,5 +23,6 @@ creativity and discuss in more detail what you personally contributed to them.
 (don't forget Google in the form, textual criticism)
 
 Include here information about your favored extracurricular and leisure time
-activities since your graduation from high school.
+activities since your graduation from high school. - Started in
+leisure_time.txt
 

@@ -1,0 +1,25 @@
+How do your proposed field of study and career constitute an application of the
+physical sciences or engineering?
+
+The field of machine learning, and natural language processing especially,
+relies heavily on developments made first in physics.  Physicists trying to
+model what goes on in complicated atomic and molecular systems invented new
+statistical techniques that have since been used in many fields.  In more
+recent times, computer scientists trying to deal with large amounts of data
+have turned to those same techniques, such as Gibbs sampling and maximum
+entropy Markov models.
+
+Many fields of computer science are very obviously applications of the physical
+sciences, as they deal with building robots, analyzing medical images, or
+building three dimensional models of objects from video.  Machine learning, the
+broad field of study I wish to pursue, is found in all of those applications.
+Natural language processing, my current focus and a sub-field of machine
+learning, may at first be seen as a non-physical science, relating more closely
+to linguistics.  However, as the field matures the methods used increasingly
+draw from the physical sciences, relying on more advanced statistical
+techniques to solve more complicated problems.  I am confident this trend
+towards applying methods developed in other fields to natural language
+processing will continue, and that is a large part of the reason I gained a
+strong background in physics and mathematics.
+
+

@@ -1,0 +1,25 @@
+How did you choose your field and what are your primary expectations of your
+future career?
+
+My father, grandfather, and great-grandfather all earned PhDs in physics.  I
+grew up wanting to be a physicist, to win the Nobel Prize by discovering a
+Unified Field Theory.  When I started college, however, I discovered the field
+of computer science and quickly changed my major.  Having some experience as a
+Spanish-English interpreter, I was enthralled with the idea of machine
+interpretation -- speech recognition, machine translation, then speech
+synthesis to have live speech interpreted between languages.  Now, with much
+more experience in the field, I am continually amazed by the kinds of problems
+that can be solved with computer science, many of which have the potential to
+dramatically improve the lives of millions of people.  I want to help solve
+those problems and make our society a better place to live.
+
+I envision my future career as one of research, likely in the domain of natural
+language processing, though possibly also in computer vision or other areas of
+machine learning.  I have not yet decided between research in industry or
+academia; perhaps my career will take me first to industry, ending up as a
+professor later in life.  But what I want from my career is to find new
+problems to solve that will better society, then solve them.  Things like
+machine translation and interpretation, extracting knowledge from large
+collections of text, and making that knowledge accessible to people, are what I
+want to work on.
+
