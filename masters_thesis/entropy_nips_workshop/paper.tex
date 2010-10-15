@@ -1,8 +1,14 @@
 \documentclass{article}
 \usepackage{nips10submit_e,times}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
-\title{Improving the Visualization of Topic Models}
+% Better references, I think
+\newcommand{\secref}[1]{Section~\ref{sec:#1}}
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\algref}[1]{Algorithm~\ref{alg:#1}}
+
+\title{Better Corpus Visualization through Topic Ranking}
 \author{
 Matthew J. Gardner \\
 Department of Computer Science \\
@@ -25,8 +31,9 @@ Address \\
 \end{abstract}
 
 \section{Introdcution}
+\label{sec:introduction}
 
-Topic modeling has shown to be an effective means of extracting semantic
+Topic modeling has been shown to be an effective means of extracting semantic
 meaning from a collection of
 documents~\cite{blei-2003-latent-dirichlet-allocation}.  Topic models have been
 used as an inputs to other kinds of algorithms, such as classification and
@@ -42,10 +49,10 @@ visualization are limited mainly to showing the similarity between documents in
 the corpus in various ways.  Such methods are useful in their own right when
 one is individually scanning documents, but they are insufficient to answer
 broader questions about the corpus, like, ``What topics show up most in these
-documents?'' and, ``What does a particular author in the document talk about
-most frequently that is unique to that author?''  Those questions turn one away
-from analyzing individual documents to trying to get information out of the
-topics themselves.
+documents?'' and, ``What does a particular author in the corpus talk about most
+frequently that is unique to that author?''  Those questions turn one away from
+analyzing individual documents to trying to get information out of the topics
+themselves.
 
 Upon looking at the topics one is confronted with tens or hundreds of lists of
 words, sorted by a number given to each list by the algorithm.  Sifting through
@@ -62,42 +69,149 @@ topic a coherence value, so that the person can ignore topics that are likely
 to be meaningless~\cite{newman-2010-automatic-evaluation-of-topic-coherence}.
 While topic coherence is able to eliminate meaningless topics from
 consideration, it is not able to address many broader questions that a person
-browsing the corpus might have.
+browsing the corpus may have.
 
-In this paper we present the idea of using the distribution of documents for a
-given topic, $p(d|z)$, in order to answer questions about a corpus that
-previous visualization techniques are not able to answer.  The distribution of
-topics in a document, $p(z|d)$, has been widely used in all applications of
-topic modeling, from dimensionality reduction of document representations to
-showing similar documents in a corpus browser.  This is understandable, given
-that estimating the distribution $p(z|d)$ is one of the primary purposes of
-topic modeling.  However, $p(d|z)$ also contains interesting information that
-can be very useful for visualizing and understanding the output of the topic
-model.
+In this paper we present the novel task of ranking topics by relevance to
+specific user questions.  If one is to successfully visualize a corpus in a way
+that answers broad questions, and if topics, not documents, are the natural
+answer to those questions, then one must properly rank topics such that the
+most prominent topics contain the answer to the user's questions.  We recognize
+that not all questions about a corpus fit into this visualization model, but
+there are many that do, such as those listed above.
 
-The rest of this paper is outlined as follows.  We first describe a corpus of
-campaign speeches from the 2008 presidential primaries and general election.
-Then we present questions that a person browsing through these campaign
-speeches may want to answer, and how one can use $p(d|z)$ to answer those
-questions where other methods fail.  Finally, we conclude.
+The rest of this paper is outlined as follows.  We first give further
+motivation and a more detailed description of the task of ranking topics by
+relevance in \secref{ranking}.  \secref{docdist} describes a method for
+determining the relevance of a topic to various possible questions a person
+could have when looking at a corpus, and \secref{examples} shows examples of
+how this technique provides a proper ranking.  In \secref{challenges} we
+discuss the challenges of evaluating this visualization method.  Finally, in
+\secref{conclusion} we conclude.
 
-\section{Campaign Speeches}
+\section{The topic ranking task}
+\label{sec:ranking}
 
-TODO
+We assert that for many tasks, the proper visualization of a topic model is a
+ranking of topics, not simply a window onto individual documents.  When one
+wants to see what topics are prevelant in a corpus, the answer is not found by
+scanning individual documents, but by looking at the topics produced by a topic
+model.  Likewise, when one wants to see trends of topics over time, one does
+not look through the documents, but at the topics, computing some statistics of
+those topics for each year for which there are documents.  Thus a proper
+visualization of the topic model for these tasks is to show most prominently
+those topics that are most relevant to the task.
 
-\section{What topics were most prevelant during the 2008 campaign cycle?}
+We can formalize the topic ranking problem simply as follows.  Given a set of
+topics from a topic model of a corpus, and a user question about the corpus,
+rank the topics by relevance to the user's question.  This is very similar to
+basic information retrieval tasks, but also significantly different, in that we
+are not looking for a ranking of documents as the result of a query, but a
+ranking of topics which answer broader questions about the corpus as a whole.
 
-TODO
+Clearly the topic ranking task is fundamental to the proper visualization of
+topic models, but as far as we are aware, this is the first attempt to even
+consider the problem.  We propose a very simple way to answer some user
+questions through the use of the document distribution of each topic.  This
+technique is by no means a general solution to the problem, but for some
+specific tasks it provides rankings that gives users the topics that answer
+their questions.
 
-\section{What topics were most universal across candidates?}
+\section{The document distribution for a topic}
+\label{sec:docdist}
 
-TODO
+The distribution of topics in a document, $p(z|d)$, has been widely used in all
+applications of topic modeling, from dimensionality reduction of document
+representations to showing similar documents in a corpus browser.  This is
+understandable, given that estimating the distribution $p(z|d)$ is one of the
+primary purposes of topic modeling.  However, $p(d|z)$, the document
+distribution for a given topic, also contains interesting information that can
+be very useful for visualizing and understanding the output of the topic model.
+We use various aspects of this distribution as approximations of relevance to
+certain user questions.
 
-\section{What did Barack Obama talk about most frequently?}
+The document distribution for a topic can be thought of as follows: suppose we
+have a token labeled with a given topic; what is the probability distribution
+over documents in the corpus that this token could have come from?  We
+approximate this distribution with a sample from a Gibbs sampler of LDA.  The
+distribution is thus defined as
+\begin{align}
+  \label{eq:entropy}
+  p(d|z) = \frac{C(d,z)}{\sum_{d \in \mathcal{D}} C(d,z)}
+\end{align}
+where $d$ is a particular document, $z$ is a particular topic, $C(d,z)$ is the
+number of tokens in document $d$ labeled with topic $z$, and $\mathcal{D}$ is
+the corpus.
 
-TODO
+Our use of the document distribution for a topic focuses primarily on
+calculating the entropy of the distribution and of related distributions where
+documents are grouped by category.  For instance, one can group the documents
+by author and compute the distribution of the topic over authors as
+\begin{align}
+  p(a|z) = \frac{\sum_{d \in \mathcal{A}} C(d,z)}{\sum_{d \in \mathcal{D}}
+  C(d,z)}
+\end{align}
+where $a$ is an author and $\mathcal{A}$ is the set of documents written by
+that author.
+
+Also, one can compute the distribution over any subset of the documents, where
+$p(d|z)$ is defined as in \eqref{eq:entropy}, but instead of the entire corpus,
+$\mathcal{D}$ represents some specific subset.  When using subsets of the
+documents, we only consider topics which have at least one token in the given
+subset, so as to avoid division by zero.
+
+\section{Using $p(d|z)$ to rank topics}
+\label{sec:examples}
+
+We present here a few examples of how the document distribution for a topic can
+be used to rank topics according to their relevance for certain user questions.
+In our examples we use a corpus of 480 campaign speeches from the 2008
+presidential primary and general election.  We inferred 150 topics in the data
+from a Gibbs sampling of the LDA topic model.
+
+Questions here:
+
+What topics are most prevelant in the corpus?
+
+What topics did John McCain talk about the most?
+
+What topics did Barack Obama most consistently throughout his campaign? 
+
+What topics are most consistent across candidates?
+
+What topics were constant throughout the campaign?
+
+What topics were transitory, only spoken of rarely?
+
+
+\section{Challenges of evaluation}
+\label{sec:challenges}
+
+The obvious way to evaluate a topic ranking is to use the evaluations methods
+commonly found in information retrieval tasks.  There are well established
+techniques to evaluate a ranking given a true ranking.  However, there are
+several obstacles to using such a scheme to evaluate performance on this task.
+
+The first and glaring obstacle is that there is no set of data that has been
+labeled with true rankings for these or any questions.  One cannot compare the
+output of an algorithm to ground truth when there is no ground truth.  It is
+not even clear how such data would be obtained; perhaps one could take a topic
+model and a set of questions and rank each topic for relevance to each
+question, but such a task would be incredibly laborious and error-prone.  The
+labeler would first have to understand what exactly each topic is capturing, in
+itself a difficult task, then go through the entire data collection to answer
+the question herself and determine how well the topic matches.  Clearly such a
+process for creating a set of evaluation data is not feasible.
+
+But what if the topic model fails to capture topics that truly answer the
+question?  
+Separate topics can be overlapping in words, where a human would consider them
+the same topic.
+
+The topic model itself could be high or low quality, and that affects the
+results.
 
 \section{Conclusion}
+\label{sec:conclusion}
 
 TODO
 
