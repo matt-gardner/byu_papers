@@ -112,11 +112,21 @@ topics he desires to find.
 When browsing through topics, the user can filter the topic list by coherence
 to eliminate from the view topics that are mostly meaningless, and sort by
 document entropy to find topics that were used widely (or narrowly, if that is
-desired) throughout the corpus.  She could also filter by document or
-attribute, seeing only topics that were used in a particular document or by a
-particular author.  Documents can similarly be filtered and sorted, showing
-only documents that contain tokens with a particular topic, or with a
-particular value of an attribute.
+desired) throughout the corpus.  For example, Figure~\ref{fig:sidebar} shows
+that the family was one of the most consistent themes in the speeches.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.34\textwidth]{sidebar}
+  \caption{The navigational sidebar showing topics sorted by dispersion
+  throughout the corpus and filtered by coherence}
+  \label{fig:sidebar}
+\end{figure}
+
+The user can also filter by document or attribute, seeing only topics that were
+used in a particular document or by a particular author.  Documents can
+similarly be filtered and sorted, showing only documents that contain tokens
+with a particular topic, or with a particular value of an attribute.
 
 \section{Topic Browsing}
 
@@ -146,6 +156,19 @@ inside of their context.  We select a random token of each word type labeled
 with the topic and show up to 50 characters on either side of the token,
 keeping words intact.  We also allow the user to cycle through contexts to gain
 a broader view of how each word is actually used in that topic in the corpus.
+When viewing the topic about troops in Iraq, for example (see
+Figure~\ref{fig:context}), one can see that most often when the word ``troops''
+is used in this topic, it is in reference to bringing the troops home, and when
+``end'' is used, it is not used in the context of ``end the war'' as often as
+one might expect.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{words_in_context}
+  \caption{The top ten words in the topic shown with a random context selected
+  from the corpus.}
+  \label{fig:context}
+\end{figure}
 
 \subsection{Getting More Information}
 
@@ -156,16 +179,36 @@ proportion (by percentage) of the given topic.  This allows the user to quickly
 find documents that best demonstrate what the topic captured.  Showing the top
 values for a given attribute (such as authors for the attribute ``Author'')
 gives the user an idea of how focused the topic is and often gives interesting
-information about the corpus being browsed (for example, in Figure
-\ref{fig:something}, we see that Democrats spoke more often about education
-than Republicans did, at least in the topic shown).
+information about the corpus being browsed.  For example, in Figure
+\ref{fig:top-values}, we see that Democrats spoke more often about education
+than Republicans did, at least in the topic shown.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{top_values}
+  \caption{Part of the overall topic view, looking at a topic about education.
+  Note particularly the top documents for the topic and the top values for the
+  attribute ``party,'' shown at the bottom.}
+  \label{fig:top-values}
+\end{figure}
 
 The other way that we give more information about topics is by showing similar
 topics.  We find similar topics either by looking at the documents that the
 topics show up in or by the words that the topics use.  Looking at similar
 topics by document shows topics that are commonly used together in the corpus,
 and looking by word shows topics that have similar words, possibly because the
-two topics really should have been one topic.
+two topics really should have been one topic.  When looking at a topic about
+health care, the user can see that other topics used together with the health
+care topic include topics about the cost of medication and the quality of care
+(see Figure~\ref{fig:similar}).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{similar_topics}
+  \caption{Another look at the overall topic view, featuring different parts of
+  the view.  Note particularly the similar topics box near the top right.}
+  \label{fig:similar}
+\end{figure}
 
 \section{Document, Word, and Attribute Browsing}
 
@@ -179,26 +222,58 @@ methods on the list of documents, as mentioned previously.  When looking at a
 particular document, we show basic information about the document, its text,
 the topic distribution in the document, and similar documents based on that
 distribution.  When looking at the document in the context of a topic, we also
-highlight the tokens in the document that were labeled with that topic.  All of
-this has been done previously, aside from the sorting and filtering of the
-documents, and in fact constitutes the entirety of most previous corpus
-browsers based on topic models---this functionality is all that is generally
-provided.
+highlight the tokens in the document that were labeled with that topic.  For
+example, the user might be curious to see a document that best demonstrates the
+health care topic mentioned above.  Clicking on the top document in the document list brings the user to the view shown in Figure~\ref{fig:document}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{document}
+  \caption{The document view, looking at a speech by Hillary Clinton in the
+  context of a topic about health care (the rest of the document is cut off in
+  this screenshot).}
+  \label{fig:document}
+\end{figure}
+
+These document visualizations been done previously, and in fact the view in
+Figure~\ref{fig:document} constitutes the entirety of most previous corpus
+browsers based on topic models.  This functionality is all that is generally
+provided in other browsers, though it is just a small part of ours.
 
 We also provide views of individual words in the corpus.  When viewing a word
 in the context of a topic, the user can see all uses of the word in that topic
 in the corpus, with context taken from their corresponding documents.  The user
 can also view words independently with a search-like interface, seeing topics
-and documents in which the word appears most frequently.  While providing basic
-functionality, however, the search interface leaves much to be desired, as only
-single words can currently be searched for.  We plan on expanding that to
-phrases.
+and documents in which the word appears most frequently.  The user examining
+the health care topic might be curious where else the word ``health'' was used
+in the topics and the corpus.  Figure~\ref{fig:word} shows the result of using
+our word search to answer that question.  While providing basic functionality,
+however, the search interface leaves much to be desired, as only single words
+can currently be searched for.  We plan on expanding that to phrases.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.72\textwidth]{word}
+  \caption{The word search functionality, showing the results for searching for
+  the word ``health.''}
+  \label{fig:word}
+\end{figure}
 
 The user can also look at aggregated information for values of an attribute
 (i.e., a particular author or year in the documents), combining all of the
 topic and word counts for all documents with the given attribute.  This view is
 also at present somewhat limited, showing only what topics and words are used
 most frequently by the collection of documents with that attribute.
+Figure~\ref{fig:attribute} shows us, among other things, that one of Barack
+Obama's top topics was change in politics.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{attribute}
+  \caption{The attribute view, showing aggregated information for all speeches
+  given by Barack Obama.}
+  \label{fig:attribute}
+\end{figure}
 
 \section{Plots}
 
@@ -209,7 +284,18 @@ of plot has been used in visualizing topic models almost since their
 introduction~\cite{griffiths-2004-finding-scientific-topics}.  Our topic
 browser allows the user to interactively generate these trend plots over any
 attribute for any topic or combination of topics of the documents in the
-corpus.
+corpus.  Our user exploring health care topics may want to view how much each
+candidate spoke about health care.  We saw already that there were three
+related topics that mentioned health care, so the user views all of them
+together in a histogram, shown in Figure~\ref{fig:trend-plot}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{trend_plot}
+  \caption{A plot of topics over attributes, showing the use of three health
+  care-related topics across candidates.}
+  \label{fig:trend-plot}
+\end{figure}
 
 The second kind of plot that we include is more useful for analyzing and
 understanding the behavior of the topic model itself.  We allow the user to
@@ -219,7 +305,24 @@ such as the fact that document entropy seems to correlate with the logarithm of
 the number of tokens in the topic, and that coherence does not seem to
 correlate with any other topic metric.  The user can also find outliers, such
 as topics with low document entropy but a high token count, that can then be
-examined in the topic page. (TODO: use Obama vs. McCain as example here)
+examined in the topic page.
+
+An interesting application of these topic metric plots occurs when the metrics
+include how consistently each candidate spoke about each topic.
+Figure~\ref{fig:metric-plot} shows a plot of topics, comparing John McCain's
+use of the topic to Barack Obama's use of the topic.  Topics in the upper left
+were topics unique to Obama, and topics in the lower right were unique to
+McCain.  Topics in the middle (near the value of 2 for each candidate) were
+somewhat shared between the two.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{metric_plot}
+  \caption{A topic metric comparison plot.  The metrics used were how
+  consistently Barack Obama and John McCain used each topic. The plot shows
+  topics that were unique to Obama or McCain and topics they shared.}
+  \label{fig:metric-plot}
+\end{figure}
 
 \section{Conclusion}
 
