@@ -1,1 +1,0 @@
-/aml/home/mjg82/latex-makefile/Makefile
