@@ -28,6 +28,15 @@ Address \\
 \maketitle
 
 \begin{abstract}
+
+Topic modeling is a popular and effective method for gathering meaning from a
+set of documents.  Such models contain a lot of information and can be very
+difficult to analyze.  For the proper visualization of these models, one must
+present only the topics that are relevant to the task at hand.  We present the
+novel task of topic ranking in response to user questions that greatly aids in
+the visualization of topic models.  We make use of the document distribution of
+a topic in order to rank the topics according to specific user questions.
+
 \end{abstract}
 
 \section{Introdcution}
@@ -84,9 +93,8 @@ motivation and a more detailed description of the task of ranking topics by
 relevance in \secref{ranking}.  \secref{docdist} describes a method for
 determining the relevance of a topic to various possible questions a person
 could have when looking at a corpus, and \secref{examples} shows examples of
-how this technique provides a proper ranking.  In \secref{challenges} we
-discuss the challenges of evaluating this visualization method.  Finally, in
-\secref{conclusion} we conclude.
+how this technique provides a proper ranking.  Finally, in \secref{conclusion}
+we conclude.
 
 \section{The topic ranking task}
 \label{sec:ranking}
@@ -147,6 +155,7 @@ calculating the entropy of the distribution and of related distributions where
 documents are grouped by category.  For instance, one can group the documents
 by author and compute the distribution of the topic over authors as
 \begin{align}
+  \label{eq:attrentropy}
   p(a|z) = \frac{\sum_{d \in \mathcal{A}} C(d,z)}{\sum_{d \in \mathcal{D}}
   C(d,z)}
 \end{align}
@@ -159,61 +168,135 @@ $\mathcal{D}$ represents some specific subset.  When using subsets of the
 documents, we only consider topics which have at least one token in the given
 subset, so as to avoid division by zero.
 
-\section{Using $p(d|z)$ to rank topics}
+\section{Example topic rankings}
 \label{sec:examples}
 
-We present here a few examples of how the document distribution for a topic can
-be used to rank topics according to their relevance for certain user questions.
-In our examples we use a corpus of 480 campaign speeches from the 2008
-presidential primary and general election.  We inferred 150 topics in the data
-from a Gibbs sampling of the LDA topic model.
+We present here a few examples of questions a user might ask about a corpus and
+how we can rank topics according to their relevance to those questions.  In our
+examples we use a corpus of 480 campaign speeches from the 2008 presidential
+primary and general election.  We inferred 150 topics in the data from a Gibbs
+sampling of the LDA topic model.
 
-Questions here:
+The first question we address is, What topics are most prevelant in the corpus?
+This is a simple question with an obvious answer that does not require using
+$p(d|z)$.  One can simply order the topics by the number of tokens in the
+topic.  Upon doing so one finds the following topics (we show the topic number
+and the top ten words in the topic for the top five topics):
 
-What topics are most prevelant in the corpus?
+\begin{tabular}{l|l}
+  35 & years time made long today place home day ago back \\
+  42 & people don ve make country ll time put didn money \\
+  119 & make national work effort including protect adiministration clear
+	support policy \\
+  15 & america world american future challenges great lead generation nation
+	leadership \\
+  108 & president work day senator house make white clinton care support \\
+\end{tabular}
 
-What topics did John McCain talk about the most?
+One can see that these topics for the most part are meaningless, capturing stop
+words and noise in the data and hardly answering the question at hand.  When we
+filter by a minimum value of coherence, however, we see a better picture:
 
-What topics did Barack Obama most consistently throughout his campaign? 
+\begin{tabular}{l|l}
+  42 & people don ve make country ll time put didn money \\
+  119 & make national work effort including protect adiministration clear
+	support policy \\
+  120 & law government rights respect case society fact laws principles order \\
+  143 & jobs ve create economy make years billion companies invest energy \\
+  101 & children family day man mother care love father parents young \\
+\end{tabular}
 
-What topics are most consistent across candidates?
+While still somewhat noisy, this list gives the viewer some idea of what was
+spoken of most during the 2008 presidential election.
 
-What topics were constant throughout the campaign?
+Next we look at a similar question: What topics did John McCain talk about the
+most?  This question is also answered without needing to use $p(d|z)$; simply
+order the topics by the number of tokens that occur in speeches given by
+McCain.  The list is the following (here again we filter by coherence):
 
-What topics were transitory, only spoken of rarely?
+\begin{tabular}{l|l}
+  129 & mccain news john senator obama remarks america events donate email \\
+  119 & make national work effort including protect adiministration clear
+	support policy \\
+  27 & mccain news john search media speeches www johnmccain email freedom \\
+  90 & war iraq honor defeat enemy greater responsibility responsibilities
+	difficult great \\
+  66 & dollars reform federal washington congress reforms public policy
+	problems system \\
+\end{tabular}
 
+Another similar, though slightly distinct, question is, What topics did Barack
+Obama speak of most consistently throughout his campaign?  This question
+differs from the previous in that the previous question could be answered by a
+topic Obama used just a few times in long speeches.  This question looks for
+topics that were consistent in all of his speeches.  Here we turn to the
+document entropy for each topic as in \eqref{eq:entropy}, looking only at
+speeches given by Obama.  The result of such an ordering is:
 
-\section{Challenges of evaluation}
-\label{sec:challenges}
+\begin{tabular}{l|l}
+  60 &  barack remarks senator barackobama obama ll www http hope states\\
+  47 & mccain senator john ll bush washington states election won george \\
+  124 & change politics country time american washington ve common americans
+	end \\
+  84 & delegates south future party carolina kennedy support pledged total
+	versus \\
+  143 & jobs ve create economy make years billion companies invest energy \\
+\end{tabular}
 
-The obvious way to evaluate a topic ranking is to use the evaluations methods
-commonly found in information retrieval tasks.  There are well established
-techniques to evaluate a ranking given a true ranking.  However, there are
-several obstacles to using such a scheme to evaluate performance on this task.
+The first topic consists of markup on all of Barack Obama's speeches.  From the
+rest of the topics one can see that Obama spoke a lot about his opponent,
+Senator McCain, about change and the economy, and he apparently spent a lot of
+time in South Carolina.
 
-The first and glaring obstacle is that there is no set of data that has been
-labeled with true rankings for these or any questions.  One cannot compare the
-output of an algorithm to ground truth when there is no ground truth.  It is
-not even clear how such data would be obtained; perhaps one could take a topic
-model and a set of questions and rank each topic for relevance to each
-question, but such a task would be incredibly laborious and error-prone.  The
-labeler would first have to understand what exactly each topic is capturing, in
-itself a difficult task, then go through the entire data collection to answer
-the question herself and determine how well the topic matches.  Clearly such a
-process for creating a set of evaluation data is not feasible.
+Another question one may have about these speeches is, What topics are most
+consistent across candidates?  Each candidate has issues particular to them,
+but what topics are universally used by the candidates?  A natural ranking for
+this question is to order by entropy over candidates, as in
+\eqref{eq:attrentropy}.  Such a ranking shows these to be universal topics:
 
-But what if the topic model fails to capture topics that truly answer the
-question?  
-Separate topics can be overlapping in words, where a human would consider them
-the same topic.
+\begin{tabular}{l|l}
+  8 & congress government federal bill legislation members house conference
+	statement congressional \\
+  104 & states united countries international support economic state force
+	military community \\
+  103 & public political understand values home play rules shared committed
+	important \\
+  93 & president bush administration george war failed stop department
+	september moral \\
+  18 & result led group death allowed consequences early continued quickly
+	balance \\
+\end{tabular}
 
-The topic model itself could be high or low quality, and that affects the
-results.
+Similarly, one could ask, What topics were constant throughout the campaign?
+This question is also answered with \eqref{eq:attrentropy}, with the month of
+the speech used to group the documents together.  We see these topics as a
+result:
+
+\begin{tabular}{l|l}
+  120 & law government rights respect case society fact laws principles order \\
+  8 & congress government federal bill legislation members house conference
+	statement congressional \\
+  25 & party vote election campaign votes people democrats state democratic
+	candidate \\
+  101 & children family day man mother care love father parents young \\
+  38 & economy economic american world security prosperity trade market markets
+	growth \\
+\end{tabular}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-TODO
+Displaying the right topics to a user is essential to the effective
+visualization of topic models.  We have presented the novel task of ranking
+topics according to relevance to certain user questions.  We have also given a
+method for ranking topics in order to answer a few specific questions.  Such
+rankings allow visualizations of topic models that present information to users
+in much more effective ways than was previously possible.
+
+While our methods are useful for a few user questions, it remains as future
+work to devise a method for ranking topics in answer to arbitrary questions.
+The evaluation of such rankings is also a difficult task that must be left to
+future work.  
 
 \bibliographystyle{unsrt}
 \bibliography{../../../bib/lda/bib}
