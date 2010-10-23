@@ -7,65 +7,92 @@
 Matthew J. Gardner \\
 Department of Computer Science \\
 Brigham Young University \\
-Provo, UT 84604 \\
 \texttt{mjg82@byu.edu} \\
 \And
-Other authers\ldots \\
-Affiliation \\
-Address \\
-\texttt{email} \\
+Joshua Lutes \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{joshua@lutes.me} \\
+\And
+Jeff Lund \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{jefflund@gmail.com} \\
+\And
+Josh Hansen \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{jjfresh@byu.edu} \\
+\And
+Dan Walker \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{danwalkeriv@gmail.com} \\
+\And
+Eric Ringger \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{ringger@cs.byu.edu} \\
+\And
+Kevin Seppi \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{kseppi@lcs.byu.edu} \\
 }
 
-%\nipsfinalcopy % Uncomment for camera-ready version
 
 \begin{document}
+\nipsfinalcopy % Uncomment for camera-ready version
 \maketitle
 
 \begin{abstract}
 
-Topic models have been shown to capture a measure of the semantics in a corpus.
-Many individualized and cherry-picked visualizations of topic models have been
-reported in the literature, showing the potential of topic models to give
-valuable insight into a corpus.  However, good, general tools for browsing the
-entire output of a topic model along with the analyzed corpus have been
-lacking.  We present an interactive tool that incorporates both prior work in
-displaying topic models as well as some novel ideas that greatly enhance the
-visualization of these models.
+Topic models have been shown to reveal the semantic content in large corpora.
+Many individualized visualizations of topic models have been reported in the
+literature, showing the potential of topic models to give valuable insight into
+a corpus.  However, good, general tools for browsing the entire output of a
+topic model along with the analyzed corpus have been lacking.  We present an
+interactive tool that incorporates both prior work in displaying topic models
+as well as some novel ideas that greatly enhance the visualization of these
+models.
 
 \end{abstract}
 
 \section{Introduction}
 
 Proper visualizations are essential to extracting information from and
-identifying trends in data, especially large, highly dimensional data.  Large
-text corpora are particularly difficult to visualize, as they typically include
-thousands of documents and perhaps millions of words.  Topic
+identifying trends in data, especially large, high dimensional data.  Large
+text corpora are particularly difficult to visualize, as they may include many
+thousands of documents and millions of words.  Topic
 modeling~\cite{blei-2003-latent-dirichlet-allocation} is a method of reducing
 the dimensionality of a corpus into a set of meaningful topics.  Topic models
 have been used with some success as an aid to corpus
 visualization~\cite{blei-2009-topic-models,
-newman-2010-visualizing-with-topic-maps}.  However, in general the presentation
-of topic models has been limited to hand selected topics that show the model in
-the best light possible.  These presentations leave the viewer wondering what
-else the topic model discovered and provide little help in gaining a deep
-understanding of the model.
+newman-2010-visualizing-with-topic-maps}.  However, in many papers the
+presentation of topic models has been limited to hand-selected, coherent
+topics, when often there are many meaningless topics to sift through.  These
+presentations leave the viewer wondering what else the topic model discovered
+and provide little help in gaining a deep understanding of the model.
 
 To aid in the visualization of topic models and in pattern discovery in
-document collections, we present The Topic Browser, a tool for interactively
-exploring both the output of a topic modeling algorithm and its attendant
-corpus.  Our topic browser incorporates many visualizations of topic models
-previously published as well as some innovative ideas of our own.  The Topic
-Browser is an aid both to those who wish to browse through a corpus and for
-those who wish to analyze the topic model itself.
-
-The rest of this paper describes the Topic Browser.  We demonstrate our tool
-with a topic model run on a collection of about 460 campaign speeches from the
-2008 presidential primary and general elections.
+document collections, we present The Topic Browser, a web-based tool for
+interactively exploring both the output of a topic modeling algorithm and its
+attendant corpus.  Our topic browser incorporates many visualizations of topic
+models previously published as well as some innovative ideas of our own.  The
+Topic Browser is an aid both to those who wish to browse through a corpus and
+for those who wish to analyze the topic model itself.  We believe that this
+interactive approach to visualization in browsing reveals topics and topical
+trends in large document collections in a way that is not possible with static
+visualizations.  The rest of this paper describes the Topic Browser in an
+attempt to demonstrate that this is tool.  We display our tool with a topic
+model run using MALLET's implementation of LDA~\cite{mallet} with 150 topics on
+a collection of about 460 campaign speeches from the 2008 presidential primary
+and general elections retrieved from http://2008election.procon.org.
 
 \section{Extra Information}
 
 Aside from the documents and the topic model themselves, our browser
-incorporates three other pieces of information: attributes (or metadata)
+incorporates three other pieces of information: attributes (metadata)
 associated with each document, topic metrics, and document metrics.  Here we
 give a brief description of these kinds of information, deferring a discussion
 of their use in visualization to the subsequent sections.
@@ -80,13 +107,14 @@ visualizations that include the attributes.
 
 In order to browse more effectively through topics, we introduce topic metrics
 that give information about the topic.  These range from simple metrics, such
-as the number of tokens and types labeled with the topic, to more complicated
-metrics like how dispersed the topic is across documents, or how coherent its
-words are~\cite{newman-2010-automatic-evaluation-of-topic-coherence}.  We also
-use pairwise topic metrics as similarity measures to show similar topics.
+as the number of words tokens and types labeled with the topic, to more
+complicated metrics such as how dispersed the topic is across documents, or how
+coherent its words
+are~\cite{newman-2010-automatic-evaluation-of-topic-coherence}.  We also use
+pairwise topic metrics as similarity measures to show similar topics.
 
 Similar to topic metrics, one can also compute document metrics.  Beyond simple
-metrics like token count in the document, these can include things such as the
+metrics like token count in the document, these include things such as the
 entropy of the topic distribution of the
 document~\cite{misra-2008-lda-to-find-semantically-incoherent-documents}.  And
 as with topics, we make use of pairwise document metrics such as topic
@@ -94,51 +122,54 @@ correlation~\cite{blei-2009-topic-models} to show similar documents.
 
 \section{Sidebar}
 
-The sidebar in our browser is the main navigation tool.  Apart from the obvious
-task of directing the user to various parts of the visualization tool, the main
-purpose of the sidebar is to list the items of a particular type (such as
-topics or documents).  The new capability introduced by this browser is the
-ability to sort and filter these lists as the user desires.
+The sidebar in our browser is the main navigation tool.  To facilitate
+navigation through the large amount of information in the browser, the sidebar
+lists the items of the type currently being explored.  The new capability
+introduced by this browser is the ability to sort and filter these lists as the
+user desires.
 
-When presenting the results of a topic model analysis, papers will often
-cherry-pick the list of topics looking for particularly good topics to display,
-leaving the large number of meaningless topics untouched.  While such
-presentations may help the researcher to highlight the benefits of her new
-topic model, they hide the fact that finding good topics is often a laborious
-process.  With our topic and document metrics, the sorting and filtering
-capabilities of the sidebar list allow the user to often go quickly to the very
-topics he desires to find.
+When presenting the results of a topic model analysis, papers will often hand
+pick particularly good topics to display, leaving out a large number of
+meaningless topics.  While such presentations may help to highlight the
+benefits of a new topic model, they hide the fact that finding good topics is
+often a laborious process.  With our topic and document metrics, the sorting
+and filtering capabilities of the sidebar list allow the user to go quickly to
+meaningful topics that are relevant to his questions.
 
 When browsing through topics, the user can filter the topic list by coherence
-to eliminate from the view topics that are mostly meaningless, and sort by
-document entropy to find topics that were used widely (or narrowly, if that is
-desired) throughout the corpus.  For example, Figure~\ref{fig:sidebar} shows
-that the family was one of the most consistent themes in the speeches.
+to eliminate from the view those topics that are mostly meaningless and sort by
+document entropy (a measure of the dispersion of the topic across the
+documents) to find topics that were used widely throughout the corpus.  For
+example, Figure~\ref{fig:sidebar} shows that ``the family'' was one of the most
+consistent themes in the speeches.  We use the top two words to name a topic in
+the sidebar and other places, to avoid clutter, though we are actively
+investigating better ways to name topics.
 
 \begin{figure}
   \centering
   \includegraphics[width=.34\textwidth]{sidebar}
-  \caption{The navigational sidebar showing topics sorted by dispersion
-  throughout the corpus and filtered by coherence}
+  \caption{The navigational sidebar showing topics.  In this example the topics
+  are sorted by dispersion throughout the corpus and filtered by coherence}
   \label{fig:sidebar}
 \end{figure}
 
-The user can also filter by document or attribute, seeing only topics that were
+The user can also filter by document or attribute to show only topics that were
 used in a particular document or by a particular author.  Documents can
 similarly be filtered and sorted, showing only documents that contain tokens
-with a particular topic, or with a particular value of an attribute.
+with a particular topic or with a particular value of an attribute.
 
 \section{Topic Browsing}
 
-Topic models are typically presented as static lists of words, often simply
-showing the top ten words from each topic in a list.  While this practice is
+The results from a topic model are typically presented as static lists of
+words, often simply showing the top ten words from each topic in a
+list~\cite{blei-2003-latent-dirichlet-allocation}.  While this practice is
 often sufficient to give a reader a basic idea of what the topic captured, it
 is largely incapable of conveying a deep understanding of the context of that
 topic in the corpus.  In order to answer significant questions about a corpus
 one must browse the topics discovered, and previous methods have failed to
-adequately allow the user to explore topics.  Our browser presents new ways
-to gather information about a topic in the corpus, both in how the words in the
-topic are displayed and in that is presented about the topic.
+adequately allow the user to explore topics.  Our browser presents new ways to
+gather information about a topic in the corpus, both in terms of how the words
+in the topic are displayed and in terms of what is presented about the topic.
 
 \subsection{Showing Top Words}
 
@@ -149,18 +180,17 @@ Blei \& Lafferty's Turbo Topics method~\cite{blei-2009-turbo-topics}.
 
 While these visualizations are modest improvements over typical visualization
 methods, our most useful display of the words is showing them in their context.
-
 The topics in a topic model cannot be fully interpreted when completely
-separated from their context.  Thus we display the top ten words in the topic
-inside of their context.  We select a random token of each word type labeled
-with the topic and show up to 50 characters on either side of the token,
-keeping words intact.  We also allow the user to cycle through contexts to gain
-a broader view of how each word is actually used in that topic in the corpus.
-When viewing the topic about troops in Iraq, for example (see
-Figure~\ref{fig:context}), one can see that most often when the word ``troops''
-is used in this topic, it is in reference to bringing the troops home, and when
-``end'' is used, it is not used in the context of ``end the war'' as often as
-one might expect.
+separated from their context.  Thus in addition to the word cloud we also
+display the top ten words in the topic inside of their context.  We select a
+random token of each word type labeled with the topic and show up to 50
+characters on either side of the token, keeping words intact.  We also allow
+the user to cycle through contexts to gain a broader view of how each word is
+actually used in that topic.  When viewing the topic about troops in Iraq, for
+example (see Figure~\ref{fig:context}), one can see that most often when the
+word ``troops'' is used in this topic, it is in reference to bringing the
+troops home, and when ``end'' is used, it is not used in the context of ``end
+the war'' as often as one might expect.
 
 \begin{figure}
   \centering
@@ -178,8 +208,8 @@ either the highest number of tokens labeled with that topic or the highest
 proportion (by percentage) of the given topic.  This allows the user to quickly
 find documents that best demonstrate what the topic captured.  Showing the top
 values for a given attribute (such as authors for the attribute ``Author'')
-gives the user an idea of how focused the topic is and often gives interesting
-information about the corpus being browsed.  For example, in Figure
+gives the user an idea of how focused the topic is and often reveals
+interesting information about the corpus being browsed.  For example, in Figure
 \ref{fig:top-values}, we see that Democrats spoke more often about education
 than Republicans did, at least in the topic shown.
 
@@ -193,14 +223,15 @@ than Republicans did, at least in the topic shown.
 \end{figure}
 
 The other way that we give more information about topics is by showing similar
-topics.  We find similar topics either by looking at the documents that the
-topics show up in or by the words that the topics use.  Looking at similar
-topics by document shows topics that are commonly used together in the corpus,
-and looking by word shows topics that have similar words, possibly because the
-two topics really should have been one topic.  When looking at a topic about
-health care, the user can see that other topics used together with the health
-care topic include topics about the cost of medication and the quality of care
-(see Figure~\ref{fig:similar}).
+topics.  We find similar topics either by looking at the distribution of
+documents that contain the topic or by the topic's distribution over words.
+Looking at similar topics by document shows topics that are commonly used
+together in the corpus, and finding similar topics by word distribution shows
+topics that have similar words, possibly because the two topics really should
+have been one topic.  When looking at a topic about health care, the user can
+see that other topics used together with the health care topic include topics
+about the cost of medication and the quality of care (see
+Figure~\ref{fig:similar}).
 
 \begin{figure}
   \centering
@@ -214,8 +245,8 @@ care topic include topics about the cost of medication and the quality of care
 
 In addition to enabling the user to browse the topics in the topic model, we
 provide means for browsing the documents, words, and attributes in the corpus.
-These facilities give users means to explore the corpus itself in the context
-of the topic model.
+These facilities give users the ability to explore the corpus itself in the
+context of the topic model.
 
 When simply browsing through the documents, we provide sorting and filtering
 methods on the list of documents, as mentioned previously.  When looking at a
@@ -224,21 +255,26 @@ the topic distribution in the document, and similar documents based on that
 distribution.  When looking at the document in the context of a topic, we also
 highlight the tokens in the document that were labeled with that topic.  For
 example, the user might be curious to see a document that best demonstrates the
-health care topic mentioned above.  Clicking on the top document in the document list brings the user to the view shown in Figure~\ref{fig:document}.
+health care topic mentioned above.  Clicking on the top document in the
+document list (as in the bottom of Figure~\ref{fig:top-values}) brings the user
+to the view shown in Figure~\ref{fig:document}.
 
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{document}
   \caption{The document view, looking at a speech by Hillary Clinton in the
   context of a topic about health care (the rest of the document is cut off in
-  this screenshot).}
+  this screenshot, and sadly, the colored tokens in the document are not very
+  visible in black and white).}
   \label{fig:document}
 \end{figure}
 
-These document visualizations been done previously, and in fact the view in
+The document visualizations reported here were drawn from the work of
+others~\cite{blei-2003-latent-dirichlet-allocation}, and in fact the view in
 Figure~\ref{fig:document} constitutes the entirety of most previous corpus
-browsers based on topic models.  This functionality is all that is generally
-provided in other browsers, though it is just a small part of ours.
+browsers based on topic models (e.g.,~\cite{blei-arxiv-corpus-browser}).  Our
+browser substantially goes beyond the existing functionality reported by
+others.
 
 We also provide views of individual words in the corpus.  When viewing a word
 in the context of a topic, the user can see all uses of the word in that topic
@@ -246,10 +282,11 @@ in the corpus, with context taken from their corresponding documents.  The user
 can also view words independently with a search-like interface, seeing topics
 and documents in which the word appears most frequently.  The user examining
 the health care topic might be curious where else the word ``health'' was used
-in the topics and the corpus.  Figure~\ref{fig:word} shows the result of using
-our word search to answer that question.  While providing basic functionality,
-however, the search interface leaves much to be desired, as only single words
-can currently be searched for.  We plan on expanding that to phrases.
+in the topics and in the corpus.  Figure~\ref{fig:word} shows the result of
+using our word search to answer that question.  While providing basic
+functionality, however, the search interface leaves much to be desired, as only
+single words can currently be searched for.  We plan on expanding that to
+phrases.
 
 \begin{figure}
   \centering
@@ -259,13 +296,13 @@ can currently be searched for.  We plan on expanding that to phrases.
   \label{fig:word}
 \end{figure}
 
-The user can also look at aggregated information for values of an attribute
-(i.e., a particular author or year in the documents), combining all of the
-topic and word counts for all documents with the given attribute.  This view is
-also at present somewhat limited, showing only what topics and words are used
-most frequently by the collection of documents with that attribute.
+The user can also look at aggregated information for the values of an attribute
+(i.e., a particular candidate or party), combining all of the topic and word
+counts for all documents with the given attribute.  This view is also at
+present somewhat limited, showing only what topics and words are used most
+frequently by the collection of documents with that attribute.
 Figure~\ref{fig:attribute} shows us, among other things, that one of Barack
-Obama's top topics was change in politics.
+Obama's top topics was ``change in politics.''
 
 \begin{figure}
   \centering
@@ -278,16 +315,16 @@ Obama's top topics was change in politics.
 \section{Plots}
 
 We currently include two kinds of plots in our topic browser, with plans to
-implement many more.  The first is showing trends for topics over the values of
-an attribute (such as date, or author), useful for corpus browsing.  This kind
+implement many more.  The first shows trends for topics over the values of an
+attribute (such as date, or candidate), useful for corpus browsing.  This kind
 of plot has been used in visualizing topic models almost since their
 introduction~\cite{griffiths-2004-finding-scientific-topics}.  Our topic
 browser allows the user to interactively generate these trend plots over any
-attribute for any topic or combination of topics of the documents in the
-corpus.  Our user exploring health care topics may want to view how much each
-candidate spoke about health care.  We saw already that there were three
-related topics that mentioned health care, so the user views all of them
-together in a histogram, shown in Figure~\ref{fig:trend-plot}
+attribute for any topic or combination of topics in the corpus.  Our user
+exploring health care topics may want to view how much each candidate spoke
+about health care.  We saw already that there were three related topics that
+mentioned health care, so the user might view all of them together in a
+histogram, shown in Figure~\ref{fig:trend-plot}.
 
 \begin{figure}
   \centering
@@ -310,7 +347,7 @@ examined in the topic page.
 An interesting application of these topic metric plots occurs when the metrics
 include how consistently each candidate spoke about each topic.
 Figure~\ref{fig:metric-plot} shows a plot of topics, comparing John McCain's
-use of the topic to Barack Obama's use of the topic.  Topics in the upper left
+use of each topic to Barack Obama's use of the topic.  Topics in the upper left
 were topics unique to Obama, and topics in the lower right were unique to
 McCain.  Topics in the middle (near the value of 2 for each candidate) were
 somewhat shared between the two.
@@ -318,7 +355,7 @@ somewhat shared between the two.
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{metric_plot}
-  \caption{A topic metric comparison plot.  The metrics used were how
+  \caption{A topic metric comparison plot.  The metrics plotted are how
   consistently Barack Obama and John McCain used each topic. The plot shows
   topics that were unique to Obama or McCain and topics they shared.}
   \label{fig:metric-plot}
@@ -333,15 +370,21 @@ including basic corpus browsing functionality, plots of trends over attributes
 in the corpus, and Blei \& Lafferty's Turbo Topics method of finding
 significant phrases for each topic.  We have also presented many novel ways to
 mine information from a topical analysis of a corpus in an interactive browsing
-experience.
+experience.  The Topic Browser is an effective tool both for those wishing to
+browse through a corpus in the context of a topic model, and for those wishing
+to better understand topic models and develop new models.
 
-While our tool is still under development, we intend to make it open and freely
-available, both for those wishing to browse through a corpus in the context of
-a topic model, and for those wishing to better understand topic models and
-develop new models.  Our tool currently supports any topic model that labels
-individual tokens in the corpus with topics.  We have plans to include special
-visualizations for more complicated topic models, such as Topics over Time,
-sentiment-topic models, hierarchical topic models, and others.
+
+While our tool is still under development, a description of the Topic Browser,
+a working demo, and the current version of the code are available at
+http://nlp.cs.byu.edu/topic\_browser [Note to reviewers: this is currently just
+a demo of the browser; by the time of the workshop it will have the description
+and code mentioned].  Our tool currently supports any topic model that labels
+individual tokens in the corpus with topics, and is built to import data
+directly from MALLET input and output files~\cite{mallet}, or files similarly
+formatted.  We have plans to include specialized visualizations for more
+complicated topic models, such as Topics over Time, sentiment-topic models,
+hierarchical topic models, and others.
 
 \bibliographystyle{plain}
 \bibliography{../../../bib/lda/bib}
