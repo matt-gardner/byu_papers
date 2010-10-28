@@ -15,13 +15,15 @@ resume.txt
 
 -------
 
-Academic honors and distinctions
+Academic honors and distinctions - Draft completed in honors.txt
 
-Fellowships, scholarships, teaching or other appointments
+Fellowships, scholarships, teaching or other appointments - Draft completed in
+fellowships.txt
 
 Previous research: choose one or two projects that best exemplify your own
 creativity and discuss in more detail what you personally contributed to them.
-(don't forget Google in the form, textual criticism)
+- Draft completed in research.txt (don't forget Google in the form, textual
+criticism)
 
 Include here information about your favored extracurricular and leisure time
 activities since your graduation from high school. - Draft completed in

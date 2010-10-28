@@ -1,0 +1,92 @@
+"Solving large crystallography problems with particle swarm optimization",
+December 2007 -- June 2009, B. Campbell, M. Gardner, K. Seppi.  Dr. Campbell's
+work is on-going and he hopes to submit it for publication soon.
+
+"An Exploration of Topologies and Communication in Large Particle Swarms",
+Congress on Evolutionary Computation 2009, A.W. McNabb, M.J. Gardner, K. Seppi.
+
+"Track cost per call data through Google TV Ads", internship at Google, Inc.
+May-August 2009.  Official blog post on the project is at http://google-tvads.blogspot.com/2010/01/track-cost-per-call-data-through-google.html.
+
+"Automatic Topic Discovery in 100 Years of General Conference Talks", poster
+presented at the peer-reviewed 50th anniversary BYU Studies Symposium, March
+2010, M.J. Gardner, E. Ringger.
+
+"Speculative Evaluation in Particle Swarm Optimization", Parallel Problem
+Solving in Nature 2010, M.J. Gardner, A.W. McNabb, K. Seppi.  This was also my
+honors thesis, though the text was modified before submission to the
+conference.
+
+"A Speculative Approach to Parallelization in Particle Swarm Optimization",
+currently under review at the journal Swarm Intelligence, M.J. Gardner, A.W.
+McNabb, K. Seppi.
+
+--------
+
+"An Inquiry into Automated Methods for Textual Criticism", technical report
+submitted to BYU, July 2010.
+
+"The Topic Browser: An Interactive Tool for Browsing Topic Models", currently
+under review at the Challenges of Data Visualization workshop for the
+conference Neural Information Processing Systems 2010, M.J. Gardner, J. Lutes,
+J. Lund, J. Hansen, D. Walker, E. Ringger, K. Seppi.
+
+"Answering Corpus-Level Questions through Topic Ranking", current research, to
+be submitted to a conference soon.
+
+
+Three of the papers listed from my undergraduate career all came from a single
+project -- how do you effectively solve long-running optimization problems with
+a large cluster of hundreds or thousands of machines?  The project started when
+a physics professor approached my advisor seeking help solving a
+crystallography problem.  Having just begun working with my advisor, I accepted
+the problem mostly in an auxiliary role, writing some code and running
+experiments for Dr. Campbell, the physics professor.  We used particle swarm
+optimization to try to fit his model of what was happening in a particular kind
+of crystal to data that he had collected.  After spending a lot of time seeing
+the output of the algorithm, I also helped to interpret the results.  I
+discovered that we had too many free parameters in our model and helped Dr.
+Campbell to make progress in solving his problem.  
+
+The crystallography problem we were solving required the evaluation of a
+function that took several minutes to run, so we used several hundred
+processors on BYU's supercomputer.  This led us to ask some interesting
+questions about how we could best use those processors to solve the problem.
+We first experimented with the topology of the algorithm, or how the particles
+in the swarm communicate with each other.  I did much of the experimentation,
+though I was directed by a graduate student in the lab, who eventually wrote
+the paper that we published.  We saw some improvements in the performance of
+the algorithm with our new topologies, though we also noticed that increasing
+the number of particles with additional processors had diminishing returns.
+
+To solve this problem, my advisor proposed applying the idea of speculative
+execution in processors to particle swarm optimization (PSO).  Instead of
+increasing the swarm size, additional processors could be used to evaluate
+possible next-iteration positions of each particle in parallel.  I thought it
+was an interesting idea, and I made it my honors thesis.  I took the idea and
+discovered how it could actually be done, performing the evaluations needed and
+piecing the results back together from messages sent between processors so that
+speculative evaulation could be done in a distributed PSO environment with only
+a single round of message passing per iteration.  Once I had implemented the
+technique, I ran many experiments to compare our methods to other means of
+parallelizing PSO.  Once I was satisfied that my results were significant, I
+wrote, submitted, and successfully defended my honors thesis.  
+
+In implementing speculative evaluation, however, I noticed a number of ways the
+method could potentially be improved.  Even though my honors thesis was
+completed, I continued my investigation.  I found that a large number of the
+speculative evaluations we performed were wasted, and that the algorithm could
+be improved by replacing useless evaluations with better evaluations, such as
+speculating several iterations ahead on paths that particles were likely to
+take.  I significantly expanded the work of my honors thesis, preparing to
+submit it to a journal on optimization.  After a rejection of a smaller version
+from a conference, I got quite discouraged, wanting to give up and move on to
+something new.  My advisor insisted I perservere, saying it was good
+preparation for a PhD, and so I continued.  After running more experiments to
+strengthen the paper, we submitted it to the journal Swarm Intelligence, where
+it is currently under review.
+
+
+
+
+
