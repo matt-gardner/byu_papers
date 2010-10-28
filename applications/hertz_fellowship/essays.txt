@@ -10,7 +10,8 @@ What are the considerations involved in your choice of graduate school? -
 Draft completed in grad_school_choice.txt
 
 A concise resume, in chronological order, recapitulating significant periods of
-technical and other creative activity since high school.
+technical and other creative activity since high school. - Draft completed in
+resume.txt
 
 -------
 
@@ -23,6 +24,6 @@ creativity and discuss in more detail what you personally contributed to them.
 (don't forget Google in the form, textual criticism)
 
 Include here information about your favored extracurricular and leisure time
-activities since your graduation from high school. - Started in
+activities since your graduation from high school. - Draft completed in
 leisure_time.txt
 
