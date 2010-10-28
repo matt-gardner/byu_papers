@@ -10,123 +10,134 @@
 
 \title{Better Corpus Visualization through Topic Ranking}
 \author{
-Matthew J. Gardner \\
+Matthew Gardner \\
 Department of Computer Science \\
 Brigham Young University \\
-Provo, UT 84604 \\
 \texttt{mjg82@byu.edu} \\
 \And
-Other authers\ldots \\
-Affiliation \\
-Address \\
-\texttt{email} \\
+Kevin Seppi \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{kseppi@cs.byu.edu} \\
+\And
+Eric Ringger \\
+Department of Computer Science \\
+Brigham Young University \\
+\texttt{ringger@cs.byu.edu} \\
 }
 
-%\nipsfinalcopy % Uncomment for camera-ready version
 
 \begin{document}
+\nipsfinalcopy % Uncomment for camera-ready version
 \maketitle
 
 \begin{abstract}
 
 Topic modeling is a popular and effective method for gathering meaning from a
 set of documents.  Such models contain a lot of information and can be very
-difficult to analyze.  For the proper visualization of these models, one must
-present only the topics that are relevant to the task at hand.  We present the
-novel task of topic ranking in response to user questions that greatly aids in
-the visualization of topic models.  We make use of the document distribution of
-a topic in order to rank the topics according to specific user questions.
+difficult to analyze.  Current attempts at using topic models to enhance
+information discovery in a document collection are limited mainly to simple
+corpus browsers.  However, there are many questions a person may have about a
+corpus that are best answered by the topics found by the topic model.  To get
+these kinds of information from the model, one must decide which topics best
+answer the question and present only the best topics.  In an attempt to address
+this issue, we present the novel task of topic ranking in response to these
+kinds of user questions and give some methods that are useful in this task.
 
 \end{abstract}
 
-\section{Introdcution}
+\section{Introduction}
 \label{sec:introduction}
+
+There are many kinds of questions a person might have when confronted with a
+previously unseen collection of documents.  Some of those questions are
+factual, such as, ``Who was Barack Obama's campaign advisor?''  Some questions
+look for documents, such as ``What speeches did John McCain give about the war
+in Iraq?''  Still other questions ask about topics and topical trends in the
+corpus, such as, ``What were Obama's consistent campaign themes?''  Each kind
+of question requires a separate kind of visualization.  The first two kinds of
+questions listed require facts and documents that answer the question, and the
+methods of information retrieval are well suited to those questions.  The last
+kind of question, however, naturally falls into the domain of topic modeling.
+
 
 Topic modeling has been shown to be an effective means of extracting semantic
 meaning from a collection of
 documents~\cite{griffiths-2004-finding-scientific-topics}.  Topic models have
 been used as an inputs to other kinds of algorithms, such as classification and
 sentiment tasks~\cite{blei-2003-latent-dirichlet-allocation,
-brody-2010-aspect-sentiment-model-for-reviews}, but the usefulness of topic
-models as visualization tools in and of themselves has not been well
-established, and is even in
-question~\cite{newman-2010-visualizing-with-topic-maps}.  Some recent work has
-been done in an attempt to make corpus browsers using the results of LDA, and
-to make the results of LDA more easily interpretable, but there is much work
-yet to be done~\cite{blei-arxiv-corpus-browser,
-newman-2010-visualizing-with-topic-maps,
-mei-2007-automatic-labeling-of-topic-models}.  
+brody-2010-aspect-sentiment-model-for-reviews}, but, as far as we are aware,
+their use in revealing information about a corpus has previously been limited
+to corpus browsing~\cite{newman-2010-visualizing-with-topic-maps,
+blei-arxiv-corpus-browser}.  While topic-based corpus browsers give a better
+window into the documents in the corpus and can help to visualize some kinds of
+information, they are not capable of effectively answering questions about the
+topics in the corpus.
 
-Common approaches to using topic models to facilitate corpus browsing and
-visualization are limited mainly to showing the similarity between documents in
-the corpus in various ways.  Such methods are useful in their own right when
-one is individually scanning documents, but they are insufficient to answer
-broader questions about the corpus, like, ``What topics show up most in these
-documents?'' and, ``What does a particular author in the corpus talk about most
-frequently that is unique to that author?''  Those questions turn one away from
-analyzing individual documents to trying to get information out of the topics
-themselves.
-
-Upon looking at the topics one is confronted with tens or hundreds of lists of
-words, sorted by a number given to each list by the algorithm.  Sifting through
-those lists and trying to understand what they mean, and whether or not a
-particular topic is important, can be a daunting task, particularly to one not
-very familiar with the algorithm.  The common practice of cherry-picking good
-topics to present in a paper hides the fact that a large number of topics
+In order to properly visualize a topic model in response to topical questions,
+one must present information about the topics themselves, not the documents,
+and decide which topics are most relevant to the information desired by the
+user.  Typical methods of getting such information from a topic model require
+the user to sift through tens or hundreds of lists of words, trying to
+understand what they mean, and decide whether or not a particular topic is
+relevant.  This can be a daunting task.  The common practice of hand-picking
+good topics to present in a paper hides the fact that a large number of topics
 returned by topic models are very hard to interpret or even completely
 meaningless to humans.
 
-In order for topic models to be useful for corpus browsing, some sense has to
-be made out of the topics.  One recently proposed method is to assign to each
-topic a coherence value, so that the person can ignore topics that are likely
-to be meaningless~\cite{newman-2010-automatic-evaluation-of-topic-coherence}.
-While topic coherence is able to eliminate meaningless topics from
-consideration, it is not able to address many broader questions that a person
-browsing the corpus may have.
+Clearly, then, for topic models to be useful for visualizing corpora in
+response to these kinds of questions, some sense has to be made out of the
+topics.  One recently proposed method is to assign to each topic a coherence
+value, so that the person can ignore topics that are likely to be
+meaningless~\cite{newman-2010-automatic-evaluation-of-topic-coherence}.  While
+topic coherence is able to eliminate meaningless topics from consideration, it
+is not able to address many broader questions that a person browsing the corpus
+may have.
 
-In this paper we present the novel task of ranking topics by relevance to
-specific user questions.  If one is to successfully visualize a corpus in a way
-that answers broad questions, and if topics, not documents, are the natural
-answer to those questions, then one must properly rank topics such that the
-most prominent topics contain the answer to the user's questions.  We recognize
-that not all questions about a corpus fit into this visualization model, but
-there are many that do, such as those listed above.
+In an attempt to address this issue, we present the novel task of topic
+ranking; that is, deciding which topics are most pertinent to a user's
+topically-based question.  In general this is a very difficult problem, but it
+is essential to the proper visualization of topic models for many applications.
+Surprisingly, it appears that researchers have not as yet attempted to solve
+this problem.  In this paper we formalize the topic ranking problem and present
+some initial attempts at solving a limited subset of possible questions.
 
 The rest of this paper is outlined as follows.  We first give further
-motivation and a more detailed description of the task of ranking topics by
-relevance in \secref{ranking}.  \secref{docdist} describes a method for
-determining the relevance of a topic to various possible questions a person
-could have when looking at a corpus, and \secref{examples} shows examples of
-how this technique provides a proper ranking.  Finally, in \secref{conclusion}
-we conclude.
+motivation and a more detailed description of the topic ranking task in
+\secref{ranking}.  \secref{docdist} describes a method for determining the
+relevance of a topic to a few types of topically-based questions a person could
+have when looking at a corpus, and \secref{examples} shows examples of how this
+technique provides a proper ranking.  Finally, in \secref{conclusion} we
+conclude.
 
 \section{The topic ranking task}
 \label{sec:ranking}
 
 We assert that for many tasks, the proper visualization of a topic model is a
 ranking of topics, not simply a window onto individual documents.  When one
-wants to see what topics are prevelant in a corpus, the answer is not found by
+wants to see what topics are prevalent in a corpus, the answer is not found by
 scanning individual documents, but by looking at the topics produced by a topic
 model.  Likewise, when one wants to see trends of topics over time, one does
 not look through the documents, but at the topics, computing some statistics of
-those topics for each year for which there are documents.  Thus a proper
-visualization of the topic model for these tasks is to show most prominently
-those topics that are most relevant to the task.
+those topics for each year for which there are documents.  Thus the correct
+visualization of a topic model for these tasks includes showing most
+prominently those topics that are most relevant to the task.
 
 We can formalize the topic ranking problem simply as follows.  Given a set of
-topics from a topic model of a corpus, and a user question about the corpus,
-rank the topics by relevance to the user's question.  This is very similar to
-basic information retrieval tasks, but also significantly different, in that we
+topics from a topic model of a corpus, and a topically-based question about the
+corpus (that is, a question whose answer is naturally a topic, not a fact or a
+document), rank the topics by relevance to the question.  This is similar to
+some information retrieval tasks, but also significantly different, in that we
 are not looking for a ranking of documents as the result of a query, but a
 ranking of topics which answer broader questions about the corpus as a whole.
 
 Clearly the topic ranking task is fundamental to the proper visualization of
 topic models, but as far as we are aware, this is the first attempt to even
-consider the problem.  We propose a very simple way to answer some user
-questions through the use of the document distribution of each topic.  This
-technique is by no means a general solution to the problem, but for some
-specific tasks it provides rankings that gives users the topics that answer
-their questions.
+consider the problem.  We propose a very simple way to answer a few types of
+topically-based questions through the use of the document distribution of each
+topic.  This technique is by no means a general solution to the problem, but we
+show it to be useful for visualizing at least a subset of the kinds of
+information one might be interested in obtaining from a corpus.
 
 \section{The document distribution for a topic}
 \label{sec:docdist}
@@ -144,8 +155,8 @@ certain user questions.
 The document distribution for a topic can be thought of as follows: suppose we
 have a token labeled with a given topic; what is the probability distribution
 over documents in the corpus that this token could have come from?  We
-approximate this distribution with a sample from a Gibbs sampler of LDA.  The
-distribution is thus defined as
+approximate this distribution with a sample from a Gibbs sampler of LDA.  Our
+approximation of this distribution is thus defined as
 \begin{align}
   \label{eq:entropy}
   p(d|z) = \frac{C(d,z)}{\sum_{d \in \mathcal{D}} C(d,z)}
@@ -168,9 +179,11 @@ that author.
 
 Also, one can compute the distribution over any subset of the documents, where
 $p(d|z)$ is defined as in \eqref{eq:entropy}, but instead of the entire corpus,
-$\mathcal{D}$ represents some specific subset.  When using subsets of the
-documents, we only consider topics which have at least one token in the given
-subset, so as to avoid division by zero.
+$\mathcal{D}$ represents some specific subset (in our applications the subset
+always corresponds to a set of documents having some particular attribute, such
+as a common author).  When using subsets of the documents, we only consider
+topics which have at least one token in the given subset, so as to avoid
+division by zero.
 
 \section{Example topic rankings}
 \label{sec:examples}
@@ -181,7 +194,7 @@ examples we use a corpus of 480 campaign speeches from the 2008 presidential
 primary and general election.  We inferred 150 topics in the data from a Gibbs
 sampling of the LDA topic model.
 
-The first question we address is, What topics are most prevelant in the corpus?
+The first question we address is, What topics are most prevalent in the corpus?
 This is a simple question with an obvious answer that does not require using
 $p(d|z)$.  One can simply order the topics by the number of tokens in the
 topic.  Upon doing so one finds the following topics (we show the topic number
@@ -190,7 +203,7 @@ and the top ten words in the topic for the top five topics):
 \begin{tabular}{l|l}
   35 & years time made long today place home day ago back \\
   42 & people don ve make country ll time put didn money \\
-  119 & make national work effort including protect adiministration clear
+  119 & make national work effort including protect administration clear
 	support policy \\
   15 & america world american future challenges great lead generation nation
 	leadership \\
@@ -203,7 +216,7 @@ filter by a minimum value of coherence, however, we see a better picture:
 
 \begin{tabular}{l|l}
   42 & people don ve make country ll time put didn money \\
-  119 & make national work effort including protect adiministration clear
+  119 & make national work effort including protect administration clear
 	support policy \\
   120 & law government rights respect case society fact laws principles order \\
   143 & jobs ve create economy make years billion companies invest energy \\
@@ -220,7 +233,7 @@ McCain.  The list is the following (here again we filter by coherence):
 
 \begin{tabular}{l|l}
   129 & mccain news john senator obama remarks america events donate email \\
-  119 & make national work effort including protect adiministration clear
+  119 & make national work effort including protect administration clear
 	support policy \\
   27 & mccain news john search media speeches www johnmccain email freedom \\
   90 & war iraq honor defeat enemy greater responsibility responsibilities
@@ -290,17 +303,20 @@ result:
 \section{Conclusion}
 \label{sec:conclusion}
 
-Displaying the right topics to a user is essential to the effective
-visualization of topic models.  We have presented the novel task of ranking
-topics according to relevance to certain user questions.  We have also given a
-method for ranking topics in order to answer a few specific questions.  Such
-rankings allow visualizations of topic models that present information to users
-in much more effective ways than was previously possible.
+Many kinds of information a person might desire to get from a collection of
+documents are best presented as topics from a topic model.  In order to
+determine the relevance of each topic to specific user questions, we have
+presented the novel task of topic ranking.  We have presented methods to answer
+questions of the form, ``What are the consistent themes in this corpus, or for
+this author?''  We have also shown results on a corpus of political speeches
+that intuitively seem correct.  
 
-While our methods are useful for a few user questions, it remains as future
-work to devise a method for ranking topics in answer to arbitrary questions.
-The evaluation of such rankings is also a difficult task that must be left to
-future work.  
+We believe that the topic ranking task is an important problem that deserves
+more attention than it has as yet received.  This work is very preliminary in
+that it only addresses a very small subset of possible topically-based
+questions.  We plan on continuing to explore topic ranking, expanding the set
+of questions that can be answered and searching for automated means of
+evaluating these rankings.
 
 \bibliographystyle{unsrt}
 \bibliography{../../../bib/lda/bib}
