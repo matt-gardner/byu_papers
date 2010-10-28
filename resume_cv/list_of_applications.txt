@@ -48,7 +48,8 @@ Transactions on Evolutionary Computation: rejected (2010)
 Waiting:
 ==============
 
-
+"A Speculative Approach to Particle Swarm Optimization" submitted to
+Swarm Intelligence: waiting (2010)
 
 
 
