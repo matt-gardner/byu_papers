@@ -3,7 +3,7 @@ physical sciences or engineering?
 
 The field of machine learning, and natural language processing especially,
 relies heavily on developments made first in physics.  Physicists trying to
-model what goes on in complicated atomic and molecular systems invented new
+model what goes on in complicated atomic and molecular systems discovered new
 statistical techniques that have since been used in many fields.  In more
 recent times, computer scientists trying to deal with large amounts of data
 have turned to those same techniques, such as Gibbs sampling and maximum

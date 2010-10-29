@@ -1,6 +1,6 @@
 "Solving large crystallography problems with particle swarm optimization",
 December 2007 -- June 2009, B. Campbell, M. Gardner, K. Seppi.  Dr. Campbell's
-work is on-going and he hopes to submit it for publication soon.
+work is on-going and he plans to submit it for publication soon.
 
 "An Exploration of Topologies and Communication in Large Particle Swarms",
 Congress on Evolutionary Computation 2009, A.W. McNabb, M.J. Gardner, K. Seppi.
@@ -24,7 +24,8 @@ McNabb, K. Seppi.
 --------
 
 "An Inquiry into Automated Methods for Textual Criticism", technical report
-submitted to BYU, July 2010.
+submitted to the Natural Language Processing lab at Brigham Young University,
+July 2010.
 
 "The Topic Browser: An Interactive Tool for Browsing Topic Models", currently
 under review at the Challenges of Data Visualization workshop for the
@@ -32,45 +33,52 @@ conference Neural Information Processing Systems 2010, M.J. Gardner, J. Lutes,
 J. Lund, J. Hansen, D. Walker, E. Ringger, K. Seppi.
 
 "Answering Corpus-Level Questions through Topic Ranking", current research, to
-be submitted to a conference soon.
+be submitted to a conference soon, likely the conference of the Association for
+Computational Linguistics.
 
 
 Three of the papers listed from my undergraduate career all came from a single
-project -- how do you effectively solve long-running optimization problems with
-a large cluster of hundreds or thousands of machines?  The project started when
-a physics professor approached my advisor seeking help solving a
+project focusing on how to effectively solve long-running optimization problems
+with a large cluster of hundreds or thousands of machines.  The project started
+when a physics professor approached my advisor seeking help solving a
 crystallography problem.  Having just begun working with my advisor, I accepted
 the problem mostly in an auxiliary role, writing some code and running
 experiments for Dr. Campbell, the physics professor.  We used particle swarm
-optimization to try to fit his model of what was happening in a particular kind
-of crystal to data that he had collected.  After spending a lot of time seeing
-the output of the algorithm, I also helped to interpret the results.  I
-discovered that we had too many free parameters in our model and helped Dr.
-Campbell to make progress in solving his problem.  
+optimization, a bio-inspired optimization algorithm similar to evolutionary
+algorithms, to try to fit to data his model of what was happening in a
+particular kind of crystal.  After spending a lot of time seeing the output of
+the algorithm, I also helped to interpret the results.  I discovered that we
+had too many free parameters in our model and helped Dr. Campbell to make
+progress in solving his problem.  
 
 The crystallography problem we were solving required the evaluation of a
-function that took several minutes to run, so we used several hundred
-processors on BYU's supercomputer.  This led us to ask some interesting
-questions about how we could best use those processors to solve the problem.
-We first experimented with the topology of the algorithm, or how the particles
-in the swarm communicate with each other.  I did much of the experimentation,
-though I was directed by a graduate student in the lab, who eventually wrote
-the paper that we published.  We saw some improvements in the performance of
-the algorithm with our new topologies, though we also noticed that increasing
-the number of particles with additional processors had diminishing returns.
+function that took several minutes to run, and each particle in the algorithm
+must evaluate the function at every iteration, so we used several hundred
+processors on BYU's supercomputer in our optimization of the function.  This
+led us to ask some interesting questions about how we could best use those
+processors to solve the problem.  We first experimented with the topology of
+the algorithm, or how the particles in the swarm communicate with each other.
+I did much of the experimentation, though I was directed by a graduate student
+in the lab, who eventually wrote the paper that we published.  We saw some
+improvements in the performance of the algorithm with our new topologies,
+though we also noticed that increasing the number of particles with additional
+processors had diminishing returns.
 
 To solve this problem, my advisor proposed applying the idea of speculative
-execution in processors to particle swarm optimization (PSO).  Instead of
-increasing the swarm size, additional processors could be used to evaluate
-possible next-iteration positions of each particle in parallel.  I thought it
-was an interesting idea, and I made it my honors thesis.  I took the idea and
-discovered how it could actually be done, performing the evaluations needed and
-piecing the results back together from messages sent between processors so that
-speculative evaulation could be done in a distributed PSO environment with only
-a single round of message passing per iteration.  Once I had implemented the
-technique, I ran many experiments to compare our methods to other means of
-parallelizing PSO.  Once I was satisfied that my results were significant, I
-wrote, submitted, and successfully defended my honors thesis.  
+decomposition in the parallelization literature to particle swarm optimization
+(PSO).  Instead of increasing the number of particles in the swarm, additional
+processors could be used to evaluate possible next-iteration positions of each
+particle in parallel.  I thought it was an interesting idea, and I made it my
+honors thesis.  I took the idea and discovered how it could actually be done,
+performing the evaluations needed and piecing the results back together from
+messages sent between processors so that speculative evaulation could be done
+in a distributed PSO environment with only a single round of message passing
+per iteration.  Once I had implemented the technique, I ran many experiments to
+compare our methods to other means of parallelizing PSO.  Once I was satisfied
+that my results were significant, I wrote, submitted, and successfully defended
+my honors thesis.  I also modified the paper to fit in the aims and page
+requirements of Parallel Problem Solving in Nature, a well-respected parallel
+optimization conference, and submitted my thesis there, and it was accepted.
 
 In implementing speculative evaluation, however, I noticed a number of ways the
 method could potentially be improved.  Even though my honors thesis was
@@ -85,6 +93,13 @@ something new.  My advisor insisted I perservere, saying it was good
 preparation for a PhD, and so I continued.  After running more experiments to
 strengthen the paper, we submitted it to the journal Swarm Intelligence, where
 it is currently under review.
+
+While I have since move on to other interests, this project was my first
+experience performing research and dealing with the submission process at
+conferences.  I learned a lot about what research is, what getting a PhD is
+like, and how much I loved exploring new topics and extending the limits of
+what we can do.  This project set the stage for my masters thesis and for my
+future work as a PhD student.
 
 
 
