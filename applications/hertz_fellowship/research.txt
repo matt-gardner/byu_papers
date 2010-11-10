@@ -6,7 +6,8 @@ work is on-going and he plans to submit it for publication soon.
 Congress on Evolutionary Computation 2009, A.W. McNabb, M.J. Gardner, K. Seppi.
 
 "Track cost per call data through Google TV Ads", internship at Google, Inc.
-May-August 2009.  Official blog post on the project is at http://google-tvads.blogspot.com/2010/01/track-cost-per-call-data-through-google.html.
+May-August 2009.  Official blog post on the project is at
+http://google-tvads.blogspot.com/2010/01/track-cost-per-call-data-through-google.html.
 
 "Automatic Topic Discovery in 100 Years of General Conference Talks", poster
 presented at the peer-reviewed 50th anniversary BYU Studies Symposium, March
@@ -37,7 +38,7 @@ be submitted to a conference soon, likely the conference of the Association for
 Computational Linguistics.
 
 
-Three of the papers listed from my undergraduate career all came from a single
+Four of the items listed from my undergraduate career all came from a single
 project focusing on how to effectively solve long-running optimization problems
 with a large cluster of hundreds or thousands of machines.  The project started
 when a physics professor approached my advisor seeking help solving a
@@ -52,8 +53,8 @@ had too many free parameters in our model and helped Dr. Campbell to make
 progress in solving his problem.  
 
 The crystallography problem we were solving required the evaluation of a
-function that took several minutes to run, and each particle in the algorithm
-must evaluate the function at every iteration, so we used several hundred
+function that took several minutes to run.  As each particle in the algorithm
+must evaluate the function at every iteration, we used several hundred
 processors on BYU's supercomputer in our optimization of the function.  This
 led us to ask some interesting questions about how we could best use those
 processors to solve the problem.  We first experimented with the topology of
@@ -73,7 +74,7 @@ honors thesis.  I took the idea and discovered how it could actually be done,
 performing the evaluations needed and piecing the results back together from
 messages sent between processors so that speculative evaulation could be done
 in a distributed PSO environment with only a single round of message passing
-per iteration.  Once I had implemented the technique, I ran many experiments to
+per iteration.  After implementing the technique, I ran many experiments to
 compare our methods to other means of parallelizing PSO.  Once I was satisfied
 that my results were significant, I wrote, submitted, and successfully defended
 my honors thesis.  I also modified the paper to fit in the aims and page
@@ -89,18 +90,18 @@ speculating several iterations ahead on paths that particles were likely to
 take.  I significantly expanded the work of my honors thesis, preparing to
 submit it to a journal on optimization.  After a rejection of a smaller version
 from a conference, I got quite discouraged, wanting to give up and move on to
-something new.  My advisor insisted I perservere, saying it was good
+something new.  My advisor insisted I persevere, saying it was good
 preparation for a PhD, and so I continued.  After running more experiments to
 strengthen the paper, we submitted it to the journal Swarm Intelligence, where
 it is currently under review.
 
 While I have since move on to other interests, this project was my first
 experience performing research and dealing with the submission process at
-conferences.  I learned a lot about what research is, what getting a PhD is
-like, and how much I loved exploring new topics and extending the limits of
-what we can do.  This project set the stage for my masters thesis and for my
-future work as a PhD student.
-
+conferences.  All told, I worked on particle swarm optimization for about two
+and a half years.  I learned a lot about what research is, the perseverance
+required in getting a PhD, and how much I love exploring new topics and
+extending the limits of what we can do.  This project set the stage for my
+masters thesis and for my future work as a PhD student.  
 
 
 

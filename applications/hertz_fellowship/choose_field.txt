@@ -20,11 +20,11 @@ language processing, though possibly also in computer vision or other areas of
 machine learning.  I have not yet decided between research in industry or
 academia; perhaps my career will take me first to industry, ending up as a
 professor later in life.  I have spent some time as a teaching assistant, and I
-feel that I would enjoy teaching students of the great things that can be done,
-getting them excited to do research in the field.  But what I most want from my
-career is to find new problems to solve that will better society, then solve
-them.  Things like machine translation and interpretation, or extracting
-knowledge from large collections of text and making that knowledge accessible
-to people, are intriguing problems that I would love to spend my life's work
-on.
+feel that I would enjoy teaching students of all the interesting problems there
+are in computer science, getting them excited to do research in the field.  But
+what I most want from my career is to find new problems to solve that will
+better society, then solve them.  Things like machine translation and
+interpretation, or extracting knowledge from large collections of text and
+making that knowledge accessible to people, are intriguing problems that I
+would love to spend my life's work on.
 

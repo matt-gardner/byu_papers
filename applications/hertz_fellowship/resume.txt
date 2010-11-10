@@ -2,24 +2,18 @@ A concise resume, in chronological order, recapitulating significant periods of
 technical and other creative activity since high school.
 
 2004-2005 school year
-4 semesters of physics (waves, optics, electricity and magnetism, experimental
-and computational methods)
-3 semesters of math (linear algebra, multi-variate calculus, differential
-equations)
+4 semesters of physics (waves, optics, electricity and magnetism, experimental and computational methods)
+3 semesters of math (linear algebra, multi-variate calculus, differential equations)
 2 semesters of computer science
 
 2005-2007
-Away from school as a missionary for two years.  While I did not do any
-technical work during this time, the experience was incredibly formative for me
-in terms of character development and leadership skills.
+Away from school as a missionary for two years.  While I did not do any technical work during this time, the experience was incredibly formative for me in terms of character development and leadership skills.
 
 2007-2008 school year
-3 semesters of physics (quantum mechanics, electronics, partial differential
-equations)
+3 semesters of physics (quantum mechanics, electronics, partial differential equations)
 1 semester of statistics
 4 semesters of computer science
-Started working in a computer science research lab, focusing on particle swarm
-optimization
+Started working in a computer science research lab, focusing on particle swarm optimization
 
 Summer 2008
 4 semesters of computer science
@@ -27,36 +21,31 @@ Continued work at CS research lab
 
 2008-2009 school year
 8 semesters of computer science
-Co-authored a research paper accepted at the Congress on Evolutionary
-Computation, a major conference in the field
-Began research for honors thesis, for which I received a grant from BYU's
-Office of Research and Creative Activities (ORCA)
+Co-authored a research paper accepted at the Congress on Evolutionary Computation, a major conference in the field
+Began research for honors thesis, for which I received a grant from BYU's Office of Research and Creative Activities (ORCA)
 
 Summer 2009
-Internship at Google Inc., focusing on an application of machine learning
+Internship at Google Inc., focusing on an application of machine learning to TV advertising
 
 2009-2010 school year
 Finished and defended my honors thesis
-Honors thesis was accepted at Parallel Problem Solving in Nature, a major
-conference
+Honors thesis was accepted at Parallel Problem Solving in Nature, a major conference
 2 semesters of computer science
 1 semester of mathematics (abstract algebra)
 Awarded a BS in Computer Science from Brigham Young University (April 2010)
-Received another ORCA grant to continue the work that started as my honors
-thesis
-Submitted a greatly expanded version of my honors thesis to Swarm Intelligence,
-a top journal in the field
+Received another ORCA grant to continue the work that started as my honors thesis
+Submitted a greatly expanded version of my honors thesis to Swarm Intelligence, a top journal in the field
 
 ------------------
 
 Summer 2010
 1 semester of advanced statistics for machine learning
-Attended the conference of the North American chapter of the Association for
-Computational Linguistics
-Received a scholarship to attend a two-week summer school at Johns Hopkins
-University on human language technologies
+Attended the conference of the North American chapter of the Association for Computational Linguistics (NAACL)
+Attended, on a scholarship from NAACL, a two-week summer school at Johns Hopkins University on human language technologies
 
 Fall 2010
 2 semesters of computer science
-Submitted a paper to a workshop at Neural Information Processing Systems, a
-respected conference in machine learning
+Submitted a paper to a workshop at Neural Information Processing Systems, a respected conference in machine learning
+
+Winter 2011 (anticipated)
+MS in Computer Science from Brigham Young University (April 2011)
