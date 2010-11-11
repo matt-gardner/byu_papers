@@ -1,0 +1,100 @@
+\documentclass[onecolumn, 11pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+
+\title{Proposed validation of topic models and topic ranking}
+\author{Matthew Gardner and Mike Thompson}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Topic models have been shown to be useful in many tasks, and it is generally
+assumed that they do a good job at capturing thematic elements in large bodies
+of text.  While this has been anecdotally asserted on many occasions, to our
+knowledge it has never been rigorously established.  Thus topic modeling has
+not been widely used in the qualitative analysis of large corpora.
+
+It is our intent to quantitatively show that topic models can effectively
+capture qualitative or thematic elements in a collection of documents as judged
+by humans, and that automated methods can select topics from a topic model that
+match human thematic judgments in a variety of situations.
+
+\section{Data}
+
+In order to establish this, we will use two sources of data.  The first comes
+from student ratings of courses and professors at Brigham Young University.
+After answering many questions which require selecting one of several options,
+students are given the opportunity to write in free text whatever comments they
+have about the class.  We will use those free-form comments as one source of
+text in which we will find thematic elements.
+
+The second source of data we will use is a set of product reviews from
+Amazon.com, or some other review site that has publicly available data.  We
+have yet to select a particular website from which to retrieve data or which
+products to use.  However, we will select products which are common enough that
+an average person would be qualified to find themes through a set of comments.
+
+\section{Annotation}
+
+As there are hundreds of thousands of comments available from the student
+ratings data that we will use, and similarly large numbers of product reviews,
+having annotators read and label every document with thematic elements is an
+impossible task.  Instead, will we select a subset of the data that is large
+enough to exhibit themes but small enough that an average college student can
+annotate the data in approximately half an hour.  We imagine that somewhere
+between 50 to 100 comments (where each comment is about a paragraph long) is an
+appropriate size.  We will judge the amount of time required by annotating the
+data ourselves first.  We expect that between 10 and 20 annotators for each
+data set will be sufficient to establish a solid set of test data.  Previous
+work on evaluating other aspects of topic models successfully used 9
+annotators.  
+
+An important aspect of the subset of the data that we annotate will be that it
+will consist of a set of documents that all have the same value for some
+attribute, such as ratings for the same teacher, or reviews about the same
+product.  This will facilitate both the finding of consistent thematic elements
+and more extensive kinds of validation, which will be explained later.
+
+The kinds of information we will elicit from the annotators will include the
+top overall themes (probably ordered) in the whole collection of documents they
+are present, as well as where those themes show up in the documents.  It would
+likely be helpful for the annotator to select for each theme a single document
+that best exhibits that theme, as well as list words that are commonly used in
+the theme.  All of this will help us to judge whether a particular topic from
+the topic model actually matches the theme given by the annotators.
+
+\section{Validation Methodology}
+
+There are two parts to validating the use of topic models in the qualitative
+analysis of text.  The first is showing that topic models actually capture the
+thematic elements in a set of documents, as judged by humans.  The second is
+showing that methods for ranking the topics in a topic model accurately rank
+topics according to the ranking given by humans.  Each part requires separate
+validation.
+
+\subsection{Validating the topic model's topics}
+
+To demonstrate that topic models capture thematic elements, a mechanism is
+necessary to compare a topic model's topic to the themes recorded by humans.
+Devising this similarity metric will require some research, but as a starting
+point we will compare the words given by the annotators to the words in the
+topic, as well as the top documents given by the annotators to the documents
+with the highest proportion of each topic.  We will also try to use some kind
+of mutual information between the words in the topic and the title or
+description of each theme as given by the annotators.
+
+\subsection{Validating the topic rankings}
+
+In order to show that automatic rankings can faithfully reproduce human
+rankings, we will use standard metrics from information retrieval (IR), such as
+mean average precision, to compare the two rankings.  This validation depends
+on the first, as we must be able to determine if the topics ranked by the
+computer match the themes ranked by humans.  This can be problematic if there
+is no topic in the topic model that successfully captures a human theme, or if
+there are two topics that each capture the theme equally well.  We may have to
+modify the standard IR metrics to be better suited to our task.
+
+\end{document}

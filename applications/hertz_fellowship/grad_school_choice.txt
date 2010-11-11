@@ -1,19 +1,32 @@
 What are the considerations involved in your choice of graduate school?
 
-For a long time my school of choice was the Massachussetts Institute of
+For a long time my school of choice was the Massachusetts Institute of
 Technology, mainly because that I always thought that it was the best, and I
-wanted to go to the best school.  As I have more seriously looked into graduate
-institutions, however, and seen the research presented at conferences from
-various universities, I have realized that in my field of interest other
-schools have better programs.  Both the University of California at Berkeley
-and Carnegie-Mellon University are considered the top schools in natural
-language processing, and I would have a hard time choosing between them.  My
-preference would likely fall with UC Berkeley, however.  I attended a
-conference for the North American chapter of the Association for Computational
-Linguistics, and all of the papers at that conference that impressed me the
-most were written by students at UC Berkeley.  It seems to me that they have
-the best research in natural language processing in the world, likely because
-they have a large group of very talented people in related areas, and there is
-a lot of sharing of ideas.  I find that kind of environment very conducive to
-learning and to research, and that is where I want to study.
+wanted to go to the best school.  As I approached the end of my undergraduate
+degree, however, I realized that I was really enjoying my time at Brigham Young
+University, and I had a few projects that were very close to being ready to
+publish.  Wanting to get a PhD at one of the nation's top universities, I
+figured that having several publications, instead of merely hopes of
+publishing, would give me a stronger application.  I also had taken some
+graduate level classes at BYU that probably would not transfer to another
+institution.  So I decided to stay at BYU for a masters degree, both because I
+could complete it within a year and so that I could finish the work I had
+started here.
+
+During my time at BYU, my understanding of graduate institutions has also
+matured.  There is no "best" school, especially across all areas of inquiry.
+All schools have strengths and weaknesses, and a decision as large as where to
+spend five years of your life should be based on something other than some
+nebulous idea of who is "best" overall.  So I started looking at which schools
+had strong programs and professors in areas I was interested in, their
+publishing record, and what students in the program thought of their
+professors.  I talked to the professors at BYU and read the websites of the
+schools I was interested in.  The event that had the most influence on my
+current choice of schools, however, was going to the conference of the North
+American chapter of the Association for Computational Linguistics in the summer
+of 2010.  I was able to see first-hand the kind of research being done at each
+institution, hear directly from the professors and students researching there,
+and find out who was doing research that excited me.  It was at that conference
+that I decided that I wanted to go to UC Berkeley, because I am really excited
+to work on the problems they are working on.
 
