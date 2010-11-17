@@ -11,10 +11,6 @@
 \pagestyle{empty}
 
 \begin{center}
-  Matthew Gardner\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
-  \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
-  Proposed Research Essay
-  \\
   \textbf{Searching Document Collections by Topic}
 \end{center}
 \vspace{-4mm}
@@ -24,37 +20,34 @@ information extraction}
 
 \textbf{Introduction.}  In our modern world, large document collections are
 becoming more prevalent and more important.  Companies want to look at online
-reviews of their products, students beginning research in a new area have piles
-of documents to read, and intelligence analysts have thousands of documents to
-sift through looking for anything noteworthy.  The recent controversies
-involving the release of hundreds of thousands of documents by WikiLeaks about
-the wars in Afghanistan and Iraq highlight the enormity of this problem.  How
-does a person even begin to look through these massive corpora?
+reviews of their products and intelligence analysts have thousands of documents
+to sift through looking for suspicious activity.  The recent controversies
+involving the public release of hundreds of thousands of documents by WikiLeaks
+about the wars in Afghanistan and Iraq highlight the enormity of this problem.
+How does a person even begin to look through these massive corpora?
 
-Typically, the interface between a person and a document collection has been
-search, using a Google-like tool to find documents that contain specific
+Typically, the interface between a person and a document collection has been a
+search engine, using a Google-like tool to find documents that contain specific
 information.  While such tools can be very useful for some tasks, they cannot
 give broad pictures about the corpus as a whole, and they are limited in the
-kinds of queries they can answer.  A person has to have something to look for
-in order to form a query; current search tools are not very helpful when a
+kinds of queries they can answer.  A person has to have specific information in
+mind in order to form a query; current search tools are not very helpful when a
 person has no idea what to even look for.
 
 Recent methods have been proposed that attempt to address part of this issue.
-Topic models, including latent Dirichlet allocation and its
-variants~\cite{blei-2003-latent-dirichlet-allocation}, seek to gather
-information about topics used throughout the corpus.  These topics are modeled
-as collections of words that are used together across documents.  Topic models,
-then, could feasibly be used to give a broad overview of a corpus and even
-answer queries about topics in the documents, instead of just queries about the
-documents themselves.
+Topic models, including latent Dirichlet
+allocation~\cite{blei-2003-latent-dirichlet-allocation}, gather information
+about topics used in a corpus.  These topics are modeled as collections of
+words that are used together across documents.  Topic models could feasibly be
+used to give a broad overview of a corpus and even answer queries about topics
+in the documents, instead of just queries about the documents.
 
 As far as I am aware, however, topic models have not as yet been used for this
 purpose.  They have successfully been used as input into document
-classification tasks, for sentiment extraction, and as a surrogate for parts of
-speech in machine translation (e.g.,~\cite{blei-2008-supervised-topic-models}).
-But attempts to improve human corpus analysis through topic models are very
-preliminary and have mostly been used to give the user better access to the
-documents, not to the topics
+classification and many other tasks
+(e.g.,~\cite{blei-2008-supervised-topic-models}), but attempts to aid humans in
+corpus analysis through topic models are very preliminary, mostly giving the
+user better access to the documents in the corpus, not to the topics
 themselves~\cite{newman-2010-visualizing-with-topic-maps}.  It is generally
 assumed that topic models do a good job at capturing thematic elements in large
 bodies of text, but while this has been anecdotally asserted on many
@@ -62,86 +55,66 @@ occasions~\cite{griffiths-2004-finding-scientific-topics}, to my knowledge it
 has never been rigorously established.  Thus topic models have not been widely
 used in the qualitative analysis of large corpora.
 
-\textbf{Research Objective.}  It is my intent to quantitatively show that
-topic models can effectively capture qualitative or thematic elements in a
-collection of documents as judged by humans, and that automated methods can
-select topics from a topic model that match human thematic judgments in a
-variety of situations.
+\textbf{Research Objective.}  It is my intent to quantitatively show that topic
+models can effectively capture qualitative or thematic elements in a collection
+of documents as judged by humans, and that automated methods can select topics
+from a topic model that match human thematic judgments in a variety of
+situations.  As an example, given the set of campaign speeches for all
+candidates in the 2008 presidential primaries and general election, this
+research will show conclusively that a topic model can accurately answer the
+question, ``What were Barack Obama's consistent campaign themes?''
 
-\textbf{Methods.}  In order to establish this, I will need a large collection
-of documents annotated with specific topical information.  The necessary
-annotations include human judgments on what themes or topics are present in
-the documents, where they occur, and how they occur.  To my knowledge there is
-no such set of data, so I will create one.  
+\textbf{Methods.}  Establishing that topic models can answer topic-based
+queries the same way a human would requires two parts.  First one must show
+that a topic found by a topic model can be accurately compared to a theme or
+topic elicited from a human.  Second, one must show that an automated system
+can correctly answer queries about topics in a corpus by returning the topics
+from a topic model that match human answers to the same queries.
 
-To get more conclusive results, I will collect and annotate two separate
-collections of documents.  The first comes from student ratings of courses and
-professors at Brigham Young University.  After answering many questions which
-require selecting one of several options, students are given the opportunity to
-write in free text whatever comments they have about the class.  I will use
-those free-form comments as one source of text in which to find thematic
-elements.
+In order to establish these two parts, I will need a large collection of
+documents annotated with specific topical information.  The necessary
+annotations include human judgments on what themes or topics are present in the
+documents (giving a phrasal description of each topic), where they occur
+(including documents that demonstrate the topic well), and how they occur
+(giving example words or phrases from the documents).  To my knowledge there is
+no such annotated data, so I will create it.  
 
-The second source of data I will use is a publicly available set of restaurant
-reviews from CitySearch New York~\cite{ganu-2009-restaurant-ratings}.  This
-dataset has the advantage of already being partially labeled, so providing the
-rest of the annotations necessary for my purposes should be less expensive.
+I will use two sets of data to provide more conclusive results.  The first is a
+collection of free-form student comments on classes and professors given to
+Brigham Young University at the end of each semester.  The second is a publicly
+available set of restaurant reviews from CitySearch New
+York~\cite{ganu-2009-restaurant-ratings}.  Neither of these sets of data are
+annotated with sufficient topical information, though the restaurant reviews
+are already partially annotated.
 
-I will annotate only a subset of the data.  As there are hundreds of thousands
-of comments available from the student ratings data that we will use, and over
-50,000 restaurant reviews, reading and labeling every document with thematic
-elements is an impossible task.  Instead, I will select a subset of the data
-that is large enough to exhibit themes but small enough that an average college
-student can annotate the data in approximately half an hour.  I imagine that
-somewhere between 50 to 100 comments (where each comment is about a paragraph
-long) is an appropriate size.  I will judge the amount of time required by
-annotating the data myself, then hire between 10 and 20 college students to
-also annotate the data, so that I can be sure that the annotations accurately
-reflect average human judgments.  
+As there are many thousands of documents in each set of data, annotating the
+entire corpus would be impossible.  Thus I will only annotate a section of each
+collection, corresponding to all of the comments about one particular class in
+the student ratings, or one restaurant in the reviews.  This will aid in
+validation, as I will have complete topical information about one of the
+classes or restaurants and will thus be able to accurately test the answers to
+queries.  I will hire between 20 and 40 college students to each independently
+annotate the same subset of one of the collections of documents, so that I can
+have confidence in the data and have some idea of the consistency of human
+thematic judgments.
 
-An important aspect of the subset of the data that will be annotated is
-that it will consist of a set of documents that all have the same value for
-some attribute, such as ratings for the same teacher, or reviews about the same
-restaurant.  This will facilitate both the finding of consistent thematic
-elements and more extensive kinds of validation, which will be explained later.
+\textbf{Validation.}  Once I have annotated data, I will be able to test the
+validity of my hypothesis.  Determining whether a particular topic mathces a
+human-defined topic should be straightforward with the annotations I will
+gather.  I can test the words found by the topic model against the description
+given by the humans, and I can see if the example documents given by the
+annotators agree with the documents that have high proportions of the topic.
 
-The kinds of information I will elicit from the annotators will include the
-top overall themes (ordered by prevalence) in the whole collection of documents
-they are presented, as well as where those themes show up in the documents.  It
-would likely be helpful for the annotator to select for each theme a single
-document that best exhibits that theme, as well as list words that are commonly
-used in the theme.  All of this will help me to judge whether a particular
-topic from the topic model actually matches the theme given by the annotators.
-
-\textbf{Validation.}  There are two parts to validating the use of topic models
-in the qualitative analysis of text.  The first is showing that topic models
-actually capture the thematic elements in a set of documents, as judged by
-humans.  The second is showing that automatic methods for ranking the topics in
-a topic model accurately rank topics according to the ranking given by humans.
-Each part requires separate validation.
-
-To demonstrate that topic models capture thematic elements, a mechanism is
-necessary to compare a topic model's topic to the themes recorded by humans.
-Devising this similarity metric will require some research, but as a starting
-point I will compare the words given by the annotators to the words in the
-topic, as well as the top documents given by the annotators to the documents
-with the highest proportion of each topic.  I will also try to use some kind
-of mutual information between the words in the topic and the title or
-description of each theme as given by the annotators.
-
-In order to show that automatic rankings can faithfully reproduce human
-rankings, I will use standard metrics from information retrieval (IR), such as
-mean average precision, to compare the two rankings.  This validation depends
-on the first, as I must be able to determine if the topics ranked by the
-computer match the themes ranked by humans.  This can be problematic if there
-is no topic in the topic model that successfully captures a human theme, or if
-there are two topics that each capture the theme equally well.  I may have to
-modify the standard IR metrics to be better suited to my task.  While I will
-only be annotating a subset of each data collection, I will be able to use the
-entire corpus to validate my methods.  An important question to be able to
-answer correctly is, ``What topics occur in reviews about McDonald's?''
-Learning a topic model on the entire data and ranking the topics in answer to
-such specific questions will be a very useful validation.
+With methods for matching topics from a topic model with human-given topics, I
+can complete the second part of my objective.  With topics obtained from humans
+for a particular class, I can learn a topic model over the entire collection of
+student ratings and see if automatic methods to rank the topics return the
+correct topics.  One such method is to rank the topics by their entropy over
+the documents for that class, which should rank highest the topics that were
+used consistently about that class, matching the human-given topics and
+answering the question, ``What were the main themes in comments of Chemistry
+101?''  Other possible queries and methods to answer them are items that will
+be explored in the course of this research.
 
 \textbf{Broader Impacts.}  This work will quantitatively establish the
 usefulness of topic models in extracting thematic elements from a collection of
@@ -151,12 +124,12 @@ anyone using a topic model to analyze a corpus, including intelligence analysts
 looking at classified documents, university administrators looking at student
 ratings, and companies reading online reviews about their products.  This work
 also establishes a method and a set of data for topic models to be compared to
-each other, for one model may better capture human-judged thematic elements
-than another.
+each other in order to determine which models best capture human thematic
+judgments.
 
 \footnotesize
 \bibliographystyle{plain}
-\renewcommand\bibsection{\subsubsection*{References}}
+\renewcommand\bibsection{\noindent \small\textbf{References}\vspace{-2mm}\footnotesize}
 \bibliography{../../../bib/lda/bib}
 
 \end{document}
