@@ -4,6 +4,7 @@
 \usepackage{natbib}
 
 \setlength{\textheight}{9in}
+\setlength{\bibsep}{0in}
 
 \begin{document}
 
@@ -25,14 +26,14 @@ problem---how to effectively solve long-running optimization problems with a
 large cluster of hundreds or thousands of machines.
 
 This project started when a physics professor approached my advisor seeking
-help solving a crystallography problem.  Having just begun working with my
-advisor, I accepted the problem mostly in an auxiliary role, writing some code
-and running experiments for Dr. Campbell, the physics professor.  We used
-particle swarm optimization, a bio-inspired optimization algorithm similar to
+help solving a crystallography problem.  As a new student in the lab, I
+accepted the problem mostly in an auxiliary role, writing some code and running
+experiments for Dr. Campbell, the physics professor.  We used particle swarm
+optimization (PSO), a bio-inspired optimization algorithm similar to
 evolutionary algorithms, to try to fit to data his model of what was happening
 in a particular kind of crystal.  After spending a lot of time seeing the
 output of the algorithm, I also helped to interpret the results.  I discovered
-that we had too many free parameters in our model and helped Dr. Campbell to
+that we had too many free parameters in our model and helped Dr.  Campbell to
 make progress in solving his problem.  Because of our help in solving his
 problem, Dr. Campbell has made what he considers a breakthrough in
 understanding these crystals and plans to submit his work for publication soon.
@@ -51,9 +52,9 @@ in the performance of the algorithm with our new topologies, though we also
 noticed that increasing the number of particles with additional processors had
 diminishing returns.
 
-To solve this problem, my advisor proposed applying the idea of speculative
-decomposition in the parallelization literature to particle swarm optimization
-(PSO).  Instead of increasing the number of particles in the swarm, additional
+To solve this problem of diminishing returns, my advisor proposed applying the
+idea of speculative decomposition in the parallelization literature to PSO.
+Instead of increasing the number of particles in the swarm, additional
 processors could be used to evaluate possible next-iteration positions of each
 particle in parallel.  I thought it was an interesting idea, and I made it my
 honors thesis.  I took the idea and discovered how it could actually be done,
@@ -65,44 +66,44 @@ compare our methods to other means of parallelizing the algorithm.  Once I was
 satisfied that my results were significant, I wrote, submitted, and
 successfully defended my honors thesis.  I also modified the paper to fit in
 the aims and page requirements of Parallel Problem Solving from Nature, a
-well-respected parallel optimization conference.  I submitted my thesis
-there and it was accepted~\cite{gardner-2010-speculative-evaluation-in-pso}.
+well-respected parallel optimization conference.  I submitted my thesis there
+and it was accepted~\cite{gardner-2010-speculative-evaluation-in-pso}.
 
 In implementing speculative evaluation, however, I noticed a number of ways the
 method could potentially be improved.  Even though my honors thesis was
-completed, I continued my investigation.  I found that a large number of the
-speculative evaluations we performed were wasted, and that the algorithm could
-be improved by replacing useless evaluations with better evaluations, such as
-speculating several iterations ahead on paths that particles were likely to
-take.  I significantly expanded the work of my honors thesis, preparing to
-submit it to a journal on optimization.  After a rejection of a smaller version
-from a conference, I got quite discouraged, wanting to give up and move on to
-something new.  My advisor insisted I persevere, saying it was good preparation
-for a PhD, and so I continued.  After running more experiments to strengthen
-the paper, we submitted it to the journal Swarm Intelligence, where it is
-currently under
+completed I continued my investigation, as I thought there was more that could
+be done.  I found that a large number of the speculative evaluations we
+performed were wasted, and that the algorithm could be improved by replacing
+useless evaluations with better evaluations, such as speculating several
+iterations ahead on paths that particles were likely to take.  I significantly
+expanded the work of my honors thesis, preparing to submit it to a journal on
+optimization.  After a rejection of a smaller version from a conference, I
+became quite discouraged, wanting to give up and move on to something new.  My
+advisor insisted I persevere, saying it was good preparation for a PhD, and so
+I continued.  After running more experiments to strengthen the paper, we
+submitted it to the journal Swarm Intelligence, where it is currently under
 review~\cite{gardner-2010-speculative-approach-to-parallelization-pso}.
 
 While I have since move on to other interests, this project was my first
 experience performing research and dealing with the submission process at
-conferences.  All told, I worked on particle swarm optimization for about two
-and a half years.  I learned a lot about what research is, the perseverance
-required in getting a PhD, and how much I love exploring new topics and
-extending the limits of what we can do, as well as helping researchers in other
-areas to solve their problems.  This project set the stage for my masters
-thesis and for my future work as a PhD student.  
+conferences.  I learned a lot about what research is, the perseverance required
+in getting a PhD, and how much I love exploring new topics and extending the
+limits of what we can do, as well as helping researchers in other areas to
+solve their problems.  This project set the stage for my masters thesis and for
+my future work as a PhD student.  
 
-Along with the research I performed as an undergraduate research assistant,
-there are two other research projects worth noting here.  One of them was my
-internship at Google in the summer of 2009.  I was presented with the problem
-of how to determine the effectiveness of TV advertisements given only a list of
-at what times and on what channels the ads played, along with a list of phone
-calls received in response to advertisements.  This was complicated because
-often ads play at the same time on different channels, and they use the same
-phone number.  I developed and implemented a probabilistic model that assigned
-phone calls to ads that were played.  The model learned a response rate for
-each channel the ads played on and helped advertisers know where to most
-effectively spend their money.
+Along with the research I performed as an undergraduate research assistant, two
+other projects are worth noting here.  The first is my internship at Google in
+the summer of 2009.  I tackled the problem of how to determine the
+effectiveness of TV advertisements given only a list of when and on what
+channels the ads played, along with a list of phone calls received in response
+to the ads.  This was complicated because often ads play at the same time on
+different channels, and they use the same phone number.  I developed and
+implemented a probabilistic model that assigned phone calls to ads that were
+played.  The model learned a response rate for each channel the ads played on
+and helped advertisers know where to most effectively spend their money.  Once
+advertisers saw that following the recommendations of my model gave them better
+response rates, they spent more on advertising with Google.
 
 The other research area that I have pursued is topic modeling, a method for
 capturing the semantics of a document collection, and that is the area of my
@@ -112,19 +113,18 @@ international conference held at
 BYU~\cite{gardner-2010-general-conference-topics}.  As a graduate student, I
 have been investigating how to use topic models to get specific, corpus-wide
 information out of large collections of documents.  My initial endeavors have
-involved building a tool to browse the output of a topic model in novel
+involved building a tool to browse the output of a topic model in new
 ways~\cite{gardner-2010-topic-browser}.  As other departments at BYU have seen
 the work that I and others have done with our topic browser, they have been
 very interested in using our tool.  Three separate groups at BYU have asked to
-use our browser to analyze data with purposes ranging from finding public
-health information in Twitter feeds to finding problem areas in teaching from
-free-form student ratings of classes and professors.  My future plans with
-topic modeling are presented in the research proposal submitted with this
-application.
+use our browser to analyze data with purposes ranging from finding problem
+areas in teaching from free-form student ratings of classes and professors to
+searching for public health information in Twitter feeds.  My future plans with
+topic modeling are presented in my research proposal.
 
 \footnotesize
 \bibliographystyle{plain}
-\renewcommand\bibsection{\subsubsection*{Publications}}
+\renewcommand\bibsection{\noindent \small\textbf{Publications}\vspace{-2mm}\footnotesize}
 \bibliography{../../../bib/aml/bib}
 
 \end{document}
