@@ -25,18 +25,18 @@ two and a half years, I worked on several aspects of essentially the same
 problem---how to effectively solve long-running optimization problems with a
 large cluster of hundreds or thousands of machines.
 
-This project started when a physics professor approached my advisor seeking
-help solving a crystallography problem.  As a new student in the lab, I
-accepted the problem mostly in an auxiliary role, writing some code and running
-experiments for Dr. Campbell, the physics professor.  We used particle swarm
-optimization (PSO), a bio-inspired optimization algorithm similar to
-evolutionary algorithms, to try to fit to data his model of what was happening
-in a particular kind of crystal.  After spending a lot of time seeing the
-output of the algorithm, I also helped to interpret the results.  I discovered
-that we had too many free parameters in our model and helped Dr.  Campbell to
-make progress in solving his problem.  Because of our help in solving his
-problem, Dr. Campbell has made what he considers a breakthrough in
-understanding these crystals and plans to submit his work for publication soon.
+This project started when Dr. Campbell, a physics professor,  approached my
+advisor seeking help solving a crystallography problem.  As a new student in
+the lab, I accepted the problem mostly in an auxiliary role, writing some code
+and running experiments for Dr. Campbell.  We used particle swarm optimization
+(PSO), a bio-inspired optimization algorithm similar to evolutionary
+algorithms, to try to fit to data his model of what was happening in a
+particular kind of crystal.  After spending a lot of time seeing the output of
+the algorithm, I also helped to interpret the results.  I discovered that we
+had too many free parameters in our model and helped Dr.  Campbell to make
+progress in solving his problem.  Because of our help, Dr.  Campbell has made
+what he considers a breakthrough in understanding these crystals and plans to
+submit his work for publication soon.
 
 The crystallography problem we were solving required the evaluation of a
 function that took several minutes to run.  As each particle in the algorithm
@@ -44,12 +44,12 @@ must evaluate the function at every iteration, we used several hundred
 processors on BYU's supercomputer in our optimization of the function.  This
 led us to ask some interesting questions about how we could best use those
 processors to solve the problem.  We first experimented with the topology of
-the algorithm, or how the particles in the swarm communicate with each other.
-I did much of the experimentation, though I was directed by a graduate student
-in the lab, who eventually wrote the paper that we
+the algorithm, or how the particles in PSO communicate with each other.  I did
+much of the experimentation, though I was directed by a graduate student in the
+lab, who eventually wrote the paper that we
 published~\cite{mcnabb-2009-large-particle-swarms}.  We saw some improvements
 in the performance of the algorithm with our new topologies, though we also
-noticed that increasing the number of particles with additional processors had
+noticed that increasing the number of particles with additional processors gave
 diminishing returns.
 
 To solve this problem of diminishing returns, my advisor proposed applying the
@@ -125,6 +125,6 @@ topic modeling are presented in my research proposal.
 \footnotesize
 \bibliographystyle{plain}
 \renewcommand\bibsection{\noindent \small\textbf{Publications}\vspace{-2mm}\footnotesize}
-\bibliography{../../../bib/aml/bib}
+\bibliography{bib}
 
 \end{document}

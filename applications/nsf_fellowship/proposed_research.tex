@@ -16,7 +16,7 @@
 \vspace{-4mm}
 
 \textbf{Keywords.} \textit{Topic models, natural language processing,
-information extraction}
+information extraction, search}
 
 \textbf{Introduction.}  In our modern world, large document collections are
 becoming more prevalent and more important.  Companies want to look at online
@@ -65,7 +65,7 @@ research will show conclusively that a topic model can accurately answer the
 question, ``What were Barack Obama's consistent campaign themes?''
 
 \textbf{Methods.}  Establishing that topic models can answer topic-based
-queries the same way a human would requires two parts.  First one must show
+queries the same way a human would involves two parts.  First one must show
 that a topic found by a topic model can be accurately compared to a theme or
 topic elicited from a human.  Second, one must show that an automated system
 can correctly answer queries about topics in a corpus by returning the topics
@@ -98,28 +98,29 @@ annotate the same subset of one of the collections of documents, so that I can
 have confidence in the data and have some idea of the consistency of human
 thematic judgments.
 
-\textbf{Validation.}  Once I have annotated data, I will be able to test the
-validity of my hypothesis.  Determining whether a particular topic mathces a
-human-defined topic should be straightforward with the annotations I will
-gather.  I can test the words found by the topic model against the description
-given by the humans, and I can see if the example documents given by the
-annotators agree with the documents that have high proportions of the topic.
+\textbf{Validation.}  With annotated data, I can test the validity of my
+hypothesis.  Determining whether a particular topic matches a human-defined
+topic is straightforward with the annotations I will gather.  I can test the
+words found by the topic model against the description given by the humans, and
+I can see if the example documents given by the annotators agree with the
+documents that have high proportions of the topic according to the model.
 
-With methods for matching topics from a topic model with human-given topics, I
-can complete the second part of my objective.  With topics obtained from humans
-for a particular class, I can learn a topic model over the entire collection of
-student ratings and see if automatic methods to rank the topics return the
-correct topics.  One such method is to rank the topics by their entropy over
-the documents for that class, which should rank highest the topics that were
-used consistently about that class, matching the human-given topics and
-answering the question, ``What were the main themes in comments of Chemistry
-101?''  Other possible queries and methods to answer them are items that will
-be explored in the course of this research.
+Once I have methods for matching topics from a topic model with human-given
+topics, I can complete the second part of my objective.  I will learn a topic
+model over each collection of documents and see if automatic methods to rank
+the topics return topics that match those that were given by humans.  One such
+method is to rank the topics by their entropy over the documents for the
+annotated class or restaurant.  This ranking should match the human-judged
+themes and answer the question, ``What were the main themes in comments about
+this class?'' Similar methods can give a broad overview of the topics in the
+entire corpus, and other possible queries and automatic ranking methods to
+answer them are items that will be explored in the course of this research,
+including finding topics that are common or unique to two separate classes.
 
 \textbf{Broader Impacts.}  This work will quantitatively establish the
 usefulness of topic models in extracting thematic elements from a collection of
 documents.  It will also validate the automatic ranking of topics in response
-to a few classes of specific user queries.  Such work will give confidence to
+to a few types of specific user queries.  Such work will give confidence to
 anyone using a topic model to analyze a corpus, including intelligence analysts
 looking at classified documents, university administrators looking at student
 ratings, and companies reading online reviews about their products.  This work
@@ -130,6 +131,6 @@ judgments.
 \footnotesize
 \bibliographystyle{plain}
 \renewcommand\bibsection{\noindent \small\textbf{References}\vspace{-2mm}\footnotesize}
-\bibliography{../../../bib/lda/bib}
+\bibliography{bib}
 
 \end{document}
