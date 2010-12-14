@@ -1,9 +1,5 @@
 CMU:
 
-Resume:  Outline your education, research experience, work experience,
-publications, scholarships awarded, prizes and honors received, society
-memberships, and extracurricular activities.
-
 Statement of Purpose: Prepare a concise one or two page essay in PDF format
 that describes your primary areas of interest for research, your related
 experiences, and your objective in pursuing a graduate degree at Carnegie
@@ -12,10 +8,6 @@ motivations. When describing your research interests, you should explain why
 you think they are important areas of study and why you are particularly
 well-suited to pursue them. You should describe any relevant education,
 research, commercial, government, or teaching experience. 
-
-Publications (not an essay)
-
-Fellowships (not an essay)
 
 
 
@@ -37,19 +29,10 @@ historically underrepresented in higher education, evidence of your research
 focusing on underserved populations or related issues of inequality, or
 evidence of your leadership among such groups.
 
-Academic interests (faculty to work with, experiences, publications - not an
-essay)
-
-financial information
-
 
 
 
 UMass:
-
-academic honors or awards
-
-teaching or tutoring experience
 
 Personal Statement: Your Personal Statement should be a brief but carefully
 written essay regarding: 1) the reasons you want to do graduate work in this
