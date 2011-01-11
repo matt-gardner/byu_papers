@@ -1,46 +1,44 @@
-I spent two years as a volunteer missionary in Alabama, serving the hispanic
-community in that state.  While I was there I did a lot of Spanish-English
-interpretation.  That experience was the start of my interest in natural
-language processing.  What if a computer could interpret accurately and in real
-time between two languages?  What problems remain unsolved that hinder the
-building of such a system?  Those questions fascinated me during my time in
-Alabama, and after five years of studying computer science they still fascinate
-me.  I would love to spend my time as a PhD student and my future career
-working on these problems.
+I spent two years as a missionary in Alabama, serving the hispanic community in
+that state. While I was there I did a lot of Spanish-English interpretation.
+That experience was the start of my interest in natural language processing.
+What if a computer could interpret accurately and in real time between two
+languages? What problems remain unsolved that hinder the building of such a
+system? Those questions fascinated me during my time in Alabama, and they still
+do after five years of studying computer science. I would love to spend my time
+as a PhD student and my future career working on these problems.
 
 There are many components in a system that interprets between two languages.
 The three top-level requirements are speech recognition, machine translation,
-and speech synthesis.  Each of those problems can be broken down into many
-parts; here I will focus just on machine translation.
+and speech synthesis. Each of these can be broken down into many parts; here I
+will focus just on machine translation.
 
-In order to translate between two languages, state-of-the-art systems use large
-amounts of aligned data to learn a statistical model of how one language
-translates into the other.  These models involve parsing each of the sentences
-and learning how the grammars of the two languages relate, such as when the
-word or phrase order needs to be flipped between the two languages.  However,
-only a tiny percentage of available data for this task has been labeled with
-parse information.  Thus machine translation systems often are forced to use
-computer-generated parses, which can often be quite poor.  Most of the labeled
-data available for parsing in English consists of news articles from the Wall
-Street Journal; training a parser on that data and using it to parse blog posts
-does not work very well.  A particular question, then, is can we improve the
-performance of parsers on non-Wall-Street-Journal text?
+When translating between two languages, modern systems use large sets of
+aligned text to learn a statistical model of how one language translates into
+the other. These models involve parsing each of the sentences and learning how
+the grammars of the two languages relate, such as when the word or phrase order
+needs to be flipped between the two languages. However, only a tiny amount of
+aligned text has been manually parsed. Thus machine translation systems often
+must use computer-generated parses, which can be quite poor. Most of the
+hand-parsed text in English consists of articles from the Wall Street Journal;
+training a parser on that data and using it to parse blog posts does not work
+very well. A particular question, then, is can we improve the performance of
+parsers on non-Wall-Street-Journal text?
 
-In order to do that, we must somehow get information from the kind of text we
-are interested in parsing; if we want to parse blog posts, for example, the
-parser needs to learn what blog posts are like and how to parse them.  In the
-absence of labeled blog posts, we must use semi-supervised learning.  I
-recently had an idea for how to do semi-supervised parsing that may prove
-effective.
+To do that we must get information from the kind of text we want to parse; if
+we want to parse blog posts, for example, the parser needs to learn what blog
+posts are like and how to parse them. In the absence of labeled blog posts, we
+must use semi-supervised learning. I recently had an idea for how to do
+semi-supervised parsing that may prove effective. 
 
 This summer a group of researchers at a summer workshop at Johns Hopkins
 University showed that machine translation systems can get some of the benefits
-of parse information even where no such parses are available.  They used a
-topic model in a novel way in order to learn a substitute for syntactic
-categories, and they used that substitute where parse information would
-otherwise have been used.  My thought is, if this new way of using a topic
-model can reproduce syntactic information, can it then be used as input to the
-training procedure of a parser in order to learn from unlabeled data?  I have
-not yet worked out how to combine the syntactic topic model with the parsing
-model, but I think it would be an interesting and potentially very fruitful
-research project.
+of parse information even where no such parses are available. They used a topic
+model in a novel way in order to learn a substitute for syntactic categories,
+and they used that substitute where parse information would otherwise have been
+used. My thought is, if this new way of using a topic model can reproduce
+syntactic information, can it then be used as input to the training procedure
+of a parser in order to learn from unlabeled data? I have not yet worked out
+how to combine the syntactic topic model with the parsing model, but I think it
+would be an interesting and potentially very fruitful research project. I hope
+to spend my future career solving problems such as these, as I think they are
+fascinating and their solutions could improve the lives of millions of people.
