@@ -22,6 +22,9 @@ NAACL Scholarship to Johns Hopkins NLP Summer School: accepted (2010)
 
 "Speculative Evaluation in PSO" sent to PPSN: accepted (2010)
 
+"The Topic Browser: An Interactive Tool for Browsing Topic Models" submitted to
+a NIPS workshop: accepted (2010)
+
 
 ==============
 Rejected:
