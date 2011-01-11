@@ -1,0 +1,191 @@
+\documentclass[ms]{byuprop}
+% Options for this class include the following (* indicates default):
+%
+%   10pt -- 10 point font size
+%   11pt -- 11 point font size
+%   12pt (*) -- 12 point font size
+%
+%   ms -- produce a thesis proposal (off)
+%   areaexam -- produce a research area overview (off)
+%   phd -- produce a dissertation proposal (off)
+%   
+%   layout -- show layout lines on the pages, helps with overfull boxes (off)
+%   grid -- show a half-inch grid on every page, helps with printing (off)
+
+
+% This command fixes my particular printer, which starts 0.03 inches too low,
+% shifting the whole page down by that amount.  This shifts the document
+% content up so that it comes out right when printed.
+%
+% Discovering this sort of behavior is best done by specifying the ``grid''
+% option in the class parameters above.  It prints a 1/2 inch grid on every
+% page.  You can then use a ruler to determine exactly what the printer is
+% doing.
+%
+% Uncomment to shift content up (accounting for printer problems)
+%\setlength{\voffset}{-.03in}
+
+% Here we set things up for invisible hyperlinks in the document.  This makes
+% the electronic version clickable without changing the way that the document
+% prints.  It's useful, but optional.
+\usepackage[
+    ps2pdf,
+    bookmarks=true,
+    breaklinks=true,
+    raiselinks=true,
+    pdfborder={0 0 0},
+    colorlinks=false,
+    ]{hyperref}
+
+% Rewrite the itemize, description, and enumerate environments to have more
+% reasonable spacing:
+\newcommand{\ItemSep}{\itemsep 0pt}
+\let\oldenum=\enumerate
+\renewcommand{\enumerate}{\oldenum \ItemSep}
+\let\olditem=\itemize
+\renewcommand{\itemize}{\olditem \ItemSep}
+\let\olddesc=\description
+\renewcommand{\description}{\olddesc \ItemSep}
+
+% Get a little less fussy about word spacing on a line.  Sometimes produces
+% ugly results, so keep your eyes peeled.
+\sloppy
+
+% Important settings for the byuprop class. %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Because I use these things in more than one place, I created new commands for
+% them.  I did not use \providecommand because I absolutely want LaTeX to error
+% out if these already exist.
+\newcommand{\Title}{Improved Corpus Exploration with Topic Modeling}
+\newcommand{\Author}{Matthew Gardner}
+\newcommand{\SubmissionMonth}{January}
+\newcommand{\SubmissionYear}{2011}
+
+% Take these from the commands defined above
+\title{\Title}
+\author{\Author}
+\monthsubmitted{\SubmissionMonth}
+\yearsubmitted{\SubmissionYear}
+
+% Committee members
+\committeechair{Kevin Seppi}
+\committeemembera{Eric Ringger}
+\committeememberb{David Embley}
+%\committeememberc{}
+%\committeememberd{}
+
+% Department graduate coordinator
+\graduatecoordinator{Kent Seamons}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Set up the internal PDF information so that it becomes part of the document
+% metadata.  The pdfinfo command will display this. Be sure to set the document
+% type and add your own keywords.
+\hypersetup{%
+    pdftitle=\Title,%
+    pdfauthor=\Author,%
+    pdfsubject={Masters thesis proposal, BYU CS Department: %
+                Submitted \SubmissionMonth~\SubmissionYear, Created \today},%
+    pdfkeywords={topic modeling, corpus browsing, corpus discovery, %
+				text mining},%
+}
+
+% These packages allow the bibliography to be sorted alphabetically and allow references to more than one paper to be sorted and compressed (i.e. instead of [5,2,4,6] you get [2,4-6])
+\usepackage{url}
+\usepackage[numbers,sort&compress]{natbib}
+\bibliographystyle{annotnat}
+\usepackage{hypernat}
+% Note, use \citet to name the authors (text mode) and \citep to do just give
+% the number (parenthetical mode).  Also, \citep* will give all of the authors
+% rather than an abbreviated list.
+
+% Additional packages required for your specific thesis go here. I've left some I use as examples.
+\usepackage{graphicx}
+%\usepackage{pdfsync}
+\usepackage{amsmath}
+
+
+\begin{document}
+
+% Produce the preamble
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Abstract}
+% 1 to 2 paragraphs
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+% 1 to 4 pages
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Related Work}
+% 1 to 2 pages
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Thesis Statement}
+% 1 to 2 sentences
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Project Description}
+% 2 to 5 pages
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Validation}
+% 1/2 to 2 pages
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Thesis Schedule}
+% 1/4 to 1/2 page
+
+\begin{itemize}
+
+\item Completed: reformulate PSO in MapReduce.
+
+\item February 6, 2009: evaluate PSO with large swarms with a few benchmark
+functions.
+
+\item February 20, 2009: evaluate PSO with very large swarms with subswarms
+and with more benchmark functions.
+
+\item March 9, 2009: rework individual papers into a coherent thesis and
+submit draft to committee chair.
+
+\item March 20, 2009: submit thesis to second committee member for review.
+
+\item March 30, 2009: submit thesis to third committee member for review.
+
+\item April 10, 2009: defend thesis.
+
+Each of the three stages of the project can be submitted as a paper to a
+conference such as GECCO or CEC.
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand\bibsection{\section{Annotated Bibliography}}
+%\newcommand\bibpreamble{Material to be added between heading and entries.}
+% 2 to 5 pages
+
+\bibliography{}
+
+
+\end{document}
