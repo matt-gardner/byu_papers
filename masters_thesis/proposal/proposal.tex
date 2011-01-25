@@ -89,7 +89,7 @@
     pdfsubject={Masters thesis proposal, BYU CS Department: %
                 Submitted \SubmissionMonth~\SubmissionYear, Created \today},%
     pdfkeywords={topic modeling, corpus browsing, corpus discovery, %
-				text mining},%
+                               text mining},%
 }
 
 % These packages allow the bibliography to be sorted alphabetically and allow references to more than one paper to be sorted and compressed (i.e. instead of [5,2,4,6] you get [2,4-6])
@@ -103,8 +103,14 @@
 
 % Additional packages required for your specific thesis go here. I've left some I use as examples.
 \usepackage{graphicx}
+\usepackage{psfrag}
 %\usepackage{pdfsync}
 \usepackage{amsmath}
+
+% Better references, I think
+\newcommand{\secref}[1]{Section~\ref{sec:#1}}
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\algref}[1]{Algorithm~\ref{alg:#1}}
 
 
 \begin{document}
@@ -118,11 +124,120 @@
 \section{Abstract}
 % 1 to 2 paragraphs
 
+Topic modeling, including latent Dirichlet allocation and its variants, has
+been shown to be an effective means of modeling a collection of documents for a
+wide variety of purposes.  Topic models have been successfully used in
+dimensionality reduction for classification tasks, in associating text with
+components in an image, and in aligning words in bilingual corpora.  Despite
+the wide-spread use of topic models in many areas of machine learning, however,
+their usefulness as an aid to corpus browsing, or trend discovery in large
+collections of documents, has not been well established.
+
+I propose to investigate the application of topic models to the task of corpus
+browsing.  That is, I seek to show that a topic model is an effective aid to a
+human looking through a previously unseen collection of documents.  I will show
+this in two parts.  The first part involves the building of a tool that allows
+one to easily browse through a corpus in the context of a topic model.  The
+second part of this work will establish that topic models do in fact capture
+themes that a human would have found in the data and that those topics can be
+automatically presented without the user having to dig through the topic model
+to find them.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
 % 1 to 4 pages
+
+In our modern world, large document collections are becoming more prevalent and
+more important.  Companies want to look at online reviews of their products and
+intelligence analysts have thousands of documents to sift through looking for
+suspicious activity.  The recent controversies involving the public release of
+hundreds of thousands of documents by WikiLeaks about the wars in Afghanistan
+and Iraq highlight the enormity of this problem.  How does a person even begin
+to look through these massive corpora?
+
+Typically, the interface between a person and a document collection has been a
+search engine, using a Google-like tool to find documents that contain specific
+information.  While such tools can be very useful for some tasks, they cannot
+give broad pictures about the corpus as a whole, and they are limited in the
+kinds of queries they can answer.  A person has to have specific information in
+mind in order to form a query; current search tools are not very helpful when a
+person has no idea what to even look for.
+
+Recent methods have been proposed that attempt to address part of this issue.
+Topic models, including latent Dirichlet
+allocation~\cite{blei-2003-latent-dirichlet-allocation}, gather information
+about topics used in a corpus.  These topics are modeled as collections of
+words that are used together across documents.  Topic models could feasibly be
+used to give a broad overview of a corpus and even answer queries about topics
+in the documents, instead of just queries about the documents.
+
+As far as I am aware, however, topic models have not as yet been used for this
+purpose.  They have successfully been used as input into document
+classification and many other tasks
+(e.g.,~\cite{blei-2008-supervised-topic-models}), but attempts to aid humans in
+corpus analysis through topic models are very preliminary, mostly giving the
+user better access to the documents in the corpus, not to the topics
+themselves~\cite{newman-2010-visualizing-with-topic-maps}.  It is generally
+assumed that topic models do a good job at capturing thematic elements in large
+bodies of text, but while this has been anecdotally asserted on many
+occasions~\cite{griffiths-2004-finding-scientific-topics}, to my knowledge it
+has never been rigorously established.  Thus topic models have not been widely
+used in the qualitative analysis of large corpora.
+
+\subsection{Topic Modeling}
+
+Topic modeling seeks to find the set of topics which are discussed in a corpus
+and to what proportion each document contains each of those topics.  Several
+methods of topic modeling have been proposed.  Among those are latent semantic
+analysis or indexing (LSA or LSI)~\cite{dumais-1988-latent-semantic-analysis},
+a probabilistic version of LSA, called pLSA or pLSI~\cite{hofmann-1999-plsi},
+and latent Dirichlet allocation, or
+LDA~\cite{blei-2003-latent-dirichlet-allocation}.  In this proposed work I
+focus on LDA.
+
+LDA is a generative probabilistic model of a collection of documents.  The
+documents are modeled as deriving from a collection of topics, where each
+document comes from some combination of those topics.  Each word in a
+document is drawn from one of the topics in that document, where the topic is
+simply a multinomial distribution over words.  The graphical model of LDA is
+shown in \figref{lda}.
+
+\begin{figure}
+  \centering
+  \psfrag{b}[C][C]{\Large$\beta$}
+  \psfrag{a}[C][C]{\Large$\alpha$}
+  \psfrag{t}[C][C]{\Large$\theta$}
+  \psfrag{f}[C][C]{\Large$\phi$}
+  \psfrag{w}[C][C]{\Large$w$}
+  \psfrag{z}[C][C]{\Large$z$}
+  \psfrag{N}[C][C]{\large$N$}
+  \psfrag{M}[C][C]{\large$M$}
+  \psfrag{K}[C][C]{\large$K$}
+  \includegraphics[width=.5\textwidth]{../../figures/lda_model}
+  \caption{The graphical model of LDA.}
+  \label{fig:lda}
+\end{figure}
+
+In the figure, $\alpha$ is a Dirichlet prior over topic distributions in a
+document, $\theta$ is a per-document multinomial topic distribution, $z$ is a
+topic label for each word in the document, and $w$ is an observed word in the
+document.  $\beta$ is a Dirichlet prior over the word distributions in a topic
+and $\phi$ is a per-topic multinomial word distribution.  The distributions can
+be written formally as follows:
+
+\begin{align*} 
+  w_i|z_i,\phi^{(z_i)} &\sim \mathrm{Categorical}(\phi^{(z_i)}) \\
+  \phi &\sim \mathrm{Dirichlet}(\beta) \\
+  z_i|\theta^{(d_i)} &\sim \mathrm{Categorical}(\theta^{(d_i)}) \\ 
+  \theta &\sim \mathrm{Dirichlet}(\alpha) 
+\end{align*}
+
+Given a collection of documents, the parameters $\theta$ and $\phi$ can be
+inferred using standard statistical techniques.  The two most common methods
+for performing inference are Gibbs
+sampling~\cite{griffiths-2004-finding-scientific-topics} and variational
+methods~\cite{blei-2003-latent-dirichlet-allocation}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,23 +245,226 @@
 \section{Related Work}
 % 1 to 2 pages
 
+Topic modeling has become incredibly popular in recent years, saturating the
+field with all kinds of applications and variations of the method.  Of
+particular interest to this proposal are two small areas that have not received
+much attention in the literature: visualizing topic models and validating topic
+models.
+
+\subsection{Visualizing Topic Models}
+
+Typically, topic models have been visualized by simply listing the 10 words
+with the highest probability of occurring in that
+topic~\cite{blei-2003-latent-dirichlet-allocation,
+griffiths-2004-finding-scientific-topics}.  When presenting topics in a paper,
+researchers often sift through the results by hand in order to show topics that
+are most meaningful.  This is understandable as showing all of the resultant
+topics in a paper is infeasible.  However, such presentations hide the fact
+that it can be time consuming and difficult to go through the output of a topic
+model by hand.
+
+While displaying an entire topic model analysis is impossible in a research
+paper, several static visualizations of whole topic models exist as
+websites~\cite{blei-arxiv-corpus-browser, mimno-nyt-browser}.  These typically
+present long lists of topics that are very difficult to use for finding
+specific information.
+
+Apart from visualizing all of the topics from a topic model as a whole, work
+has been done in how to present a topic in more interesting ways than simple
+lists of words.  Turbo Topics is a method for extracting meaningful phrases
+used in a particular topic that can be presented along with individual
+words~\cite{blei-2009-turbo-topics}.  Several people have presented trends of
+the use of a topic over time in a
+corpus~\cite{griffiths-2004-finding-scientific-topics, mimno-nyt-browser}, and
+some effort has been made in trying to automatically give topics a meaningful
+name, instead of characterizing the topic only by the most frequently appearing
+words~\cite{mei-2007-automatic-labeling-of-topic-models,
+lau-2010-best-topic-word-selection}.
+
+The output from a topic model has also been used to inform a more general
+corpus browsing experience.  Newmann et al. make what they call ``topic maps,''
+which are layouts of the documents in a corpus according to a topic-based
+similarity metric~\cite{newman-2010-visualizing-with-topic-maps}.  Stoica et
+al. use topic models to create facets to use in a browsing interface, though
+they conclude that other methods are superior to topic models in this
+task~\cite{stoica-2007-faceted-metadata-structures}.
+
+\subsection{Validating Topic Models}
+
+The question of how to evaluate topic models has been addressed in a number of
+different ways.  These include both intrinsic and extrinsic evaluations.
+
+Intrinsic evaluations of topic models use some metric on held-out data to judge
+the quality of the topic model itself.  These are typically perplexity or the
+likelihood of the held-out data according to the model.  Early papers on LDA
+used these metrics~\cite{blei-2003-latent-dirichlet-allocation,
+griffiths-2004-finding-scientific-topics}, and recent papers have given better
+methods for evaluating these
+metrics~\cite{wallach-2009-evaluation-for-topic-models,
+buntine-2009-estimating-likelihoods-for-topic-models}.
+
+A new intrinsic evaluation method presented at NAACL this summer is evaluating
+the coherence of the words in a topic, or how well the words fit together as
+judged by humans~\cite{newman-2010-automatic-evaluation-of-topic-coherence}.
+The authors found that using co-occurrence counts gathered from Wikipedia is a
+good surrogate for human judgments in this regard.  However, as the paper
+focused on finding an automated metric that matched human responses, the
+authors did not actually use their metric to compare topic models in any way.
+
+Apartment from intrinsic evaluation methods, which may have limited
+applicability in any real task, are extrinsic evaluation methods.  These
+methods use the topic model, or some part of it, as input into a secondary
+task, such as document classification.  The original paper introducing LDA used
+one of these metrics~\cite{blei-2003-latent-dirichlet-allocation}, and
+virtually all papers describing an application of topic models have also had
+some kind of extrinsic metric.  Other examples of extrinsic evaluations
+including predicting the citation count of a scientific
+paper~\cite{gerrish-2010-measuring-scholarly-impact} and classifying and
+annotating images~\cite{wang-2009-image-classification-annotation}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Thesis Statement}
 % 1 to 2 sentences
 
+Topic models, when properly visualized, can be an effective tool in the
+qualitative analysis of large text corpora.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Project Description}
 % 2 to 5 pages
 
+This project will consist of two main parts.  The first part will explore good
+visualizations of topic models and will result in a tool that incorporates
+those visualizations in an interactive browser.  The second part will consider
+the usefulness of topic models for thematic analysis, including the ability of
+a topic model to capture human-specified topics and the validation of automated
+methods for finding topics of interest to a person browsing the corpus.
+
+\subsection{The Topic Browser}
+
+Proper visualizations are essential to extracting information from and
+identifying trends in data, especially large sets of high dimensional data.
+Large text corpora are particularly difficult to visualize, as they may include
+many thousands of documents and millions of words.  Topic
+modeling~\cite{blei-2003-latent-dirichlet-allocation} is a method of reducing
+the dimensionality of a corpus into a set of meaningful topics.  Topic models
+have been used with some success as an aid to corpus
+visualization~\cite{blei-2009-topic-models,
+newman-2010-visualizing-with-topic-maps}.  However, in many papers the
+presentation of topic models has been limited to hand-selected, coherent
+topics, when often there are many meaningless topics to sift through.  These
+presentations leave the viewer wondering what else the topic model discovered
+and provide little help in gaining a deep understanding of the model.
+
+To aid in the visualization of topic models and in pattern discovery in
+document collections, this project will build a system we call The Topic
+Browser, a web-based tool for interactively exploring both the output of a
+topic modeling algorithm and its attendant corpus.  This topic browser will
+incorporate many visualizations of topic models previously published as well
+as some innovative ideas of our own.  The Topic Browser is an aid both to those
+who wish to browse through a corpus and for those who wish to analyze the topic
+model itself.  We believe that this interactive approach to visualization in
+browsing reveals topics and topical trends in large document collections in a
+way that is not possible with static visualizations.
+
+One of the innovative ideas incorporated into the topic browser is the use of
+topic metrics that can be used to separate topics of interest from
+not-as-interesting topics.  The sidebar navigation tool in the topic browser
+allows the user to sort and filter topics according to these metrics.  This
+allows a person navigating the corpus to easily find the topics he is looking
+for, instead of having to sift through all of the topics by hand.
+
+\subsection{LDA for Thematic Analysis}
+
+The second part of this project is motivated by the first---given a tool to
+browse through the output of a topic model, and topic metrics that are supposed
+to show topics relevant to certain user questions, can we quantitatively
+demonstrate that it actually works?
+
+Topic models have been shown to be useful in many tasks, and it is generally
+assumed that they do a good job at capturing thematic elements in large bodies
+of text.  While this has been anecdotally asserted on many occasions, to our
+knowledge it has never been rigorously established.  Thus topic modeling has
+not been widely used in the qualitative analysis of large corpora.
+
+This part of the project will quantitatively show that topic models can
+effectively capture qualitative or thematic elements in a collection of
+documents as judged by humans, and that automated methods can select topics
+from a topic model that match human thematic judgments in a variety of
+situations.
+
+In order to establish this, I will use two sources of data.  The first comes
+from student ratings of courses and professors at Brigham Young University.
+After answering many questions which require selecting one of several options,
+students are given the opportunity to write in free text whatever comments they
+have about the class.  We will use those free-form comments as one source of
+text in which we will find thematic elements.  The second source of data we
+will use is a set of restaurant reviews from New York CitySearch.
+
+We will choose four subsets of the data to annotate, two in each data source,
+each subset consisting of about 40 documents (where each document is
+approximately one paragraph long).  We will have 10 people annotate each subset
+of the data with topics that they judge to be relevant, so that we can have
+some idea of the consistency in human-judged topics.
+
+We will then develop methods for comparing a human-annotated topic to a topic
+produced by a topic model.  One of the main parts of this comparison will be
+finding the percent of words in the topic annotated by humans that were labeled
+with the topic by the topic model.  We will elicit from the annotators words
+and phrases that are representative of each topic annotated, along with a
+phrasal description of the topic, both of which will be useful in matching the
+human topics with machine-learned topics.
+
+Once we have methods to compare the human annotations with the machine output,
+we will see to what extent topic models capture human topics.  This will
+provide a new extrinsic evaluation method for topic models, as some models will
+better capture human topics than others.  We will then also validate the use of
+topic metrics to automatically sort topics.  In particular, we will see if
+these methods can find the topics the humans thought we prevalent in the
+annotated subset of the data when the topic model is run on the entire dataset.
+Because we will have two annotated subsets for each data source, we will also
+be able to test the ability of automated methods to determine which topics are
+common between the two subsets, and which are unique.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Validation}
 % 1/2 to 2 pages
+
+This project is expected to produce an easily usable, extensible, and helpful
+tool for browsing the output of a topic model, and to validate the use of topic
+modeling for the thematic analysis of large text corpora.
+
+\subsection{The Topic Browser}
+
+The first stage of this project is successful if it produces a tool that is
+useful to the topic modeling community (including those who do research in
+topic modeling and those who use topic models) to visualize their results.
+While I will not seek to quantitatively verify with user studies that the tool
+produced is a better way to browse topic models than existing tools, its
+usefulness should be intuitively visible to those using the browser.  This can
+be at least anecdotally verified by other groups at BYU and other universities
+using our tool, and the acceptance of a paper describing the browser at a
+peer-reviewed conference workshop.
+
+While the project will not verify the usability of the tool as a whole, some
+parts of the tool can be individually verified.  Some of the previous research
+included in the topic browser has already been independently validated, such as
+the Turbo Topics method of extracting phrases from
+topics~\cite{blei-2009-turbo-topics}.  In particular, the second stage of this
+project will validate the novel contributions in the sidebar of the browser.
+
+\subsection{LDA for Qualitative Analysis}
+
+The second stage of this project investigates the use of topic models as an aid
+in the qualitative analysis of large copora.  This stage is successful if it
+identifies in what ways topic models successfully assist a human in analyzing a
+large collection of text.  We take successfully assisting a human to mean
+saving the human work by automatically reproducing themes that a person would
+have spent hours or days producing.  We will determine a topic model's ability
+to reproduce human themes as outlined in the project description.  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,25 +474,23 @@
 
 \begin{itemize}
 
-\item Completed: reformulate PSO in MapReduce.
+\item Completed: build the Topic Browser.
+  
+\item February 4, 2011: write code to compare human topics with LDA topics.
 
-\item February 6, 2009: evaluate PSO with large swarms with a few benchmark
-functions.
+\item February 11, 2011: finish collecting human annotations.
 
-\item February 20, 2009: evaluate PSO with very large swarms with subswarms
-and with more benchmark functions.
+\item March 4, 2011: submit a paper to CoNLL detailing the work on validating
+  LDA for thematic analysis.
 
-\item March 9, 2009: rework individual papers into a coherent thesis and
+\item March 11, 2011: rework individual papers into a coherent thesis and
 submit draft to committee chair.
 
-\item March 20, 2009: submit thesis to second committee member for review.
+\item March 20, 2011: submit thesis to second committee member for review.
 
-\item March 30, 2009: submit thesis to third committee member for review.
+\item March 30, 2011: submit thesis to third committee member for review.
 
-\item April 10, 2009: defend thesis.
-
-Each of the three stages of the project can be submitted as a paper to a
-conference such as GECCO or CEC.
+\item April 13, 2011: defend thesis.
 
 \end{itemize}
 
@@ -185,7 +501,7 @@ conference such as GECCO or CEC.
 %\newcommand\bibpreamble{Material to be added between heading and entries.}
 % 2 to 5 pages
 
-\bibliography{}
+\bibliography{../../../bib/lda/bib}
 
 
 \end{document}
