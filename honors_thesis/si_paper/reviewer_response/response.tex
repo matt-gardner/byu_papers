@@ -1,0 +1,338 @@
+\documentclass[onecolumn, 12pt]{article}
+\usepackage{fullpage}
+
+\begin{document}
+
+\section*{Associate Editor Comments}
+
+\subsection*{AE.1}
+
+Reviewer comments: The quality of the article will be improved if you include a
+review of existing parallelization methods for PSO, to produce a kind of
+taxonomy. Then, also include comparisons with these approaches. You currently
+compare only with a naive approach and adaptations of your approach.
+
+Response: Copy and paste from Andrew's paper
+
+NOT DONE
+
+\subsection*{AE.2}
+
+Reviewer comments: Please indicate if differences in performance are
+statistically significant.
+
+Response: Because all of the these finished before all of these, the t-test
+gave \ldots
+
+NOT DONE
+
+\subsection*{AE.3}
+
+Reviewer comments: It will also be good if you do make use of problems where
+parallelization has benefit. For the functions that you use, there is not real
+not for parallelization. Linked to this, when will parallelization be
+beneficial?
+
+Response: Get Andrew's paragraph that deals with this
+
+NOT DONE
+
+\subsection*{AE.4}
+
+Reviewer comments: Please re-organize section 3: You start with a very long
+theoretical discussion, and only then get to section 3.1.
+
+Response: Good point.  We realized that we tried to cram too much into a single
+section, so we split the two main parts of it into two separate sections.
+There is now a section devoted entirely to the mathematics of the method and a
+separate section describing its implementation.
+
+NOT DONE
+
+\section*{Reviewer 1 Comments}
+
+\subsection*{1.1}
+
+Reviewer comments: I'm a bit skeptical about the actual \emph{practical}
+significance of the proposed method, [because it is difficult to know for any
+given problem what the right swarm size is]. To be fair, this criticism applies
+to most contributions focused on algorithms rather than on problems.
+
+Response: This is a fair criticism, as it is true that experimentation with a
+problem is required before one can know how best to solve it.  We added two
+paragraphs to the end of section 2 to further make this point, making more
+prominent reference to the No Free Lunch theorems.
+
+\subsection*{1.2}
+
+Reviewer comments: The organization and presentation of the ideas can be
+greatly improved. The authors mix results and conclusions with the description
+of the approach. This doesn't help the goal of the authors. A reader, cannot
+appreciate the significance of some result or conclusion if he/she hasn't
+understood what the authors are talking about. I recommend the authors to
+restructure the whole paper but in particular Sections 3 and 4.
+
+Response: This was not specific enough to use too much...
+
+NOT DONE
+
+\subsection*{1.3}
+
+Reviewer comments: The notation used throughout the paper is confusing. In the
+PSO literature, it is common to use x as a particles current position and some
+other letters to denote a particle's personal best position and a particle's
+neighborhood's best position. I know that the authors are using superscripts to
+distinguish between these concepts but they don't really help.
+
+Response: How do we fix this?
+
+NOT DONE
+
+\subsection*{1.4}
+
+Reviewer comments: Using "rounds of evaluations" is confusing, and results
+should be reported in terms of wall clock time.
+
+Response: Rounds of evaluations correspond exactly to wall clock time, as we
+mentioned.  However, we realize that the term is not a commonly used one, so we
+changed "rounds of evaluations" to "time steps" in hopes of better conveying
+our meaning. (Also incorporate Andrew's paragraph on why we're using time steps
+instead of evaluations)
+
+NOT DONE
+
+\subsection*{1.5}
+
+Reviewer comments: Since the authors are using Herrera et al.'s proposed
+benchmarks and since they are using a large computing cluster, I don't see why
+they can't use the same experimental protocol proposed by Herrera et al., which
+is focused on large scale optimization. That protocol would better justify a
+parallel algorithm because a 1000-dimensional problem is intuitively more
+difficult than the 20-dimensional problems the authors are currently using. As
+a side product, the authors can actually compare the results of the pruned
+versions (which in my eyes, are new PSO variants) with those of other
+state-of-the-art algorithms.
+
+Response: We need to look up what he's talking about.
+
+NOT DONE
+
+\subsection*{1.6}
+
+Reviewer comments: In the abstract, it is not clear the meaning of
+"speculative". A reader without knowledge about parallel computing may not
+understand what the authors mean.
+
+Response: Need to address this.
+
+NOT DONE
+
+\subsection*{1.7}
+
+Reviewer comments: The authors can cite Poli's paper about applications of PSO
+algorithms in the first paragraph of the paper.
+
+Response: We added the citation after the first sentence of the paper.
+
+\subsection*{1.8}
+
+Reviewer comments: What serves as the motivation for the authors's work is
+insufficiently discussed.  The authors say that adding more particles leads to
+"diminishing returns". This may be true when dealing with constant size
+populations.  However, a recent trend is to vary the population size over time.
+In fact, it has been shown that adding particles \emph{over time} may actually
+solve the problem the authors refer to. Some references are "Incremental Social
+Learning in Particle Swarms" by Montes de Oca and others published in IEEE SMCB
+and "Efficient Population Utilization Strategy for Particle Swarm Optimizer" by
+Hsieh and others in the same journal.
+
+Response: See how papers are relevant (Andrew).  But also, assuming a fixed
+computational budget, if at any point you have a smaller swarm than your budget
+allows, you should do speculative evaluation.  That's our point.
+
+NOT DONE
+
+\subsection*{1.9}
+
+Reviewer comments: In the first paragraph of Section 3, the authors say that
+adding particles may not help past a certain swarm size. This is true is the
+computation time allocated to the optimization process remains fixed. However,
+in some problems, it is the solution quality what matters. In that case, adding
+particles \emph{and} computational budget may indeed be the best thing to do.
+
+Response: Most people have a fixed computational budget, function has a set
+time.  That is the case we are interested in.
+
+NOT DONE
+
+\subsection*{1.10}
+
+Reviewer comments: In Eq. 3. Why must the current position be worse than the
+neighbor's position?
+
+Response: Restate what the case means
+
+NOT DONE
+
+\subsection*{1.11}
+
+Reviewer comments: One or two step-by-step examples would greatly improve
+Section 3.
+
+Response: We fixed section 3 by splitting it into two sections and reorganizing
+some parts, making the examples that were there more clear.  Hopefully the
+section is satisfactory now.
+
+NOT DONE
+
+\subsection*{1.12}
+
+Reviewer comments: Isn't pruning against the idea of better using the available
+computing resources? If one reduces the number of evaluated speculative
+children, then fewer CPUs are going to be used.
+
+Response: Pruning allows for the use of a larger swarm with the same number of
+processors.  We tried to make this point more clear in the text.
+
+NOT DONE
+
+\subsection*{1.13}
+
+Reviewer comments: Lines 29-30 of page 14. Stagnation is about the lack of
+improvement of the best result. It has nothing to do with what the particles
+are doing. I know that the PSO community confuses the two. I think this is a
+nice opportunity to clarify the difference between search stagnation and the
+state of the swarm.
+
+Response: todo
+
+NOT DONE
+
+\subsection*{1.14}
+
+Reviewer comments: All figures are not clear. The authors should find line
+styles that are more distinguishable.
+
+Response: ...
+
+NOT DONE
+
+\subsection*{1.15}
+
+Reviewer comments: Page 27, line 40. Algorithms are suited for problems not the
+other way around.
+
+Response: ...
+
+NOT DONE
+
+\subsection*{1.16}
+
+Reviewer comments: Page 31. Line 46. Molia -> Molina. Is it a technical report?
+Which number?  Isn't it published with the special issue?
+
+Response: ...
+
+NOT DONE
+
+\section*{Reviewer 2 Comments}
+
+I found the idea very interesting and the paper well-written. However, there
+are still some points that need further investigation.  As far as I am
+concerned, the paper has merit and shall be accepted after a revision that will
+address these remarks.
+
+\subsection*{2.1}
+
+Reviewer comments: How does it scale with the problem's dimension? There is
+experimental evidence that the required swarm size for achieving a prescribed
+accuracy in a specific problem, increases almost exponentially with its
+dimension. The proposed idea can make this necessity milder. Is there any
+evidence on how well it scales when dimension increases? (e.g. probably the
+increase in the required number of particles is closer to the linear rather
+than the exponential case).
+
+Response: ...
+
+NOT DONE
+
+\subsection*{2.2}
+
+Reviewer comments: In the first sections of the paper it is argued that the
+proposed "...method can easily be extended to arbitrary topologies". However,
+in later sections it is apparent that this may be possible if the underlying
+neighborhood topology is not "dense" enough to cause heavy communication
+traffic to the processors.  Can you be more precise to this and quantify it?
+For example, given a swarm size and a common network communication is there any
+identifiable limit to the neighborhood topology such that the algorithm retains
+an acceptable performance?
+
+Response: ...
+
+NOT DONE
+
+\subsection*{2.3}
+
+Reviewer comments: My personal experience with the PSO versions used in the
+paper suggests that, in large dimensions, it is preferrable to use larger
+swarms for less iterations rather than small swarms for more iterations. This
+is in contrast to the argued behavior of PSO for the Sphere function (Section
+1).  Did you observe the same behavior in other functions?  Could you provide
+some evidence on this because, due to the swarm's diversity loss, it seems
+somehow counterintuitive.
+
+Response: ...
+
+NOT DONE
+
+\section*{Reviewer 3 Comments}
+
+\subsection*{3.1}
+
+Reviewer comments: There are too many redundancy sentences declaring this paper
+is not proposing a new algorithm in the introduction.
+
+Response: ...
+
+NOT DONE
+
+\subsection*{3.2}
+
+Reviewer comments: The velocity updating formular is different from the
+original PSO algorithm.  The weighting factor, X, should only affects the old
+velocity, not all the items.
+
+Response: reference constricted PSO in formulas
+
+NOT DONE
+
+\subsection*{3.3}
+
+Reviewer comments: Some reference are not completed. For example, the
+journal/conference name of the 4th reference is missing. Please check it
+carefully.
+
+Response: ...
+
+NOT DONE
+
+\subsection*{3.4}
+
+Reviewer comments: Please increasing the reference to extend the integrity of
+the background.
+
+Response: ...
+
+  a)Pei-Wei Tsai, Jeng-Shyang Pan, Shyi-Ming Chen, Bin-Yih Liao, and Szu-Ping
+Hao, 2008, "Parallel Cat Swarm Optimization," Proceedings of the Seventh
+International Conference on Machine Learning and Cybernetics, Kunming, China,
+Jul. 12-15, 2008, pp. 3328-3333.
+
+  b)Jui-Fang Chang, Shu-Chuan Chu, John F. Roddick and Jeng-Shyang Pan, 2005,
+"A Parallel Particle Swarm Optimization Algorithm with Communication
+Strategies", Journal of Information Science and Engineering, Vol. 21, No. 4,
+pp. 809-818.
+
+NOT DONE
+
+\end{document}
