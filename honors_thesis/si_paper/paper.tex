@@ -138,11 +138,12 @@ optimization \and Speculative Decomposition}
 \label{sec:intro}
 
 Particle swarm optimization (PSO) has been found to be a highly robust and
-effective algorithm for solving many types of optimization problems.  For much
-of the algorithm's history, PSO was run serially on a single machine.  However,
-the world's computing power is increasingly coming from large clusters of
-processors.  In order to efficiently utilize these resources for
-computationally intensive problems, PSO needs to run in parallel.
+effective algorithm for solving many types of optimization
+problems~\cite{poli-2008-pso-applications}.  For much of the algorithm's
+history, PSO was run serially on a single machine.  However, the world's
+computing power is increasingly coming from large clusters of processors.  In
+order to efficiently utilize these resources for computationally intensive
+problems, PSO needs to run in parallel.
 
 Within the last few years, researchers have begun to recognize the need to
 develop parallel implementations of PSO, publishing many papers on the subject.
@@ -257,14 +258,15 @@ several iterations ahead instead of just one, which is made possible by pruning
 the number of speculative evaluations.
 
 The balance of this paper is organized as follows. \sec{pso} describes the
-particle swarm optimization algorithm.  \sec{sepso} describes how speculative
-evaluation can be done in parallel PSO to perform two iterations at once.  In
-\sec{relax}, we discuss various methods of improving the performance of
-speculative evaluation in PSO, all of which break the requirement of strictly
-reproducing the behavior of the original algorithm.  \sec{setup} describes the
-experiments we ran, and \sec{results} presents the results of those
-experiments.  In \sec{conclusion} and \sec{future} we conclude and discuss
-future work.
+particle swarm optimization algorithm.  \sec{sepso} describes mathematically
+how speculative evaluation can be done in parallel PSO to perform two
+iterations at once, and \sec{implementation} gives information on how to
+implement this method.  In \sec{relax}, we discuss various methods of improving
+the performance of speculative evaluation in PSO, all of which break the
+requirement of strictly reproducing the behavior of the original algorithm.
+\sec{setup} describes the experiments we ran, and \sec{results} presents the
+results of those experiments.  In \sec{conclusion} and \sec{future} we conclude
+and discuss future work.
 
 \section{Particle Swarm Optimization}
 \label{sec:pso}
@@ -327,6 +329,26 @@ communication~\citep{mcnabb-2009-large-particle-swarms}.  In the Random
 topology, each particle randomly picks two other particles to share information
 with at each iteration, along with itself.  Thus in both the Ring and the
 Random topologies, all particles have three neighbors.
+
+The ideal topology and swarm size for PSO depend on the objective function.
+Researchers have devised various benchmark functions and have found that the
+ideal topology for one function may perform very poorly for another function.
+The No Free Lunch Theorems for Optimization show that this is true in
+general---if an algorithm performs well on average for one class of functions
+then it must do poorly on average for other
+problems~\cite{wolpert-1997-nfl-for-optimization}.
+
+An attempt to standardize PSO found that although a Complete swarm of 50
+particles converged to the global optimum more quickly for many benchmark
+functions than the same swarm size with a Ring topology, it was also more
+likely to permaturely converge to local optima for other functions.  The study
+found no significant improvement for any other swarm size between 20 and 100
+and concluded with a recommendation to use a swarm of 50 particles with a Ring
+topology as a starting point.  The authors acknowledged that choosing the ideal
+topology requires thorough experimentation for the particular
+problem~\cite{bratton-2007-defining-a-standard-for-pso}.  Other authors have
+explained that a large swarm with a sparse topology propogates information
+slowly~\cite{montes-de-oca-2009-frankensteins-pso}.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -554,17 +576,19 @@ effectively simulate the Complete topology.  In~\sec{results} we report the
 results for performing speculative evaluation using both the Ring topology and
 the Random topology on a number of common benchmark functions.
 
+\section{Implementing Speculative Evaluation}
+\label{sec:implementation}
+
 It is not trivial in some parallel architectures to determine which speculative
-position was the correct next position of each particle.  In the rest of this
-section we move from the mathematics of our method to its implementation.
-First we discuss the relatively easy case of a centralized parallel PSO
-algorithm with a master computer and many slaves.  In such an architecture, the
-master keeps track of all necessary information with only trivial message
-passing needed.  Then we discuss the more complicated case of a distributed
-algorithm, where each particle is on its own and needs to send and receive
-messages to and from other particles.  Finally we discuss the further
-complications of a dynamic topology, where a particle's neighbors change from
-one iteration to another.
+position was the correct next position of each particle.  In this section we
+move from the mathematics of our method to its implementation.  First we
+discuss the relatively easy case of a centralized parallel PSO algorithm with a
+master computer and many slaves.  In such an architecture, the master keeps
+track of all necessary information with only trivial message passing needed.
+Then we discuss the more complicated case of a distributed algorithm, where
+each particle is on its own and needs to send and receive messages to and from
+other particles.  Finally we discuss the further complications of a dynamic
+topology, where a particle's neighbors change from one iteration to another.
 
 \subsection{Terminology}
 
