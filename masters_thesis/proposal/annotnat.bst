@@ -1456,9 +1456,7 @@ FUNCTION {begin.bib}
   write$ newline$
   "\providecommand{\bibAnnote}[2]{%"
   write$ newline$
-  "  \begin{quotation}\noindent\textsc{Key:} #1\\"
-  write$ newline$
-  "  \textsc{Annotation:}\ #2\end{quotation}}"
+  "  \begin{quotation}\noindent\textsc{Annotation:}\ #2\end{quotation}}"
   write$ newline$
 }
 EXECUTE {begin.bib}
