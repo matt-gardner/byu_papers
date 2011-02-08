@@ -1,4 +1,4 @@
-set xlabel "Rounds of Evaluations"
+set xlabel "Time Steps"
 set ylabel "Best Function Value"
 set logscale y 10
 set logscale y2 10

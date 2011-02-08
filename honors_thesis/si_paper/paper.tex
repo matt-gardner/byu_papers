@@ -29,10 +29,10 @@
 \providecommand{\ppos}{\ensuremath{\Vec{x}}}
 \providecommand{\fppos}{\ensuremath{\Vec{fx}}}
 \providecommand{\pvel}{\ensuremath{\Vec{v}}}
-\providecommand{\nbest}{\ensuremath{\Vec{x}^\neigh}}
-\providecommand{\fnbest}{\ensuremath{\Vec{fx}^\neigh}}
-\providecommand{\pbest}{\ensuremath{\Vec{x}^\pers}}
-\providecommand{\fpbest}{\ensuremath{\Vec{fx}^\pers}}
+\providecommand{\nbest}{\ensuremath{\Vec{b}^\neigh}}
+\providecommand{\fnbest}{\ensuremath{\Vec{fb}^\neigh}}
+\providecommand{\pbest}{\ensuremath{\Vec{b}^\pers}}
+\providecommand{\fpbest}{\ensuremath{\Vec{fb}^\pers}}
 \providecommand{\constriction}{\ensuremath{\chi}}
 \providecommand{\ncoeff}{\ensuremath{\phi^\neigh}}
 \providecommand{\pcoeff}{\ensuremath{\phi^\pers}}
@@ -139,7 +139,7 @@ optimization \and Speculative Decomposition}
 
 Particle swarm optimization (PSO) has been found to be a highly robust and
 effective algorithm for solving many types of optimization
-problems~\cite{poli-2008-pso-applications}.  For much of the algorithm's
+problems~\citep{poli-2008-pso-applications}.  For much of the algorithm's
 history, PSO was run serially on a single machine.  However, the world's
 computing power is increasingly coming from large clusters of processors.  In
 order to efficiently utilize these resources for computationally intensive
@@ -177,17 +177,18 @@ increases, the performance improves.
   \label{fig:iters-sphere}
 \end{figure}
 
-However, it can be seen from the graph that doubling the swarm size produces
-only incremental benefit; performance improves, but not by very much.  The
-reason for this is that there comes a point of diminishing returns with respect
-to adding particles.  In \fig{evals-sphere} we show the value obtained after
-50,000 function evaluations (not iterations) as a function of swarm size, again
-for the function Sphere.  Increasing the swarm size from 5 to 10 has a
-significant effect on the value obtained.  However, increasing the swarm size
-from 16 to 30 makes the algorithm less efficient; that is, it reduces the
-progress the algorithm makes per evaluation.  Other functions show similar
-trends, though often the optimal swarm size is slightly larger.  For this
-reason, previous work has recommended the use of a swarm size of 50 for
+However, it can be seen from the graph that once the swarm is sufficiently
+large, doubling the swarm size produces only incremental benefit; performance
+improves, but not by very much.  The reason for this is that there comes a
+point of diminishing returns with respect to adding particles.  In
+\fig{evals-sphere} we show the value obtained after 50,000 function evaluations
+(not iterations) as a function of swarm size, again for the function Sphere.
+Increasing the swarm size from 5 to 10 has a significant effect on the value
+obtained.  However, increasing the swarm size from 16 to 30 makes the algorithm
+less efficient; that is, it reduces the progress the algorithm makes per
+evaluation.  Other functions show similar trends, though often the optimal
+swarm size is slightly larger.  For this reason, previous work has recommended
+the use of a swarm size of 50 for
 PSO~\citep{bratton-2007-defining-a-standard-for-pso}.  Thus, in at least some
 cases, adding particles indefinitely will not yield an efficient
 implementation. 
@@ -205,8 +206,10 @@ In this paper we consider PSO parallelization strategies for clusters of
 hundreds or thousands of processors and functions for which a single evaluation
 will take at least tens of seconds, but probably minutes or perhaps hours.  Our
 purpose is to explore the question of what to do with a thousand processors
-when 50 or 100 particles is the most efficient swarm size, and simply
-adding particles results in only incremental improvement.
+when 50 or 100 particles is the most efficient swarm size, and simply adding
+particles results in only incremental improvement.  In our work we assume that
+the researcher has some fixed number of processors that should be fully
+utilized throughout the optimization process.
 
 In order to solve this problem, we apply the concept of speculative
 decomposition~\citep{grama-2003-intro-to-parallel-computing} to particle swarm
@@ -218,27 +221,27 @@ memory cache miss), guess which way the branch will go and start executing,
 ensuring that any changes can be undone.  If the processor guesses right,
 execution is much farther ahead than if it had idly waited on the memory
 reference.  If it guesses wrong, execution restarts where it would have been
-anyway.  
+anyway.  Thus the processor speculates about future paths of execution in an
+attempt to decrease overall processing time.
 
 In this paper we show that the results of standard PSO can be reproduced
 \emph{exactly}, two iterations at a time, using a speculative approach adapted
 from speculative execution. We prove that the standard PSO equation can be
 factored such that a set of speculative positions can be found which will
-\emph{always} include the position computed in the next iteration.  By
-computing the value of the objective function for each of the speculative
-positions at the same time the algorithm evaluates the objective function for
-the current position, it is possible to know the objective function values for
-both the current and the next iteration at the same time.  We demonstrate this
-principle by implementation and show that it produces exactly the same results
-as standard PSO, but two iterations at a time.  The resulting implementation
-runs efficiently on large clusters where the number of processors is much
-larger than a typical or reasonable number of particles, producing better
-results in less ``wall-clock'' time.
+always include the position computed in the next iteration.  By computing the
+value of the objective function for each of the speculative positions at the
+same time the algorithm evaluates the objective function for the current
+position, it is possible to know the objective function values for both the
+current and the next iteration at the same time.  We demonstrate this principle
+by implementation and show that it produces exactly the same results as
+standard PSO, but two iterations at a time.  The resulting implementation runs
+efficiently on large clusters where the number of processors is much larger
+than a typical or reasonable number of particles, producing better results in
+less ``wall-clock'' time.
 
-It is important to note here that this is not a variant of PSO.  We are not
-proposing a new algorithm, and we do not try to beat the state of the art in
-PSO research.  We simply propose a new way to think about the parallelization
-of PSO that we show works better in many cases than a na\"ive parallelization.
+It is important to note here that this is not a variant of PSO.  We simply
+propose a new way to think about the parallelization of PSO that we show
+performs better in many cases than previous parallelizations.
 
 Furthermore, we show that if we relax the requirements of the algorithm, no
 longer demanding that it strictly reproduce the exact behavior of standard PSO,
@@ -258,12 +261,13 @@ several iterations ahead instead of just one, which is made possible by pruning
 the number of speculative evaluations.
 
 The balance of this paper is organized as follows. \sec{pso} describes the
-particle swarm optimization algorithm.  \sec{sepso} describes mathematically
-how speculative evaluation can be done in parallel PSO to perform two
-iterations at once, and \sec{implementation} gives information on how to
-implement this method.  In \sec{relax}, we discuss various methods of improving
-the performance of speculative evaluation in PSO, all of which break the
-requirement of strictly reproducing the behavior of the original algorithm.
+particle swarm optimization algorithm, and \sec{related} gives a brief overview
+of previous parallelization techniques for this algorithm.  \sec{sepso}
+describes mathematically how speculative evaluation can be done in parallel PSO
+to perform two iterations at once, then \sec{implementation} gives information
+on how to implement this method.  In \sec{relax}, we discuss various methods of
+improving the performance of speculative evaluation in PSO, all of which break
+the requirement of strictly reproducing the behavior of the original algorithm.
 \sec{setup} describes the experiments we ran, and \sec{results} presents the
 results of those experiments.  In \sec{conclusion} and \sec{future} we conclude
 and discuss future work.
@@ -284,7 +288,7 @@ component where particles remember the best solution they have found and are
 attracted back to that place, and a social component by which particles are
 attracted to the best solution that any of their neighbors have found.
 
-At each iteration of the algorithm, the position $\ppos_t$ and velocity
+At each iteration of constricted PSO, the position $\ppos_t$ and velocity
 $\pvel_t$ of each particle are updated as follows:
 \begin{align}
 \nonumber
@@ -336,7 +340,7 @@ ideal topology for one function may perform very poorly for another function.
 The No Free Lunch Theorems for Optimization show that this is true in
 general---if an algorithm performs well on average for one class of functions
 then it must do poorly on average for other
-problems~\cite{wolpert-1997-nfl-for-optimization}.
+problems~\citep{wolpert-1997-nfl-for-optimization}.
 
 An attempt to standardize PSO found that although a Complete swarm of 50
 particles converged to the global optimum more quickly for many benchmark
@@ -346,9 +350,112 @@ found no significant improvement for any other swarm size between 20 and 100
 and concluded with a recommendation to use a swarm of 50 particles with a Ring
 topology as a starting point.  The authors acknowledged that choosing the ideal
 topology requires thorough experimentation for the particular
-problem~\cite{bratton-2007-defining-a-standard-for-pso}.  Other authors have
+problem~\citep{bratton-2007-defining-a-standard-for-pso}.  Other authors have
 explained that a large swarm with a sparse topology propogates information
-slowly~\cite{montes-de-oca-2009-frankensteins-pso}.
+slowly~\citep{montes-de-oca-2009-frankensteins-pso}.
+
+\section{Related Work}
+\label{sec:related}
+
+There have been several parallel implementations of PSO presented in the
+literature.  These implementations vary along two axes---what computation is
+performed and how it is done.  How the computation is performed involves both
+architectural decisions, such as a master-slave versus a fully distributed
+architecture, and decisions about synchronicity.  What computation is performed
+involves decisions about how to scale the PSO algorithm for parallel
+implementations, such as the ratio of particles to processors or the topology
+to use.
+
+\subsection{Synchronous vs. Asynchronous PSO}
+
+Synchronous parallel implementations of PSO reproduce the standard serial
+algorithm exactly.  This approach was first described analytically by
+\citet{belal-2004-parallel-models-for-pso} and first implemented by
+\citet{schutte-2004-parallel-global-optimization-with-pso}.  In a typical
+master-slave algorithm, the master assigns tasks to slave processors, and in
+parallel PSO, each task consists primarily of a function evaluation.  Updating
+the particle's position and value may also be included in the
+task~\citep{belal-2004-parallel-models-for-pso}, or this work may be performed
+in serial by the
+master~\citep{schutte-2004-parallel-global-optimization-with-pso}.  Before
+proceeding to the next iteration, particles communicate, and each particle
+updates its neighborhood best.  Whether this communication step happens
+sequentially on the master or in parallel, each particle must receive
+communication from its neighbors before proceeding.  The benefits of the
+synchronous PSO include its simplicity, repeatability, and comparability with
+standard PSO, which may be essential in research applications.
+
+Asynchronous parallel
+PSO~\citep{venter-2005-parallel-pso-asynchronous-evaluations,
+koh-2006-parallel-asynchronous-pso} is a modification to the standard algorithm
+which removes the synchronization point at the end of each iteration.  Instead,
+particles iterate independently and communicate asynchronously.  In a typical
+master-slave implementation of asynchronous parallel PSO, the master updates
+each particle's personal best, neighborhood best, velocity, and position
+immediately after receiving the function value from the slave processor.  Since
+this update occurs while other particles are still being evaluated, it may use
+information from the previous iteration for some
+neighbors.\footnote{Asynchronous parallel PSO has been compared to the
+``asynchronous updates'' variant of serial
+PSO~\citep{koh-2006-parallel-asynchronous-pso}.  However, serial PSO with
+asynchronous updates differs from standard PSO in that particles use newer
+information, but asynchronous parallel PSO differs from standard PSO in that
+particles use older information.} In a partially asynchronous implementation,
+particles might wait for some but not all neighbors to complete before
+proceeding~%
+\citep{scriven-2008-asynchronous-pso-in-unreliable-distributed-environments}.
+In some master-slave implementations, particles never get more than one
+iteration ahead of
+others~\citep{venter-2005-parallel-pso-asynchronous-evaluations,
+koh-2006-parallel-asynchronous-pso}.  However, in a fully distributed
+implementation, particles might never wait for information, and one particle
+could complete many more iterations than another
+particle~\citep{scriven-2008-distributed-pso-using-peer-to-peer}.  The main
+effect of asynchronous evaluation is that processors spend less time
+idle---this trait is particularly valuable when processors are heterogeneous or
+function evaluation times are
+varied~\citep{venter-2005-parallel-pso-asynchronous-evaluations,
+koh-2006-parallel-asynchronous-pso}.  Asynchronous parallel PSO behaves
+differently than the standard algorithm and may even produce different results
+between runs.  Most reports conclude that asynchronous communication produces
+similar numerical results to the standard algorithm, but the question has not
+yet been thoroughly
+addressed~\citep{venter-2005-parallel-pso-asynchronous-evaluations,
+koh-2006-parallel-asynchronous-pso}.
+
+\subsection{Scaling PSO to many processors}
+
+The contribution of this work deals not with the implementation details of
+architecture and synchronicity, but with what should be done with the PSO
+equations when many hundreds or thousands of processors are available.  The
+main issues that have been addressed in this space are how many particles to
+use for a particular number of processors and what communication topology
+should be employed.
+
+The number of particles per processor has typically been decided by how long it
+takes to evaluate the function being optimized.  When the function takes longer
+than a few seconds to evaluate, previous techniques have assigned the number of
+particles in the swarm to be the number of processors available~%
+\citep{jin-2005-pso-antenna-designs,mcnabb-2009-large-particle-swarms},
+advocating using as many processors as possible to get the best performance.
+When the function takes less time to evaluate than the TCP/IP stack used to
+send interprocessor communication, parallel implementations assign several or
+many particles to a single processor~\citep{chu-2006-intelligent-parallel-pso,
+chang-2005-parallel-pso-with-communication-strategies}.  Often the processor
+only sends information about the best particle it evaluated to other
+processors~\citep{mcnabb-2009-large-particle-swarms}.
+
+Another popular method is simply to run PSO independently on each of the
+processors available, taking the best result when all of the runs complete.  It
+should be noted that this is equivalent to the previously stated method of
+assigning many particles to each processor, only with no communication between
+processors instead of little communication.  Both of these methods can be
+described as changes in the communication topology of the original PSO
+algorithm~\citep{mcnabb-2009-large-particle-swarms}.
+
+Thus previous work in parallelizing PSO has consisted entirely of increasing
+the swarm size and adapting the topology to be better suited to parallel
+computation.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -361,23 +468,25 @@ algorithm reach any given level of fitness appreciably faster.  Instead of
 adding particles we employ a speculative approach that allows us to perform
 two iterations at a time.
 
-To do so we must first refactor PSO such that the determination of the value
-of the objective function is separate from the rest of the computation.  For
-simplicity, this discussion will describe the case where PSO is performing
-function minimization using the Ring topology.  In this example, each particle
-has two neighbors, the ``right neighbor'' and ``left neighbor,'' whose
-positions are represented as $\rightn$ and $\leftn$ respectively.  Though we
-will only describe the case of the Ring topology, this method can easily be
-extended to arbitrary topologies.
+\subsection{Refactoring the PSO Equations}
+
+To perform two iterations at a time we must first refactor PSO such that the
+determination of the value of the objective function is separate from the rest
+of the computation.  For simplicity, this discussion will describe the case
+where PSO is performing function minimization using the Ring topology.  In this
+example, each particle has two neighbors, the ``right neighbor'' and ``left
+neighbor,'' whose positions are represented as $\rightn$ and $\leftn$
+respectively.  Though we will only describe the case of the Ring topology, this
+method can easily be extended to arbitrary topologies.
 
 The refactoring hinges on the idea that once the random coefficients
-$\pURand_{t}$ and $\nURand_{t}$ are determined, there are only a few possible
-new positions, or updates, for $\nbest$ and $\pbest$.  For the Ring topology
-there are 7 possible update cases, identified in Table~\ref{tab:evals}.  We
-label each case with an identifier referring to the source of the update: a
-minus sign ($-$) represents no update, $L$ represents an update to $\nbest$
-coming from the left neighbor, $R$ represents an update to $\nbest$ coming from
-the right neighbor, and $S$ represents an update to either $\pbest$ or $\nbest$
+$\pURand_{t}$ and $\nURand_{t}$ are drawn, there are only a few possible new
+positions, or updates, for $\nbest$ and $\pbest$.  For the Ring topology there
+are 7 possible update cases, identified in Table~\ref{tab:evals}.  We label
+each case with an identifier referring to the source of the update: a minus
+sign ($-$) represents no update, $L$ represents an update to $\nbest$ coming
+from the left neighbor, $R$ represents an update to $\nbest$ coming from the
+right neighbor, and $S$ represents an update to either $\pbest$ or $\nbest$
 coming from the particle itself.  As an example, $\casexn$ refers to the case
 that the particle finds a new personal best, but neither it nor its neighbors
 find a position that updated its neighborhood best.  In the equations that
@@ -416,7 +525,9 @@ $\casegen$ corresponds to the case actually taken by PSO,
 $\indic_{t+1}^{\casegen}$ evaluates to 1; otherwise it evaluates to 0.  We can
 then sum over all of the cases, and the indicator function will make all of the
 terms drop to zero except for the case that actually occurs.  For example, the
-indicator function for the specific case $\casexn$ can be written as follows:
+indicator function for the specific case $\casexn$ (which, as is shown in
+Table~\ref{tab:evals}, means that the particle's personal best was updated, but
+its neighborhood best was not) can be written as follows:
 
 \begin{align}
   \nonumber
@@ -443,11 +554,10 @@ iteration $t$:
 \nonumber
 	\specvel_{t+1}^{\casexn} & (\pvel_t, \ppos_{t}, \leftn_{t}, \rightn_{t},
 	\pbest_{t-1}, \nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
-\nonumber
-		&= \constriction \bigl[ \pvel_{t} +
-			\pcoeff\pURand_{t}\otimes(\ppos_{t} - \ppos_{t}) \\
 \label{eq:defvcasexn}
-			& \quad \quad \quad \; + \ncoeff\nURand_{t}\otimes(\nbest_{t-1} -
+		&= \constriction \bigl[ \pvel_{t} +
+			\pcoeff\pURand_{t}\otimes(\ppos_{t} - \ppos_{t})
+			+ \ncoeff\nURand_{t}\otimes(\nbest_{t-1} -
 			\ppos_{t}) \bigr]
 \end{align}
 
@@ -458,9 +568,8 @@ subscripts.
 \begin{align}
 \label{eq:defpcasegen}
 	\specpos_{t+1}^{\casegen} & (\ppos_{t}, \pvel_{t}, \leftn_{t},
-	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
-\nonumber
-	& = \ppos_{t} + \specvel_{t+1}^{\casegen}
+	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t})
+	= \ppos_{t} + \specvel_{t+1}^{\casegen}
 \end{align}
 
 With this notation we can re-write the original PSO velocity
@@ -471,15 +580,13 @@ functions without the parameters for compactness.  The equation becomes:
 \nonumber
 	\pvel_{t+1} &=
 		\constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
-\nonumber
-			& \quad \quad \quad \, + \ncoeff\nURand_{t}\otimes(\nbest_{t} -
+			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t})
+			+ \ncoeff\nURand_{t}\otimes(\nbest_{t} -
 			\ppos_{t}) \bigr] \\
 \nonumber
 	&= \sum_{c \in \caseset} \indic_{t+1}^{c} \ \constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
-\nonumber
-			& \quad \quad \quad \, + \ncoeff\nURand_{t}\otimes(\nbest_{t} -
+			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t})
+			+ \ncoeff\nURand_{t}\otimes(\nbest_{t} -
 			\ppos_{t}) \bigr]  \\
 \label{eq:vel2update}
 	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specvel_{t+1}^{c} 
@@ -487,10 +594,9 @@ functions without the parameters for compactness.  The equation becomes:
 
 Similarly, the position update equation~\eqref{eq:posupdate} becomes:
 \begin{align}
-\nonumber
-	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1} \\
 \label{eq:pos2update}
-	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specpos_{t+1}^{c} 
+	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1}
+	= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specpos_{t+1}^{c} 
 \end{align}
 
 The value of the objective function at $\ppos_{t+1}$ is given by:
@@ -505,9 +611,8 @@ Returning our attention to the computation of $\ppos_{t+1}$ in
 above, we obtain:
 \begin{align}
 \nonumber
-  \ppos_{t+1} &= \sum_{c \in \caseset} \\
-\nonumber
-	& \indic_{t+1}^{c}(\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
+  \ppos_{t+1} = \sum_{c \in \caseset}
+	&\indic_{t+1}^{c}(\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
 	\ofunc(\rightn_{t}) ,\ofunc(\pbest_{t-1}) ,\ofunc(\nbest_{t-1})) \\
 \label{eq:val2updatelong}
 	& \specpos_{t+1}^{c}(\ppos_{t},\pvel_{t},\leftn_{t},\rightn_{t},
@@ -532,6 +637,8 @@ for all $\casegen \in \caseset$, even those for which $\indic_{t+1}^{\casegen}
 have been computed.  We call the set of computations
 $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$ ``speculative
 children'' because only one of them will be needed.
+
+\subsection{Discussion}
 
 To see the value of this refactoring, suppose that $1000$ processors are
 available, and that the evaluation of the objective function takes one hour.
@@ -859,10 +966,15 @@ Because the problem facing speculative evaluation is having too many possible
 evaluations to perform, a natural step to take is to eliminate some of the
 evaluations.  If we could reliably predict which branch were going to be taken,
 we could limit ourselves to one speculative evaluation per particle instead of
-$2n+1$.  As not all of the branches are evaluated in any given iteration, we
-call this technique pruning.  
+$2n+1$.  With a fixed number of processors, this would allow us to greatly
+increase the swarm size relative to that needed in the original speculative
+algorithm (e.g., with 120 processors, a na\"ive parallelization has a swarm of
+size 120, complete speculative evaluation has a swarm of size 15, and pruning
+the evaluations to only one per particle allows a swarm of size 60).  As not
+all of the branches are evaluated in any given iteration, we call this
+technique pruning.  
 
-A naive approach to pruning is to keep track of the last branch taken by each
+A na\"ive approach to pruning is to keep track of the last branch taken by each
 particle and speculate on that branch.  This turns out to be correct far less
 than half of the time on average.
 
@@ -1073,23 +1185,36 @@ na\"ive parallelization.  At each iteration of the algorithms, we use one
 processor to perform one function evaluation for one particle, be it
 speculative or non-speculative.  The speculative version actually performs
 two iterations of PSO at each ``iteration,'' so we instead call each
-``iteration'' a ``round of evaluations.''
+``iteration'' a ``time step.''
 
 Because our interest is in exploring the most efficient use of processors, we
-must hold fixed the number of processors used at each round of evaluations in
-all of our experiments, giving all approaches the same number of function
-evaluations.  Thus while we label our graphs with ``Rounds of Evaluations,''
-this is equivalent to the number of function evaluations used by each approach
-(simply multiply by the number of processors to transform rounds of evaluations
-to function evaluations).  We use ``Rounds of Evaluations'' to reflect
-wall-clock time, as our primary interest is using extra processors in parallel
-to improve performance on functions with long evaluation times.  A smaller
-swarm running serial PSO would likely produce better results than we present in
-the same number of function evaluations, but because the function evaluations
-were not done in parallel it would take more wall-clock time.  When comparing
-the performance of parallelized algorithms on long-running functions, we must
-compare by wall-clock time with the same resources, not solely by the number of
-function evaluations.
+must hold fixed the number of processors used at each time step in all of our
+experiments, giving all approaches the same number of function evaluations.
+Thus while we label our graphs with ``Time Steps,'' this is equivalent to the
+number of function evaluations used by each approach (simply multiply by the
+number of processors to transform time steps to function evaluations).  We use
+``Time Steps'' to reflect wall-clock time, as our primary interest is using
+extra processors in parallel to improve performance on functions with long
+evaluation times.  A smaller swarm running serial PSO would likely produce
+better results than we present in the same number of function evaluations, but
+because the function evaluations were not done in parallel it would take more
+wall-clock time.  When comparing the performance of parallelized algorithms on
+long-running functions, we must compare by wall-clock time with the same
+resources, not solely by the number of function evaluations.
+
+We also do not report absolute time used by each algorithm, as specific time
+values are heavily implementation-dependent.  Using time steps, where at every
+time step each processor evaluates the function once, is an abstraction from
+individual implementations that still conveys all of the information necessary
+to compare algorithms.  In this paper we focus on the effects of algorithm
+choices on parallel PSO performance.  As there are inexpensive functions with
+complex landscapes and expensive functions with simple landscapes, the behavior
+of PSO with respect to the function is the main issue.  For this purpose,
+benchmark functions are a useful and efficient tool for understanding the
+effects of PSO with expensive objective functions even though the benchmark
+functions are themselves inexpensive.  For example, a plot of performance with
+respect to iterations for a smooth unimodel function with five minutes per
+evaluation would be similar to that of Sphere.
 
 Using the same number of processors for each approach requires that our
 speculative parallelizations have a smaller swarm size than the na\"ive
@@ -1203,8 +1328,9 @@ Na\"ive does.  \fig{rastrigin} shows the results graphically.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{rastrigin}
-  \caption{Function Rastrigin with a swarm that uses 240 processors per round
-  of evaluations.  All speculative algorithms use the Random topology.}
+  \caption{Function Rastrigin with a swarm that uses 240 processors per time
+  step.  Recall that at each time step all processors evaluate the function
+  once.  All speculative algorithms use the Random topology.}
   \label{fig:rastrigin}
 \end{figure}
 
@@ -1223,8 +1349,9 @@ Complete performs slightly better.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{sphere}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations.  SEPSO uses the Random topology.}
+  \caption{Function Sphere with a swarm that uses 240 processors per time step.
+  Recall that at each time step all processors evaluate the function once.
+  SEPSO uses the Random topology.}
   \label{fig:basic-sphere}
 \end{figure}
 
@@ -1235,9 +1362,9 @@ Complete, Pick Best handily outperforms it with the same number of processors.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{sphere2}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations, comparing Pick Best with previous results.  All speculative
-  algorithms use the Random topology.}
+  \caption{Function Sphere with a swarm that uses 240 processors per time step,
+  comparing Pick Best with previous results.  All speculative algorithms use
+  the Random topology.}
   \label{fig:sphere-pickbest}
 \end{figure}
 
@@ -1252,9 +1379,9 @@ SEPSO, and we do not clutter the graph with a line for it.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{sphere3}
-  \caption{Function Sphere with a swarm that uses 240 processors per round of
-  evaluations, comparing speculating several iterations ahead with previous
-  results.  All speculative algorithms use the Random topology.}
+  \caption{Function Sphere with a swarm that uses 240 processors per time step,
+  comparing speculating several iterations ahead with previous results.  All
+  speculative algorithms use the Random topology.}
   \label{fig:sphere-manyiters}
 \end{figure}
 
@@ -1270,8 +1397,9 @@ outperformed by Na\"ive with a Complete topology.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{schwefel1}
-  \caption{Function Schwefel with a swarm that uses 240 processors per round of
-  evaluations.  SEPSO uses a Random topology.}
+  \caption{Function Schwefel with a swarm that uses 240 processors per time
+  step.  Recall that at each time step all processors evaluate the function
+  once.  SEPSO uses a Random topology.}
   \label{fig:schwefel1}
 \end{figure}
 
@@ -1288,9 +1416,9 @@ with more processors would have maintained better performance.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{schwefel2}
-  \caption{Function Schwefel with a swarm that uses 240 processors per round of
-  evaluations, comparing all speculative algorithms.  All speculative
-  algorithms use the Random topology.}
+  \caption{Function Schwefel with a swarm that uses 240 processors per time
+  step, comparing all speculative algorithms.  All speculative algorithms use
+  the Random topology.}
   \label{fig:schwefel2}
 \end{figure}
 
@@ -1313,10 +1441,11 @@ stuck a little less than half of the time.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank1}
-  \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations.  Instead of showing average function value, we show the
-  percentage of runs that have found the global optimum by each iteration.  All
-  algorithms use the Ring topology.}
+  \caption{Function Griewank with a swarm that uses 240 processors per time
+  step.  Recall that at each time step all processors evaluate the function
+  once.  Instead of showing average function value, we show the percentage of
+  runs that have found the global optimum by each iteration.  All algorithms
+  use the Ring topology.}
   \label{fig:basic-griewank1}
 \end{figure}
 
@@ -1331,8 +1460,8 @@ twice as fast as the Na\"ive approach without a significant loss of accuracy.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank2}
-  \caption{Function Griewank with a swarm that uses 800 processors per round of
-  evaluations.  All algorithms use the Ring topology.}
+  \caption{Function Griewank with a swarm that uses 800 processors per time
+  step.  All algorithms use the Ring topology.}
   \label{fig:basic-griewank2}
 \end{figure}
 
@@ -1354,9 +1483,9 @@ approach.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank3}
-  \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations, comparing Pick Best with previous results.  All algorithms use
-  the Ring topology.}
+  \caption{Function Griewank with a swarm that uses 240 processors per time
+  step, comparing Pick Best with previous results.  All algorithms use the Ring
+  topology.}
   \label{fig:griewank-pickbest}
 \end{figure}
 
@@ -1371,9 +1500,9 @@ original PSO.  These results are shown in \fig{griewank-pruned}.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank4}
-  \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations, comparing pruning with previous results.  All algorithms use the
-  Ring topology.}
+  \caption{Function Griewank with a swarm that uses 240 processors per time
+  step, comparing pruning with previous results.  All algorithms use the Ring
+  topology.}
   \label{fig:griewank-pruned}
 \end{figure}
 
@@ -1390,9 +1519,9 @@ optimum, the less likely it is to be successful.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank5}
-  \caption{Function Griewank with a swarm that uses 240 processors per round of
-  evaluations, comparing speculating several iterations ahead with previous
-  results.  All algorithms use the Ring topology.}
+  \caption{Function Griewank with a swarm that uses 240 processors per time
+  step, comparing speculating several iterations ahead with previous results.
+  All algorithms use the Ring topology.}
   \label{fig:griewank-manyiters}
 \end{figure}
 
@@ -1408,8 +1537,8 @@ success rate as well, making it the preferred choice.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{griewank6}
-  \caption{Function Griewank with a swarm that uses 800 processors per round of
-  evaluations.  All algorithms use the Ring topology.}
+  \caption{Function Griewank with a swarm that uses 800 processors per time
+  step.  All algorithms use the Ring topology.}
   \label{fig:griewank-800}
 \end{figure}
 
@@ -1429,8 +1558,9 @@ Many Iterations finding the optimum about twice as fast.
 \begin{figure}
   \centering
   \includegraphics[width=.8\columnwidth]{bohachevsky}
-  \caption{Function Bohachevsky with a swarm that uses 800 processors per round
-  of evaluations.  All of the speculative algorithms use the Random topology.}
+  \caption{Function Bohachevsky with a swarm that uses 800 processors per time
+  step.  Recall that at each time step all processors evaluate the function
+  once.  All of the speculative algorithms use the Random topology.}
   \label{fig:bohachevsky}
 \end{figure}
 
@@ -1482,7 +1612,7 @@ perform some amount of speculative evaluation.
 
 Sphere is a function for which only a very small amount of exploration needs to
 be done, and our speculative methods show improvements on Sphere of over 40
-orders of magnitude.  Such functions are perfect for our methods.
+orders of magnitude.  Our methods work very well on these functions.
 
 Rastrigin, on the other hand, is a function for which increasing the swarm size
 up to 4000 particles still shows improvements in the performance of the
@@ -1575,7 +1705,7 @@ evaluation.  A related but quite distinct technique for reducing computation in
 evolutionary algorithms was proposed
 in~\citep{poli-2006-backward-chaining-evolutionary-algorithms}.
 
-\appendix[Alternate form of message passing]
+\section*{Appendix---Alternate form of message passing}
 
 Here we describe a method that requires only one round of communication for
 each pair of iterations, which happens at step 5 of \alg{centralized}.  Many
@@ -1583,16 +1713,16 @@ more messages are needed, but that is sometimes more desirable than
 synchronizing all of the machines three times.
 
 This second method only requires one round of passing information because
-information about iterations $t$ and $t+1$ is passed at the same time.  Each
-processor reconstructs from the messages it receives all of the information
-that it needs about its neighbors.  Messages are passed directly after
-evaluating each particle and its children, so all messages are of the form of
-$\nonbest{\p}_t$ or $\nonbest{\s}_{t+1}$.  The first iteration needs to be
-treated specially, so each particle can produce its initial set of speculative
-children---neighbors need only pass their initial position.  This kind of
-message passing necessitates the careful use of random seeds, so that when each
-processor computes the motion equations for its neighbors it gets the same
-results as its neighboring processors.
+information about both iterations $t$ and $t+1$ is passed at the same time.
+Each processor reconstructs from the messages it receives all of the
+information that it needs about its neighbors.  Messages are passed directly
+after evaluating each particle and its children, so all messages are of the
+form of $\nonbest{\p}_t$ or $\nonbest{\s}_{t+1}$.  The first iteration needs to
+be treated specially, so each particle can produce its initial set of
+speculative children---neighbors need only pass their initial position.  This
+kind of message passing necessitates the careful use of random seeds, so that
+when each processor computes the motion equations for its neighbors it gets the
+same results as its neighboring processors.
 
 With the results of evaluating $\noeval{\p}_t$ and $\noeval{\sset}_{t+1}$,
 along with all of the required messages from neighboring particles, the goal is
@@ -1612,7 +1742,7 @@ received thus far is just as in regular PSO, and is graphically depicted in
   \psfrag{pt-n}[C][C]{$\nonbest{\p}_{t}$}
   \psfrag{nt-n}[C][C]{$\nonbest{\nset}_{t}$}
   \psfrag{pt}[C][C]{$\p_{t}$}
-  \includegraphics[width=.3\columnwidth]{messages1}
+  \includegraphics[width=.15\columnwidth]{messages1}
   \caption{The production of $\p_{t}$ from the original particle
   $\nonbest{\p}_{t}$ and the messages $\nonbest{\nset}_{t}$.}
   \label{fig:messages1}
@@ -1629,7 +1759,7 @@ graphically, in \fig{messages2}.
   \psfrag{pt}[C][C]{$\p_{t}$}
   \psfrag{pt1-n}[C][C]{$\nonbest{\p}_{t+1}$}
   \psfrag{st1-n}[C][C]{$\nonbest{\sset}_{t+1}$}
-  \includegraphics[width=.5\columnwidth]{messages2}
+  \includegraphics[width=.25\columnwidth]{messages2}
   \caption{The production of $\nonbest{\p}_{t+1}$ from the original particle 
   $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$ and
   $\nonbest{\sset}_{t+1}$, and intermediate particles.}
@@ -1654,7 +1784,7 @@ identical to \fig{messages2}, just with different sets of particles.
   \psfrag{nt}[C][C]{$\nset_{t}$}
   \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
   \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
-  \includegraphics[width=.6\columnwidth]{messages3}
+  \includegraphics[width=.3\columnwidth]{messages3}
   \caption{The production of each $\nonbest{\n}_{t+1}$ from the original
   particle $\nonbest{\n}_{t}$, messages $\nonbest{\nnset}_{t}$ and
   $\nonbest{\nsset}_{t+1}$, and intermediate particles.  $\nnset$ is the set of
@@ -1682,7 +1812,7 @@ updated.
   \psfrag{nt1-n}[C][C]{$\nonbest{\nset}_{t+1}$}
   \psfrag{nst1-n}[C][C]{$\nonbest{\nsset}_{t+1}$}
   \psfrag{pt1}[C][C]{$\p_{t+1}$}
-  \includegraphics[width=.8\columnwidth]{messages4}
+  \includegraphics[width=.4\columnwidth]{messages4}
   \caption{The production of $\p_{t+1}$ from the original particle 
   $\nonbest{\p}_{t}$, messages $\nonbest{\nset}_{t}$, $\nonbest{\sset}_{t+1}$,
   $\nonbest{\nnset}_{t}$, and $\nonbest{\nsset}_{t+1}$, and intermediate
@@ -1717,7 +1847,7 @@ messages, only for the neighbor particles instead of the particle itself.
   \psfrag{nt2-e}[C][C]{$\noeval{\nset}_{t+2}$}
   \psfrag{pt2-e}[C][C]{$\noeval{\p}_{t+2}$}
   \psfrag{st3-e}[C][C]{$\noeval{\sset}_{t+3}$}
-  \includegraphics[width=.5\columnwidth]{messages5}
+  \includegraphics[width=.25\columnwidth]{messages5}
   \caption{The production of $\noeval{\p}_{t+2}$ and $\noeval{\sset}_{t+3}$
   from $\p_{t+1}$ and $\n_{t+1}$, each of which are produced as in
   \fig{messages4}.}

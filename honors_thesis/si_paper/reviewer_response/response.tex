@@ -12,7 +12,10 @@ review of existing parallelization methods for PSO, to produce a kind of
 taxonomy. Then, also include comparisons with these approaches. You currently
 compare only with a naive approach and adaptations of your approach.
 
-Response: Copy and paste from Andrew's paper
+Response: We added a Related Work section (now section 3), describing previous
+approaches at parallelizing PSO.  We also added (NOT DONE) experiments
+comparing against another common parallelization approach, that of using
+subswarms.
 
 NOT DONE
 
@@ -33,7 +36,10 @@ parallelization has benefit. For the functions that you use, there is not real
 not for parallelization. Linked to this, when will parallelization be
 beneficial?
 
-Response: Get Andrew's paragraph that deals with this
+Response: We added a paragraph to what is now Section 7 addressing the issue of
+benchmark functions (``We also do not report\ldots'').  We also ran a
+comparison on a longer-running function and included it in our results (NOT
+DONE).
 
 NOT DONE
 
@@ -44,10 +50,10 @@ theoretical discussion, and only then get to section 3.1.
 
 Response: Good point.  We realized that we tried to cram too much into a single
 section, so we split the two main parts of it into two separate sections.
-There is now a section devoted entirely to the mathematics of the method and a
-separate section describing its implementation.
-
-NOT DONE
+There is now a section devoted entirely to the mathematics of the method (now
+Section 4) and a separate section describing its implementation (Section 5).
+We also put subsections in the new Section 4 to guide the reader a little
+better through the section.
 
 \section*{Reviewer 1 Comments}
 
@@ -72,7 +78,9 @@ appreciate the significance of some result or conclusion if he/she hasn't
 understood what the authors are talking about. I recommend the authors to
 restructure the whole paper but in particular Sections 3 and 4.
 
-Response: This was not specific enough to use too much...
+Response: We substantially reorganized Section 3, as noted above, and we moved
+the discussion of branch statistics (the old Section 4.3) to the beginning of
+the results section (NOT DONE).
 
 NOT DONE
 
@@ -84,22 +92,24 @@ other letters to denote a particle's personal best position and a particle's
 neighborhood's best position. I know that the authors are using superscripts to
 distinguish between these concepts but they don't really help.
 
-Response: How do we fix this?
-
-NOT DONE
+Response: We had a long discussion about notation before writing our paper, and
+we thought that because the personal best and neighborhood bests are positions,
+using an x to denote it would be more intuitive.  However, we see your point
+that it can be confusing for other reasons.  We changed the x to a b when
+referring to best positions, while still using the N and P superscripts to
+differentiate between which best is being referred to.
 
 \subsection*{1.4}
 
-Reviewer comments: Using "rounds of evaluations" is confusing, and results
+Reviewer comments: Using ``rounds of evaluations'' is confusing, and results
 should be reported in terms of wall clock time.
 
 Response: Rounds of evaluations correspond exactly to wall clock time, as we
-mentioned.  However, we realize that the term is not a commonly used one, so we
-changed "rounds of evaluations" to "time steps" in hopes of better conveying
-our meaning. (Also incorporate Andrew's paragraph on why we're using time steps
-instead of evaluations)
-
-NOT DONE
+describe in the second paragraph of what was Section 5 (now Section 7).
+However, we realize that the term is not a commonly used one, so we changed
+``rounds of evaluations'' to ``time steps'' in hopes of better conveying our
+meaning.  We also added some text in the description mentioned above that
+hopefully further clarifies this point.
 
 \subsection*{1.5}
 
@@ -113,19 +123,22 @@ a side product, the authors can actually compare the results of the pruned
 versions (which in my eyes, are new PSO variants) with those of other
 state-of-the-art algorithms.
 
-Response: We need to look up what he's talking about.
+Response: Running a few more sets of experiments at higher dimensionalities
+should address this adequately, though we can't really do all of their
+protocol.
 
 NOT DONE
 
 \subsection*{1.6}
 
 Reviewer comments: In the abstract, it is not clear the meaning of
-"speculative". A reader without knowledge about parallel computing may not
+``speculative''. A reader without knowledge about parallel computing may not
 understand what the authors mean.
 
-Response: Need to address this.
-
-NOT DONE
+Response: We had a paragraph explaining this in the introduction, though the
+analogy to processors lacked an explicit connection to the word
+``speculative.''  We added a sentence at the end of that paragraph to address
+this issue.
 
 \subsection*{1.7}
 
@@ -138,30 +151,39 @@ Response: We added the citation after the first sentence of the paper.
 
 Reviewer comments: What serves as the motivation for the authors's work is
 insufficiently discussed.  The authors say that adding more particles leads to
-"diminishing returns". This may be true when dealing with constant size
+``diminishing returns''. This may be true when dealing with constant size
 populations.  However, a recent trend is to vary the population size over time.
 In fact, it has been shown that adding particles \emph{over time} may actually
-solve the problem the authors refer to. Some references are "Incremental Social
-Learning in Particle Swarms" by Montes de Oca and others published in IEEE SMCB
-and "Efficient Population Utilization Strategy for Particle Swarm Optimizer" by
-Hsieh and others in the same journal.
+solve the problem the authors refer to. Some references are ``Incremental
+Social Learning in Particle Swarms'' by Montes de Oca and others published in
+IEEE SMCB and ``Efficient Population Utilization Strategy for Particle Swarm
+Optimizer'' by Hsieh and others in the same journal.
 
 Response: See how papers are relevant (Andrew).  But also, assuming a fixed
 computational budget, if at any point you have a smaller swarm than your budget
 allows, you should do speculative evaluation.  That's our point.
+
+Put those papers in related work, on another way to decide what computation to
+perform---some people increase swarm size over time.  Relate that to our point.
 
 NOT DONE
 
 \subsection*{1.9}
 
 Reviewer comments: In the first paragraph of Section 3, the authors say that
-adding particles may not help past a certain swarm size. This is true is the
+adding particles may not help past a certain swarm size. This is true if the
 computation time allocated to the optimization process remains fixed. However,
 in some problems, it is the solution quality what matters. In that case, adding
 particles \emph{and} computational budget may indeed be the best thing to do.
 
-Response: Most people have a fixed computational budget, function has a set
-time.  That is the case we are interested in.
+Response: We added some text to to the introduction (paragraph beginning with
+``In this paper we consider\ldots'') to better explain our intent; that is,
+given a fixed computational budget, how can processors be used most
+efficiently?  However, it is also the case that if there is ever a point in
+your computation where you have a bigger computational budget than the
+particles themselves demand, speculative evaluation is the best way to utilize
+the remaining computational budget.  We added text to the conclusion to explain
+this point (or maybe to related work?).
 
 NOT DONE
 
@@ -170,9 +192,12 @@ NOT DONE
 Reviewer comments: In Eq. 3. Why must the current position be worse than the
 neighbor's position?
 
-Response: Restate what the case means
-
-NOT DONE
+Response: Your question probably arose from the confusing notation.  We have
+fixed the notation and added a parenthetical statement directly preceeding the
+equation to better explain what the equation is.  The equation is a specific
+example of a possible update case, and in the case described the neighborhood
+best is not updated; thus by definition the function values of current
+positions must not be lower than the value of the previous neighborhood best.
 
 \subsection*{1.11}
 
@@ -183,8 +208,6 @@ Response: We fixed section 3 by splitting it into two sections and reorganizing
 some parts, making the examples that were there more clear.  Hopefully the
 section is satisfactory now.
 
-NOT DONE
-
 \subsection*{1.12}
 
 Reviewer comments: Isn't pruning against the idea of better using the available
@@ -192,9 +215,11 @@ computing resources? If one reduces the number of evaluated speculative
 children, then fewer CPUs are going to be used.
 
 Response: Pruning allows for the use of a larger swarm with the same number of
-processors.  We tried to make this point more clear in the text.
-
-NOT DONE
+processors.  We realized that this was never explicitly stated in the text, so
+we added a few sentences to the description of pruning (now section 6.2) to
+make it clear.  The text added to the introduction explaining our purpose of
+fully utilizing resources also addresses this issue, though somewhat
+indirectly.
 
 \subsection*{1.13}
 
@@ -204,7 +229,8 @@ are doing. I know that the PSO community confuses the two. I think this is a
 nice opportunity to clarify the difference between search stagnation and the
 state of the swarm.
 
-Response: todo
+Response: In fact the best result is improved, frequently, it is just that the
+scale of the improvements becomes increasingly smaller.
 
 NOT DONE
 
@@ -222,18 +248,20 @@ NOT DONE
 Reviewer comments: Page 27, line 40. Algorithms are suited for problems not the
 other way around.
 
-Response: ...
-
-NOT DONE
+Response: Duly noted.  We fixed the sentence (it now says ``Our methods work
+very well on these functions'').
 
 \subsection*{1.16}
 
-Reviewer comments: Page 31. Line 46. Molia -> Molina. Is it a technical report?
-Which number?  Isn't it published with the special issue?
+Reviewer comments: Page 31. Line 46. Molia $\rightarrow$ Molina. Is it a
+technical report?  Which number?  Isn't it published with the special issue?
 
-Response: ...
-
-NOT DONE
+Response:  We fixed the typo, and we looked for quite some time trying to find
+a better way to cite that paper.  The special issue hasn't been officially
+published yet, from what I can tell, and the editorial that is online (under
+``Online First'' at springerlink.com) only has a link to the test suite
+document.  I suppose that we could cite the editorial instead of the test suite
+document, if you think that would be preferable.
 
 \section*{Reviewer 2 Comments}
 
@@ -259,9 +287,9 @@ NOT DONE
 \subsection*{2.2}
 
 Reviewer comments: In the first sections of the paper it is argued that the
-proposed "...method can easily be extended to arbitrary topologies". However,
+proposed ``...method can easily be extended to arbitrary topologies''. However,
 in later sections it is apparent that this may be possible if the underlying
-neighborhood topology is not "dense" enough to cause heavy communication
+neighborhood topology is not ``dense'' enough to cause heavy communication
 traffic to the processors.  Can you be more precise to this and quantify it?
 For example, given a swarm size and a common network communication is there any
 identifiable limit to the neighborhood topology such that the algorithm retains
@@ -281,9 +309,25 @@ is in contrast to the argued behavior of PSO for the Sphere function (Section
 some evidence on this because, due to the swarm's diversity loss, it seems
 somehow counterintuitive.
 
-Response: ...
+Response: The citation given in the paper (McNabb et al. CEC 09) gives an
+interesting discussion on these points.  The functions explored are limited,
+but the paper shows that both Sphere and Griewank exhibit this behavior, while
+Rastrigin does not (the relevant figures in that paper are 2, 4 and 6).  As
+those results are previously published and cited in our paper, we felt it
+unnecessary to reduplicate the figures, though we make mention of the
+conclusions.  However, our own figures also answer your question.  The fact
+that our methods outperform the na\"ive parallelization is in itself evidence
+for this claim.  Recall that when our figures say SEPSO, that is equivalent to
+running PSO with a swarm size one eighth the size, doing twice as many
+iterations.  Figures 9 and 10 illustrate the point that for some swarm sizes
+you are correct and it is better to have a larger swarm size.  However, once
+enough processors are available to have a large enough swarm even with SEPSO,
+it is better by far to do speculative evaluation.
 
-NOT DONE
+Increasing the swarm size increases the diversity, as you say (the McNabb et
+al. paper makes the same point).  But at some point there is enough diversity,
+and when that point is reached extra processors should be used for speculative
+evaluation.  We spend almost the entire conclusion trying to make this point.
 
 \section*{Reviewer 3 Comments}
 
@@ -292,9 +336,10 @@ NOT DONE
 Reviewer comments: There are too many redundancy sentences declaring this paper
 is not proposing a new algorithm in the introduction.
 
-Response: ...
-
-NOT DONE
+Response: We found only one part of the introduction that mentioned the paper
+not proposing a new algorithm.  That part had two sentences, and we deleted the
+second one to soften the point a little.  It was an over-reaction to comments
+by previous reviewers.
 
 \subsection*{3.2}
 
@@ -302,9 +347,11 @@ Reviewer comments: The velocity updating formular is different from the
 original PSO algorithm.  The weighting factor, X, should only affects the old
 velocity, not all the items.
 
-Response: reference constricted PSO in formulas
-
-NOT DONE
+Response: You are referring to inertia weight PSO (the original equations in
+Kennedy 1995 did not have any weighting factor).  Constricted PSO is also a
+widely used improvement on the original PSO, and we cite two papers as
+justification for our use of those formulas.  However, our text wasn't clear
+that we were using the constricted PSO equations, so we clarified the text.
 
 \subsection*{3.3}
 
@@ -312,27 +359,18 @@ Reviewer comments: Some reference are not completed. For example, the
 journal/conference name of the 4th reference is missing. Please check it
 carefully.
 
-Response: ...
-
-NOT DONE
+Response: Thanks for catching that.  We fixed it and went over our other
+references carefully.
 
 \subsection*{3.4}
 
 Reviewer comments: Please increasing the reference to extend the integrity of
 the background.
 
-Response: ...
-
-  a)Pei-Wei Tsai, Jeng-Shyang Pan, Shyi-Ming Chen, Bin-Yih Liao, and Szu-Ping
-Hao, 2008, "Parallel Cat Swarm Optimization," Proceedings of the Seventh
-International Conference on Machine Learning and Cybernetics, Kunming, China,
-Jul. 12-15, 2008, pp. 3328-3333.
-
-  b)Jui-Fang Chang, Shu-Chuan Chu, John F. Roddick and Jeng-Shyang Pan, 2005,
-"A Parallel Particle Swarm Optimization Algorithm with Communication
-Strategies", Journal of Information Science and Engineering, Vol. 21, No. 4,
-pp. 809-818.
-
-NOT DONE
+Response: The Chu et al. paper that we already cite seems to be an extension of
+the Chang et al. paper you mentioned.  However, we included the Chang et al.
+paper along with the Chu et al. paper in our review of related work.  We also
+included several more related papers in our review of current parallelization
+strategies for PSO.
 
 \end{document}

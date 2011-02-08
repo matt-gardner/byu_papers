@@ -1,4 +1,4 @@
-set xlabel "Rounds of Evaluations"
+set xlabel "Time Steps"
 set ylabel "Percent of Swarms With a Best Near Zero"
 set key bottom right
 set clip two

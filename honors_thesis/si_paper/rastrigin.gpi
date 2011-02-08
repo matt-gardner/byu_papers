@@ -1,4 +1,4 @@
-set xlabel "Rounds of Evaluations"
+set xlabel "Time Steps"
 set ylabel "Best Function Value"
 set clip two
 set y2tics
