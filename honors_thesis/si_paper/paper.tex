@@ -453,9 +453,24 @@ processors instead of little communication.  Both of these methods can be
 described as changes in the communication topology of the original PSO
 algorithm~\citep{mcnabb-2009-large-particle-swarms}.
 
-Thus previous work in parallelizing PSO has consisted entirely of increasing
-the swarm size and adapting the topology to be better suited to parallel
-computation.
+Thus previous work in parallelizing PSO, apart from implementation details, has
+consisted entirely of increasing the swarm size and adapting the topology to be
+better suited to parallel computation.
+
+With regard to increasing the swarm size in PSO, some recent work has suggested
+that increasing the swarm size through the course of the optimization process
+provides better results than having a set swarm
+size~\citep{hsieh-2009-efficient-population-utilization-for-pso,
+montes-de-oca-2010-incremental-social-learning-pso}.  However, these results
+are based on total number of function evaluations, which, when running in
+parallel on expensive functions, is less important than total number of
+iterations.  Other work focusing on parallelization has shown that when extra
+processors are available they should be used, as performance increases with
+swarm size when measuring in terms of number of
+iterations~\cite{mcnabb-2009-large-particle-swarms,
+jin-2005-pso-antenna-designs}.  If the swarm size were varied throughout the
+course of the optimization process, some processors would be sitting idle at
+most iterations.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -1213,7 +1228,7 @@ of PSO with respect to the function is the main issue.  For this purpose,
 benchmark functions are a useful and efficient tool for understanding the
 effects of PSO with expensive objective functions even though the benchmark
 functions are themselves inexpensive.  For example, a plot of performance with
-respect to iterations for a smooth unimodel function with five minutes per
+respect to iterations for a smooth unimodal function with five minutes per
 evaluation would be similar to that of Sphere.
 
 Using the same number of processors for each approach requires that our
@@ -1651,6 +1666,16 @@ will not always be immediately applicable to every variant, we are confident
 that some kind of speculative approach will be beneficial to the
 parallelization of all forms of PSO, especially as the number of processors
 used gets into the thousands.
+
+We mentioned related work showing that increasing the swarm size throughout the
+course of the algorithm could provide improved performance over a fixed swarm
+size in serial PSO~\citep{montes-de-oca-2010-incremental-social-learning-pso}.
+If this method were extended to parallel PSO, most processors would be idle in
+the first few iterations, while more would be utilized at the end.  During
+iterations where there are many un-utilized processors, a natural use of them
+would be speculative evaluation, performing two or more of those iterations at
+a time.  Thus our methods have the potential to further improve the parallel
+performance of recently proposed variations of PSO.
 
 We have speculated that our Pick Best method simply draws a number of samples
 from the next iteration of the sampling distribution of PSO and keeps one of
