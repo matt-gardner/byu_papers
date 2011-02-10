@@ -159,14 +159,10 @@ Social Learning in Particle Swarms'' by Montes de Oca and others published in
 IEEE SMCB and ``Efficient Population Utilization Strategy for Particle Swarm
 Optimizer'' by Hsieh and others in the same journal.
 
-Response: See how papers are relevant (Andrew).  But also, assuming a fixed
-computational budget, if at any point you have a smaller swarm than your budget
-allows, you should do speculative evaluation.  That's our point.
-
-Put those papers in related work, on another way to decide what computation to
-perform---some people increase swarm size over time.  Relate that to our point.
-
-NOT DONE
+Response: We added a paragraph in our related work section discussing these
+methods (the last paragraph of the section).  We also added a paragraph to
+future work discussing how these methods are particularly amenable to
+speculative evaluation when parallelized (the second paragraph of the section).
 
 \subsection*{1.9}
 
@@ -176,16 +172,12 @@ computation time allocated to the optimization process remains fixed. However,
 in some problems, it is the solution quality what matters. In that case, adding
 particles \emph{and} computational budget may indeed be the best thing to do.
 
-Response: We added some text to to the introduction (paragraph beginning with
-``In this paper we consider\ldots'') to better explain our intent; that is,
-given a fixed computational budget, how can processors be used most
-efficiently?  However, it is also the case that if there is ever a point in
-your computation where you have a bigger computational budget than the
-particles themselves demand, speculative evaluation is the best way to utilize
-the remaining computational budget.  We added text to the conclusion to explain
-this point (or maybe to related work?).
-
-NOT DONE
+Response: This is very much related to the previous item, and so the response
+to that item is relevant here.  We also added some text to to the introduction
+(paragraph beginning with ``In this paper we consider\ldots'') to better
+explain our intent; that is, given a fixed computational budget, how can
+processors be used most efficiently?  The text we added in this and the
+previous item addresses this question.
 
 \subsection*{1.10}
 
