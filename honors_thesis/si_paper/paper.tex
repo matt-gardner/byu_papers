@@ -291,12 +291,11 @@ attracted to the best solution that any of their neighbors have found.
 At each iteration of constricted PSO, the position $\ppos_t$ and velocity
 $\pvel_t$ of each particle are updated as follows:
 \begin{align}
-\nonumber
+\label{eq:velupdate}
 	\pvel_{t+1} &=
 		\constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) \\
-\label{eq:velupdate}
-			& \quad \quad \quad \, + \ncoeff\nURand_{t}\otimes(\nbest_{t} - \ppos_{t})
+			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t}) +
+			\ncoeff\nURand_{t}\otimes(\nbest_{t} - \ppos_{t})
 		\bigr] \\
 \label{eq:posupdate}
 	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1}
@@ -467,7 +466,7 @@ parallel on expensive functions, is less important than total number of
 iterations.  Other work focusing on parallelization has shown that when extra
 processors are available they should be used, as performance increases with
 swarm size when measuring in terms of number of
-iterations~\cite{mcnabb-2009-large-particle-swarms,
+iterations~\citep{mcnabb-2009-large-particle-swarms,
 jin-2005-pso-antenna-designs}.  If the swarm size were varied throughout the
 course of the optimization process, some processors would be sitting idle at
 most iterations.
