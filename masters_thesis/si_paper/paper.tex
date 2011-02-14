@@ -357,15 +357,20 @@ slowly~\citep{montes-de-oca-2009-frankensteins-pso}.
 \label{sec:related}
 
 There have been several parallel implementations of PSO presented in the
-literature.  These implementations vary along two axes---what computation is
-performed and how it is done.  How the computation is performed involves both
-architectural decisions, such as a master-slave versus a fully distributed
-architecture, and decisions about synchronicity.  What computation is performed
-involves decisions about how to scale the PSO algorithm for parallel
-implementations, such as the ratio of particles to processors or the topology
-to use.
+literature.  The improvements described in the literature come in two major
+areas: innovations in implementation details and innovations in the use of
+topology and swarm size to scale PSO to many processors.
 
-\subsection{Synchronous vs. Asynchronous PSO}
+\subsection{Innovative Implementations}
+
+There are many ways to parallelize the basic PSO algorithm.  The most
+fundamental decision to make in parallel PSO is which parallel architecture to
+use.  Several architectures have been proposed, including Master-Slave, fully
+distributed (sometimes called ``diffusion''), and reformulating PSO into
+Google's MapReduce framework~\citep{belal-2004-parallel-models-for-pso,
+mcnabb-2007-parallel-pso-using-mapreduce}.  A somewhat orthogonal
+implementation decision when parallelizing PSO is whether to have synchronous
+communication or asynchronous communication.
 
 Synchronous parallel implementations of PSO reproduce the standard serial
 algorithm exactly.  This approach was first described analytically by
@@ -424,12 +429,12 @@ koh-2006-parallel-asynchronous-pso}.
 
 \subsection{Scaling PSO to many processors}
 
-The contribution of this work deals not with the implementation details of
-architecture and synchronicity, but with what should be done with the PSO
-equations when many hundreds or thousands of processors are available.  The
-main issues that have been addressed in this space are how many particles to
-use for a particular number of processors and what communication topology
-should be employed.
+The other area of research in parallelizing PSO deals not with the
+implementation details of architecture and synchronicity, but with what should
+be done with the PSO equations when many hundreds or thousands of processors
+are available.  The main issues that have been addressed in this space are how
+many particles to use for a particular number of processors and what
+communication topology should be employed.
 
 The number of particles per processor has typically been decided by how long it
 takes to evaluate the function being optimized.  When the function takes longer
@@ -442,7 +447,7 @@ send interprocessor communication, parallel implementations assign several or
 many particles to a single processor~\citep{chu-2006-intelligent-parallel-pso,
 chang-2005-parallel-pso-with-communication-strategies}.  Often the processor
 only sends information about the best particle it evaluated to other
-processors~\citep{mcnabb-2009-large-particle-swarms}.
+processors~\citep{belal-2004-parallel-models-for-pso}.
 
 Another popular method is simply to run PSO independently on each of the
 processors available, taking the best result when all of the runs complete.  It
@@ -457,19 +462,28 @@ consisted entirely of increasing the swarm size and adapting the topology to be
 better suited to parallel computation.
 
 With regard to increasing the swarm size in PSO, some recent work has suggested
-that increasing the swarm size through the course of the optimization process
-provides better results than having a set swarm
+that increasing the swarm size throughout the course of the optimization
+process provides better results than having a set swarm
 size~\citep{hsieh-2009-efficient-population-utilization-for-pso,
 montes-de-oca-2010-incremental-social-learning-pso}.  However, these results
-are based on total number of function evaluations, which, when running in
-parallel on expensive functions, is less important than total number of
-iterations.  Other work focusing on parallelization has shown that when extra
-processors are available they should be used, as performance increases with
-swarm size when measuring in terms of number of
-iterations~\citep{mcnabb-2009-large-particle-swarms,
+focused on serial computation and are based on total number of function
+evaluations, which, when running in parallel on expensive functions, is less
+important than total number of iterations.  Other work focusing on
+parallelization has shown that when extra processors are available they should
+be used, as performance increases with swarm size when measuring in terms of
+number of iterations~\citep{mcnabb-2009-large-particle-swarms,
 jin-2005-pso-antenna-designs}.  If the swarm size were varied throughout the
 course of the optimization process, some processors would be sitting idle at
 most iterations.
+
+The contribution of our work is in this area of what should be done with the
+PSO equations to better utilize a thousand processors when they are available.
+In our work we use a synchronous, MapReduce implementation of parallel PSO.
+While we use a specific implementation, we describe how speculative evaluation
+can be performed in any of the synchronous architectures mentioned in the
+previous section.  The adaptation of our methods to asynchronous PSO
+parallelization methods should be straightforward, though it is left to future
+work.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -482,7 +496,42 @@ algorithm reach any given level of fitness appreciably faster.  Instead of
 adding particles we employ a speculative approach that allows us to perform
 two iterations at a time.
 
+Our speculative methods require refactoring the PSO equations such that all
+possible positions for each particle at iteration $t+1$ can be evaluated in
+parallel along with the position of each particle at iteration $t$.  With some
+careful bookkeeping, we can then piece together the results of iteration $t+1$
+for each particle, thus using extra processors to evaluate two iterations of
+the algorithm in the time it takes to evaluate the function once.  As we show
+in Sections~\ref{sec:proof} and~\ref{sec:topology}, a wise choice of topology
+limits the necessary speculative evaluations to seven per particle.
+
+To see the value of this refactoring, suppose that $1000$ processors are
+available, and that the evaluation of the objective function takes one hour.
+If we only want a swarm of $100$ particles, $900$ of the processors would be
+sitting idle for an hour at every iteration, and it would take two hours to run
+two iterations.  If instead we perform speculative evaluation, sending each of
+the $7$ possible speculative positions of a particle to be computed at the same
+time as its current position, we would use $800$ of the $1000$ processors and
+perform two iterations in one hour.
+
+In order to do two iterations at once, we must use 8 times as many processors
+as there are particles in the swarm.  If these processors were not performing
+speculative evaluation, they might instead be used for function evaluations
+needed to support a larger swarm.  This raises the question of whether a swarm
+of 100 particles doing twice as many iterations outperforms a swarm of 800
+particles.  We show in \sec{results} that in many, though not all, instances, a
+smaller swarm performing more iterations does in fact outperform a larger
+swarm.
+
+\sec{proof} shows in detail how the PSO equations can be refactored to allow
+for speculative evaluation, proving that our methods are correct and that they
+exactly reproduce the behavior of the PSO algorithm.  The section also
+introduces some notation used later in the paper.  \sec{topology} gives a brief
+discussion of how the topology used affects the amount of speculative
+computation needed.
+
 \subsection{Refactoring the PSO Equations}
+\label{sec:proof}
 
 To perform two iterations at a time we must first refactor PSO such that the
 determination of the value of the objective function is separate from the rest
@@ -652,25 +701,8 @@ have been computed.  We call the set of computations
 $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$ ``speculative
 children'' because only one of them will be needed.
 
-\subsection{Discussion}
-
-To see the value of this refactoring, suppose that $1000$ processors are
-available, and that the evaluation of the objective function takes one hour.
-If we only want a swarm of $100$ particles, $900$ of the processors would be
-sitting idle for an hour at every iteration, and it would take two hours to run
-two iterations.  If instead we perform speculative evaluation, sending each of
-the $7$ evaluations in $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$
-to be computed at the same time as $\ofunc(\ppos_{t})$, we would use $800$ of
-the $1000$ processors and perform two iterations in one hour.
-
-In order to do two iterations at once, we must use 8 times as many processors
-as there are particles in the swarm.  If these processors were not performing
-speculative evaluation, they might instead be used for function evaluations
-needed to support a larger swarm.  This raises the question of whether a swarm
-of 100 particles doing twice as many iterations outperforms a swarm of 800
-particles.  We show in \sec{results} that in many, though not all, instances, a
-smaller swarm performing more iterations does in fact outperform a larger
-swarm.
+\subsection{Topology in Speculative Evaluation}
+\label{sec:topology}
 
 The number of speculative evaluations needed per particle depends on the number
 of neighbors each particle has.  The number of update cases in a topology where
