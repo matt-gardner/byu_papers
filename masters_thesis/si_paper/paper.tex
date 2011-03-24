@@ -1110,16 +1110,6 @@ $\nbest$ coming from any neighbor.
   \end{tabular}
 \end{table}
 
-Row 1 in Table~\ref{tab:branches}, \casepn, corresponds to the phenomenon
-commonly called stagnation in the literature, but with only a single particle.
-As an interesting aside, we found that complete stagnation (where the entire
-swarm is stagnant) practically never occurs in PSO, though frequently large
-percentages of the swarm are stagnant.  Iterations where the entire swarm is
-stagnant average less than 2 in 1000 iterations, unless the swarm converges
-beyond machine precision.  When graphs of the best function value flat-line,
-what really has happened is a contraction of the particles' velocity, not
-stagnation in the technical sense.
-
 We seek to find the probability of taking any given branch, given whatever
 information is needed: $\prob(\caseset_t|\cdot)$.  In finding these
 probabilities, we do not attempt to derive any distribution from the PSO
@@ -1138,7 +1128,7 @@ showed that other swarm sizes had similar statistics.  We ran 750 iterations on
 all combinations of functions and topologies except for the functions Griewank
 and Rastrigin with the Complete topology.  We found that those runs frequently
 converged past machine precision after 500 iterations, and that led to
-erroneously high values for the probability of stagnation.  Instead we ran for
+erroneously high values for the probability of \casepn.  Instead we ran for
 only 450 iterations on those two combinations.  All of our results were
 averaged over 20 runs of the algorithm; thus the probabilities presented are
 the averages of 3.6 million trials for the branch taken (2.16 million for the
@@ -1295,18 +1285,14 @@ interested in, and they allow us to explore the behavior of optimization
 algorithms on several different classes of functions in an easy and
 standardized way.
 
-If experimentation with benchmark functions provides sufficient experimental
-evidence for algorithmic improvements in serial PSO, it is also sufficient
-evidence for algorithmic improvements in parallel PSO.  While the discussion of
-exact running times of function evaluations and communication overhead is
-certainly appropriate, even essential, to a discussion of specific parallel
-implementations, the concern of this paper is more fundamental than
-implementation decisions.  No one expects to see actual running times in place
-of function evaluations in a paper describing an innovation in the motion
-equations of PSO.  Similarly, actual running times should not be required of
-those describing algorithmic improvements in parallel PSO.  Just as in a serial
-PSO paper, actual running times cloud the more important issues of
-implementation-independent properties of the innovations described.
+While the discussion of exact running times of function evaluations and
+communication overhead is appropriate, even essential, to a discussion of
+specific parallel implementations, the concern of this paper is more
+fundamental than implementation decisions.  One would not expect to see actual
+running times in place of function evaluations in a paper describing an
+innovation in the motion equations of PSO.  Similarly, actual running times in
+a paper on algorithmic decisions in parallel PSO cloud the more important
+issues of implementation-independent properties of the innovations described.
 
 That being said, given the time required for the evaluation of the objective
 function and the communication overhead per iteration for a specific

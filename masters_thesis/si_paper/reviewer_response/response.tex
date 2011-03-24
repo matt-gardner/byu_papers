@@ -13,21 +13,26 @@ taxonomy. Then, also include comparisons with these approaches. You currently
 compare only with a naive approach and adaptations of your approach.
 
 Response: We added a Related Work section (now section 3), describing previous
-approaches at parallelizing PSO.  We also added (NOT DONE) experiments
-comparing against another common parallelization approach, that of using
-subswarms.
-
-NOT DONE
+approaches at parallelizing PSO.  As we note in the paper, most of the related
+work is orthogonal to innovations we describe, so it is difficult to determine
+what other methods to compare against.  The majority of previous papers on the
+parallelization of PSO deal with functions with very short evaluation times, so
+they propose topologies that limit communication between processors on
+different machines.  Those methods work very well for those functions, but when
+you are dealing with functions whose evaluation takes over a second, the
+benefits of the limited communication become negligible.  We did, however,
+experiment with one of the topologies proposed for fast running functions.  We
+found that in almost all cases simply using a Complete topology gave better
+performance.  We make note of all of this in the paper, mostly in section 3.
 
 \subsection*{AE.2}
 
 Reviewer comments: Please indicate if differences in performance are
 statistically significant.
 
-Response: Because all of the these finished before all of these, the t-test
-gave \ldots
-
-NOT DONE
+Response: We restructured most of our results section, and now include
+statistical significance in the form of bolded entries in a table.  This is
+noted in the paper.
 
 \subsection*{AE.3}
 
@@ -36,12 +41,9 @@ parallelization has benefit. For the functions that you use, there is not real
 not for parallelization. Linked to this, when will parallelization be
 beneficial?
 
-Response: We added a paragraph to what is now Section 7 addressing the issue of
-benchmark functions (``We also do not report\ldots'').  We also ran a
-comparison on a longer-running function and included it in our results (NOT
-DONE).
-
-NOT DONE
+Response: We added a section dealing with this issue (section 7.1).  We also
+added experiments on a function that takes on the order of 2 seconds to
+evaluate, providing a little more motivation for the parallelization of PSO.
 
 \subsection*{AE.4}
 
@@ -79,11 +81,9 @@ appreciate the significance of some result or conclusion if he/she hasn't
 understood what the authors are talking about. I recommend the authors to
 restructure the whole paper but in particular Sections 3 and 4.
 
-Response: We substantially reorganized Section 3, as noted above, and we moved
-the discussion of branch statistics (the old Section 4.3) to the beginning of
-the results section (NOT DONE).
-
-NOT DONE
+Response: We substantially reorganized Section 3, as noted above, and we added
+more subsections throughout the paper, helping to guide the reader through the
+ideas.  We believe that the paper is now much more clear.
 
 \subsection*{1.3}
 
@@ -106,11 +106,11 @@ Reviewer comments: Using ``rounds of evaluations'' is confusing, and results
 should be reported in terms of wall clock time.
 
 Response: Rounds of evaluations correspond exactly to wall clock time, as we
-describe in the second paragraph of what was Section 5 (now Section 7).
-However, we realize that the term is not a commonly used one, so we changed
-``rounds of evaluations'' to ``time steps'' in hopes of better conveying our
-meaning.  We also added some text in the description mentioned above that
-hopefully further clarifies this point.
+describe in what is now section 7.1, and the second paragraph of section 7
+proper.  However, we realize that the term is not a commonly used one, so we
+changed ``rounds of evaluations'' to ``time steps'' in hopes of better
+conveying our meaning.  We also added some text in the description mentioned
+above that hopefully further clarifies this point.
 
 \subsection*{1.5}
 
@@ -124,11 +124,21 @@ a side product, the authors can actually compare the results of the pruned
 versions (which in my eyes, are new PSO variants) with those of other
 state-of-the-art algorithms.
 
-Response: Running a few more sets of experiments at higher dimensionalities
-should address this adequately, though we can't really do all of their
-protocol.
+Response: We ran quite a few more experiments to bring our results closer to
+Herrera et al. experimental protocol.  Their protocol wasn't entirely
+applicable, as they suggested running a specific number of function evaluations
+instead of iterations (which, as we state in section 7, is the proper
+comparison for parallel algorithms on long running functions).  But we added
+experiments for 50 dimensional functions and 500 dimensional functions.
 
-NOT DONE
+We also see your point in saying that our relaxations to speculative evaluation
+are new PSO variants, and we fixed our text in places to better address that
+point.  In particular, we changed the paragraph in the conclusion that deals
+with this issue (``What we have presented\ldots''), clearly stating that our
+methods do in fact change the behavior of PSO, but that they do so in a way
+that is applicable to almost all PSO variants.  Thus a fair comparison is to
+pick a particular variant and compare parallelization techniques with it.  It
+made sense to pick the original PSO for this comparison.
 
 \subsection*{1.6}
 
@@ -222,10 +232,16 @@ are doing. I know that the PSO community confuses the two. I think this is a
 nice opportunity to clarify the difference between search stagnation and the
 state of the swarm.
 
-Response: In fact the best result is improved, frequently, it is just that the
-scale of the improvements becomes increasingly smaller.
-
-NOT DONE
+Response: We were referring to the use of ``stagnation'' in analyses of the
+sampling distribution of PSO (such as by Poli).  Our results show that the
+``lack of improvement'' to which you refer does not in fact happen very often.
+It is just that the scale of the improvements becomes increasingly smaller,
+sometimes beyond machine precision.  We appreciate your distinction, however.
+Such a definition of stagnation must then incorporate a minimum velocity, which
+is another function-dependent parameter to specify.  We decided that the
+paragraph dealing with this issue was at best tangential to the focus of our
+paper and that it unnecessarily lengthened an already lengthy discussion.  We
+removed the paragraph from our text.
 
 \subsection*{1.14}
 
@@ -241,8 +257,8 @@ NOT DONE
 Reviewer comments: Page 27, line 40. Algorithms are suited for problems not the
 other way around.
 
-Response: Duly noted.  We fixed the sentence (it now says ``Our methods work
-very well on these functions'').
+Response: Duly noted.  We fixed the sentence, then in a later revision took out
+that discussion entirely, making the conclusion less repetitive.
 
 \subsection*{1.16}
 
@@ -273,9 +289,12 @@ evidence on how well it scales when dimension increases? (e.g. probably the
 increase in the required number of particles is closer to the linear rather
 than the exponential case).
 
-Response: ...
-
-NOT DONE
+Response: We did not share your intuition about our methods improving PSO's
+performance on higher dimensional functions.  However, we ran experiments to
+test their scalability, as you suggested, and found them to perform very well
+as dimensionality increased.  We are not entirely sure as to the reason for
+this, though we gave some intuitive arguments based on brief experimentation.
+The results and discussion are in the paper.
 
 \subsection*{2.2}
 
@@ -288,9 +307,15 @@ For example, given a swarm size and a common network communication is there any
 identifiable limit to the neighborhood topology such that the algorithm retains
 an acceptable performance?
 
-Response: ...
-
-NOT DONE
+Response: You seem to have been conflating two separate issues, and we changed
+our text to help future readers not run into the same problem.  When we said
+that our method ``can be easily extended to arbitrary topologies,'' we were
+referring specifically to the math; we only showed one case, to simplify our
+notation.  In fact our implementation handles arbitrary topologies.  One thing
+that we realized, however, was that with pruning one can use arbitrarily dense
+topologies without increasing the number of speculative evaluations at all.  We
+thus ran more experiments to test the use of these topologies with pruned
+speculative methods, and we now report those results in the paper.
 
 \subsection*{2.3}
 
@@ -303,11 +328,11 @@ some evidence on this because, due to the swarm's diversity loss, it seems
 somehow counterintuitive.
 
 Response: The citation given in the paper (McNabb et al. CEC 09) gives an
-interesting discussion on these points.  The functions explored are limited,
-but the paper shows that both Sphere and Griewank exhibit this behavior, while
-Rastrigin does not (the relevant figures in that paper are 2, 4 and 6).  As
-those results are previously published and cited in our paper, we felt it
-unnecessary to reduplicate the figures, though we make mention of the
+interesting discussion on these points.  The functions explored there are
+limited, but the paper shows that both Sphere and Griewank exhibit this
+behavior, while Rastrigin does not (the relevant figures in that paper are 2, 4
+and 6).  As those results are previously published and cited in our paper, we
+felt it unnecessary to reduplicate the figures, though we make mention of the
 conclusions.  However, our own figures also answer your question.  The fact
 that our methods outperform the na\"ive parallelization is in itself evidence
 for this claim.  Recall that when our figures say SEPSO, that is equivalent to
@@ -320,7 +345,8 @@ it is better by far to do speculative evaluation.
 Increasing the swarm size increases the diversity, as you say (the McNabb et
 al. paper makes the same point).  But at some point there is enough diversity,
 and when that point is reached extra processors should be used for speculative
-evaluation.  We spend almost the entire conclusion trying to make this point.
+evaluation.  We spend a good amount of the conclusion trying to make this
+point.
 
 \section*{Reviewer 3 Comments}
 
@@ -332,7 +358,7 @@ is not proposing a new algorithm in the introduction.
 Response: We found only one part of the introduction that mentioned the paper
 not proposing a new algorithm.  That part had two sentences, and we deleted the
 second one to soften the point a little.  It was an over-reaction to comments
-by previous reviewers.
+by previous reviewers.  We also fixed a similar statement in the conclusion.
 
 \subsection*{3.2}
 
