@@ -8,7 +8,7 @@
 %   ms -- produce a thesis proposal (off)
 %   areaexam -- produce a research area overview (off)
 %   phd -- produce a dissertation proposal (off)
-%   
+%
 %   layout -- show layout lines on the pages, helps with overfull boxes (off)
 %   grid -- show a half-inch grid on every page, helps with printing (off)
 
@@ -272,7 +272,7 @@ often the optimal swarm size is slightly larger.  For this reason, previous
 work has recommended the use of a swarm size of 50 for
 PSO~\citep{bratton-2007-defining-a-standard-for-pso}.  Thus, in at least some
 cases, adding particles indefinitely will not yield an efficient
-implementation. 
+implementation.
 
 \begin{figure}
   \centering
@@ -364,7 +364,7 @@ neighborhood best) is the best position the neighbors of the current particle
 have seen~\citep{bratton-2007-defining-a-standard-for-pso}.  The parameters \(
 \ncoeff \), \( \pcoeff \), and \( \constriction \) are given prescribed values
 required to ensure convergence (2.05, 2.05, and .73,
-respectively)~\citep{clerc-2002-constricted-pso}. 
+respectively)~\citep{clerc-2002-constricted-pso}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -492,193 +492,61 @@ particles.  This project will seek to answer that question.
 My honors thesis proposed and developed this basic approach to parallelization
 in PSO.  This masters thesis will complete the picture of speculative methods
 in particle swarm optimization.  First, we present a mathematical proof of
-correctness of our methods, given in Section~\ref{sec:proof} as demonstration
-that what we propose is in fact mathematically equivalent to standard
-parallelization methods in PSO.  Second, we propose pruning the set of possible
-speculative evaluations to better use available processors.  We motivate the
-pruning by analyzing the statistics of which branches are commonly taken in
-PSO, using those statistics to prune all but the most likely branches.
-Further, once the idea of pruning is established, we view the set of all
-possible speculative evaulations as an infinite tree, not confining ourselves
-to speculating only about the next iteration.  We then experiment with
-speculating down likely paths three or four iterations ahead, and show that
-this by far outperforms simple one-iteration speculative evaluation.  And
-lastly, as my honors thesis used only a few experiments on three benchmark
-functions, we give a better picture of the performance of speculative
-approaches with much more extensive experimentation.
+correctness of our methods as demonstration that what we propose is in fact
+mathematically equivalent to standard parallelization methods in PSO.  Second,
+we propose pruning the set of possible speculative evaluations to better use
+available processors.  We motivate the pruning by analyzing the statistics of
+which branches are commonly taken in PSO, using those statistics to prune all
+but the most likely branches.  Further, once the idea of pruning is
+established, we view the set of all possible speculative evaluations as an
+infinite tree, not confining ourselves to speculating only about the next
+iteration.  We then experiment with speculating down likely paths three or four
+iterations ahead, and show that this by far outperforms simple one-iteration
+speculative evaluation.  And lastly, as my honors thesis used only a few
+experiments on three benchmark functions, we give a better picture of the
+performance of speculative approaches with much more extensive experimentation.
 
-\subsection{Refactoring the PSO Equations}
-\label{sec:proof}
+\subsection{Proof}
 
-To perform two iterations at a time we must first refactor PSO such that the
-determination of the value of the objective function is separate from the rest
-of the computation.  For simplicity, this discussion will describe the case
-where PSO is performing function minimization using the Ring topology.  In this
-example, each particle has two neighbors, the ``right neighbor'' and ``left
-neighbor,'' whose positions are represented as $\rightn$ and $\leftn$
-respectively.  Though we will only describe the case of the Ring topology, this
-method can easily be extended to arbitrary topologies (and in fact our
-implementation of this algorithm works with arbitrary topologies; we simply
-only discuss the Ring case here as that greatly simplifies our notation).
+Some readers of my honors thesis had a hard time understanding our methods,
+thinking that we were changing the PSO algorithm when performing speculative
+evaluation.  To alleviate any such concerns and provide a strong theoretical
+background for speculative approaches to parallelization in PSO, we will
+provide a mathematical proof that PSO can be decomposed in such a way as to
+exactly reproduce the behavior of the original algorithm.
 
-The refactoring hinges on the idea that once the random coefficients
-$\pURand_{t}$ and $\nURand_{t}$ are drawn, there are only a few possible new
-positions, or updates, for $\nbest$ and $\pbest$.  For the Ring topology there
-are 7 possible update cases, identified in Table~\ref{tab:evals}.  We label
-each case with an identifier referring to the source of the update: a minus
-sign ($-$) represents no update, $L$ represents an update to $\nbest$ coming
-from the left neighbor, $R$ represents an update to $\nbest$ coming from the
-right neighbor, and $S$ represents an update to either $\pbest$ or $\nbest$
-coming from the particle itself.  As an example, $\casexn$ refers to the case
-that the particle finds a new personal best, but neither it nor its neighbors
-find a position that updated its neighborhood best.  In the equations that
-follow, we refer to an unspecified update case as $\casegen$, and to the set of
-cases collectively as $\caseset$.
+\subsection{Statistically Motivated Pruning}
 
-\begin{table}
-  \caption{All possible updates for a particle with two neighbors}
-  \label{tab:evals}
-  \centering
-  \begin{tabular}{lcc}
-	Identifier&Source of $\pbest$ update&Source of $\nbest$ update\\
-	\hline
-	\hline
-	$\casepn$&No update&No update\\
-	\hline
-	$\casepl$&No update&Left Neighbor\\
-	\hline
-	$\casepr$&No update&Right Neighbor\\
-	\hline
-	$\casexn$&Self&No update\\
-	\hline
-	$\casexl$&Self&Left Neighbor\\
-	\hline
-	$\casexr$&Self&Right Neighbor\\
-	\hline
-	$\casexx$&Self&Self\\
-	\hline
-  \end{tabular}
-\end{table}
+The key idea in this proposal is that of decreasing the number of speculative
+evaluations needing to be done by pruning away insignificant branches from the
+set of all possible evaluations.  In my honors thesis I found that exactly
+reproducing PSO two iterations at a time required too many extra evaluations to
+give competitive results in most cases.  To fix this problem, I will find ways
+to still speculate about future positions without actually evaluating all of
+the possible options.  This should improve the performance of the algorithm.
 
-In order to incorporate the determination of which case occurs into the
-position and velocity update equations, we introduce an indicator function
-$\indic_{t+1}^{\casegen}$ for each case $\casegen \in \caseset$.  When
-$\casegen$ corresponds to the case actually taken by PSO,
-$\indic_{t+1}^{\casegen}$ evaluates to 1; otherwise it evaluates to 0.  We can
-then sum over all of the cases, and the indicator function will make all of the
-terms drop to zero except for the case that actually occurs.  For example, the
-indicator function for the specific case $\casexn$ (which, as is shown in
-Table~\ref{tab:evals}, means that the particle's personal best was updated, but
-its neighborhood best was not) can be written as follows:
+Pruning the set of speculative evaluations necessitates a mechanism for
+deciding which branches are desirable.  A na\"ive approach to pruning would be
+to try the last branch taken by each particle.  Preliminary experimentation
+with this method has shown it to be ineffective.  A smarter approach would be
+to examine the statistical behavior of the branches that PSO takes and use that
+analysis as motivation for deciding which branches to prune.  We will collect
+statistics on the branching behavior of PSO across several functions and
+topologies.  We will then use those statistics to perform intelligent pruning
+of the set of speculative evaluations.
 
-\begin{align}
-  \nonumber
-	\indic_{t+1}^{\casexn} & (\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
-	\ofunc(\rightn_{t}) ,\ofunc(\pbest_{t-1}) ,\ofunc(\nbest_{t-1}))= \\
-  \label{eq:deficasexn}
-	&\begin{cases}
-	   1 & \text{if} \ \ofunc(\ppos_{t}) < \ofunc(\pbest_{t-1}) \\
-	   &\quad \text{and} \quad \ofunc(\nbest_{t-1}) < \ofunc(\ppos_{t}) \\
-	   &\quad \text{and} \quad \ofunc(\nbest_{t-1}) < \ofunc(\leftn_{t}) \\
-	   &\quad \text{and} \quad \ofunc(\nbest_{t-1}) < \ofunc(\rightn_{t}) \\
-	   0 & \text{otherwise}
-	\end{cases}
-\end{align}
+\subsection{Speculating Several Iterations Ahead}
 
-For each case $\casegen \in \caseset$, there is also a corresponding
-velocity update function $\specvel_{t+1}^{\casegen}$.  When the case is
-known, the specific values of $\pbest_t$ and $\nbest_t$ may be substituted
-directly into~\eqref{eq:velupdate}.  For example, in case $\casexn$,
-$\pbest_{t}=\ppos_{t}$, as \pbest was updated by the particle's current
-position, and $\nbest_{t}=\nbest_{t-1}$, as $\nbest$ was not updated at
-iteration $t$:
-\begin{align}
-\nonumber
-	\specvel_{t+1}^{\casexn} & (\pvel_t, \ppos_{t}, \leftn_{t}, \rightn_{t},
-	\pbest_{t-1}, \nbest_{t-1}, \pURand_{t}, \nURand_{t}) \\
-\label{eq:defvcasexn}
-		&= \constriction \bigl[ \pvel_{t} +
-			\pcoeff\pURand_{t}\otimes(\ppos_{t} - \ppos_{t})
-			+ \ncoeff\nURand_{t}\otimes(\nbest_{t-1} -
-			\ppos_{t}) \bigr]
-\end{align}
-
-In the same way we can create notation for the position update function by
-substituting into~\eqref{eq:posupdate}.  For compactness, we will drop the
-parameters to $\specvel_{t+1}^{\casegen}$ since they can be inferred from the
-subscripts.
-\begin{align}
-\label{eq:defpcasegen}
-	\specpos_{t+1}^{\casegen} & (\ppos_{t}, \pvel_{t}, \leftn_{t},
-	\rightn_{t} ,\pbest_{t-1} ,\nbest_{t-1}, \pURand_{t}, \nURand_{t})
-	= \ppos_{t} + \specvel_{t+1}^{\casegen}
-\end{align}
-
-With this notation we can re-write the original PSO velocity
-equation~\eqref{eq:velupdate}, introducing our sum over cases with the
-indicator functions.  Again, we represent the indicator functions and velocity
-functions without the parameters for compactness.  The equation becomes:
-\begin{align}
-\nonumber
-	\pvel_{t+1} &=
-		\constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t})
-			+ \ncoeff\nURand_{t}\otimes(\nbest_{t} -
-			\ppos_{t}) \bigr] \\
-\nonumber
-	&= \sum_{c \in \caseset} \indic_{t+1}^{c} \ \constriction \bigl[ \pvel_t
-			+ \pcoeff\pURand_{t}\otimes(\pbest_{t} - \ppos_{t})
-			+ \ncoeff\nURand_{t}\otimes(\nbest_{t} -
-			\ppos_{t}) \bigr]  \\
-\label{eq:vel2update}
-	&= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specvel_{t+1}^{c} 
-\end{align}
-
-Similarly, the position update equation~\eqref{eq:posupdate} becomes:
-\begin{align}
-\label{eq:pos2update}
-	\ppos_{t+1} &= \ppos_{t} + \pvel_{t+1}
-	= \sum_{c \in \caseset} \ \indic_{t+1}^{c} \ \specpos_{t+1}^{c} 
-\end{align}
-
-The value of the objective function at $\ppos_{t+1}$ is given by:
-\begin{align}
-\label{eq:val2update}
-	\ofunc (\ppos_{t+1}) = \sum_{c \in \caseset} \ \indic_{t+1}^{c}
-	\ \ofunc(\specpos_{t+1}^{c})
-\end{align}
-
-Returning our attention to the computation of $\ppos_{t+1}$ in
-\eqref{eq:pos2update} and writing it with the parameters which were omitted
-above, we obtain:
-\begin{align}
-\nonumber
-  \ppos_{t+1} = \sum_{c \in \caseset}
-	&\indic_{t+1}^{c}(\ofunc ( \ppos_{t} ) ,\ofunc(\leftn_{t}),
-	\ofunc(\rightn_{t}) ,\ofunc(\pbest_{t-1}) ,\ofunc(\nbest_{t-1})) \\
-\label{eq:val2updatelong}
-	& \specpos_{t+1}^{c}(\ppos_{t},\pvel_{t},\leftn_{t},\rightn_{t},
-	\pbest_{t-1},\nbest_{t-1},\pURand_{t}, \nURand_{t})
-\end{align}
-
-In this form the important point to notice is that there are only $7$ values
-(for this Ring topology) in the set $\{\specpos_{t+1}^{\casegen}: \casegen \in
-\caseset\}$ and that none of them depend upon $f(\ppos_t)$ or any other
-objective function evaluation at iteration $t$.  Note also that while there are
-random numbers in the equation, they are assumed fixed once drawn for any
-particular particle at a specific iteration.  Thus PSO has been refactored such
-that the algorithm can begin computing all $7$ of the objective function
-evaluations potentially needed in iteration $t+1$ \emph{before} $f(\ppos_t)$ is
-computed.  Once the evaluation of $f(\ppos_{t})$ is completed for all particles
-only one of the indicator functions $\indic_{t+1}^{\casegen}$ will be set to 1;
-hence only one of the positions $\specpos_{t+1}^\casegen$ will be kept.
-
-Although this speculative approach computes $\ofunc(\specpos_{t+1}^{\casegen})$
-for all $\casegen \in \caseset$, even those for which $\indic_{t+1}^{\casegen}
-= 0$, these extra computations will be ignored, and might just as well never
-have been computed.  We call the set of computations
-$\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$ ``speculative
-children'' because only one of them will be needed.
+Speculating one iteration ahead proved very costly in terms of the number of
+extra evaluations required.  Speculating two iterations ahead would require the
+square of the number of extra evaluations of speculating a single iteration
+ahead.  While exactly speculating two iterations ahead would be far too costly
+to be practical, when combined with statistical pruning we can experiment with
+speculating along statistically promising lines several iterations ahead.
+Preliminary experimentation shows that this can be incredibly effective,
+improving the time to completion by a factor of 2 or more, though it also seems
+prone to premature convergence.  This thesis will further explore the idea of
+speculating several iterations ahead.
 
 \section{Validation}
 % 1/2 to 2 pages
@@ -706,18 +574,27 @@ value.  The project will be successful if a statistically significant decrease
 in the number of iterations is observed.
 
 For each function, we will use the topology that is generally considered to be
-best for optimizing that particular function.  When the Complete topology is
-considered best, we will instead use a Random topology that we developed that
-mimicks the behavior of Complete while being more suited for parallel
-computation~\cite{mcnabb-2009-large-particle-swarms}.  
+best for optimizing that particular function, as described by Bratton and
+Kennedy~\cite{bratton-2007-defining-a-standard-for-pso}.  When the Complete
+topology is considered best, we will instead use a Random topology that we
+developed that mimics the behavior of Complete while being more suited for
+parallel computation~\cite{mcnabb-2009-large-particle-swarms}.
 
 The functions we will use in our comparisons are these common benchmark
 functions: Bohachevsky, Griewank, Rastrigin, Sphere, and Schwefel 2.21.  We
 will run each function with 20, 50, and 500 dimensions to test the scalability
 of our methods up to higher dimensions.  We will also test our methods on a
-more typical ``real-world'' problem, that of training a computationally
-intensive machine learning algorithm with a large amount of data.  We will
-compare our speculative methods to previous parallelization techniques,
+more typical ``real-world'' problem, that of fitting a model to a large amount
+of data.  While we will run tests on a complex crystallography problem in
+collaboration in Dr. Branton Campbell in the physics department, we will
+present our results on a similar but more well known problem.  In particular,
+we will train a radial basis function on a set of 10,000 data points.  This is
+a similar problem to Dr. Campbell's, in that both seek to match model
+parameters to observed data, but it is easier to describe and quicker to
+experiment with.  Dr. Campbell also has yet to publish his results and we do
+not wish to publish about his problem before he does.
+
+We will compare our speculative methods to previous parallelization techniques,
 including a naive parallelization of just increasing the swarm size, and a
 subswarms implementation that uses several smaller, independent swarms.
 
@@ -749,14 +626,7 @@ subswarms implementation that uses several smaller, independent swarms.
 %\newcommand\bibpreamble{Material to be added between heading and entries.}
 % 2 to 5 pages
 
-\bibliography{../../../bib/pso/general/bib,%
-../../../bib/pso/parallel/bib,%
-../../../bib/pso/topology/bib,%
-../../../bib/pso/fips/bib,%
-../../../bib/aml/bib,%
-../../../bib/parallel/bib,%
-../../../bib/nfl/bib%
-}
+\bibliography{bib}
 
 
 \end{document}

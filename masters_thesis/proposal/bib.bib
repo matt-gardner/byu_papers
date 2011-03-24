@@ -1,0 +1,1123 @@
+@article{gardner-2010-speculative-evaluation-in-pso,
+	author = {Matthew J. Gardner and Andrew W. McNabb and Kevin D. Seppi},
+	title = {{Speculative Evaluation in Particle Swarm Optimization}},
+	journal = {Parallel Problem Solving from Nature XI},
+        pages = {61--70},
+	year = {2010},
+	publisher = {Springer},
+	abstract = {Particle swarm optimization (PSO) has previously been
+		parallelized only by adding more particles to the swarm or by
+			parallelizing the evaluation of the objective function.  However,
+		some functions are more efficiently optimized with more iterations and
+			fewer particles.  Accordingly, we take inspiration from speculative
+			execution performed in modern processors and propose speculative
+			evaluation in PSO (SEPSO).  Future positions of the particles are
+			speculated and evaluated in parallel with current positions,
+		performing two iterations of PSO at once.  We also propose another way
+			of making use of these speculative particles, keeping the best
+			position found instead of the position that PSO actually would have
+			taken.  We show that for a number of functions, speculative
+			evaluation gives dramatic improvements over adding additional
+			particles to the swarm.
+	},
+	annote = {},
+}
+
+@inproceedings{mcnabb-2007-mapreduce-pso,
+    title={{MRPSO}: {MapReduce} Particle Swarm Optimization},
+    author={Andrew W. McNabb and Christopher K. Monson and Kevin D. Seppi},
+    booktitle={Proceedings of the Ninth annual conference on Genetic and evolutionary computation},
+    year={2007},
+    month=jul,
+    volume={},
+    number={},
+    pages={177},
+    keywords={parallel programming, particle swarm optimisation},
+}
+doi={10.1109/CEC.2007.4424448},
+
+@inproceedings{mcnabb-2007-parallel-pso-using-mapreduce,
+    title={Parallel {PSO} using {MapReduce}},
+    author={Andrew W. McNabb and Christopher K. Monson and Kevin D. Seppi},
+    booktitle={Proceedings of the IEEE Congress on Evolutionary Computation},
+    year={2007},
+    month=sep,
+    volume={},
+    number={},
+    pages={7--14},
+    keywords={parallel programming, particle swarm optimisation},
+	annote = { Andrew's paper formulating the PSO algorithm in terms of
+		Google's MapReduce framework.  All of our experiments use this
+			framework.},
+}
+doi={10.1109/CEC.2007.4424448},
+
+@inproceedings{mcnabb-2009-large-particle-swarms,
+    title={An Exploration of Topologies and Communication in Large Particle Swarms},
+    author={Andrew McNabb and Matthew Gardner and Kevin Seppi},
+    booktitle={Proceedings of the IEEE Congress on Evolutionary Computation},
+    year={2009},
+    month=may,
+    volume={},
+    number={},
+    pages={712--719},
+	annote = { Our paper that provided initial motivation for exploring
+		parallelization in PSO.},
+}
+doi={10.1109/CEC.2007.4424448},
+
+@inproceedings{monson-2005-origin-seeking-bias,
+    author="Christopher K. Monson and Kevin D. Seppi",
+    title="Exposing Origin-Seeking Bias in PSO",
+	booktitle="Proceedings of the Genetic and Evolutionary Computation
+		Conference ({GECCO} 2005)",
+    address="Washington, D.C.",
+    pages="241--248",
+    volume="1",
+    year="2005",
+	abstract={ We discuss testing methods for exposing origin-seeking biasin
+		PSO motion algorithms. The strategy of resizing the ini-tialization
+			space, proposed by Gehlhaar and Fogel and madepopular in the PSO
+			context by Angeline, is shown to be in-sufficiently general for
+			revealing an algorithm’s tendency tofocus its efforts on regions at
+			or near the origin. An alterna-tive testing method is proposed that
+			reveals problems withPSO motion algorithms that are not visible
+			when merelyresizing the initialization space.
+	},
+	annote={},
+}
+
+@inproceedings{monson-2007-UFO,
+    author="Christopher K. Monson and Kevin D. Seppi and James L. Carroll",
+    title="A Utile Function Optimizer",
+    booktitle="The Proceedings of the IEEE Congress on Evolutionary Computation (CEC)",
+    year=2007,
+    month="Sept",
+    publisher="IEEE Press",
+    annote = "EVSI can be used to determine optimal sample locations similar to active learning in supervised
+        learning to guide a Bayesian optimization algorithm.",
+}
+
+@inProceedings{peterson-2001-automatic-shaping,
+    AUTHOR = "Todd Peterson and Nancy Owens and James L. Carroll",
+    TITLE = "Automated Shaping as Applied to Robot Navigation",
+    BOOKTITLE = "IEEE International Conference on Robotics and
+            Automation",
+    ADDRESS = "Korea",
+    YEAR = "2001",
+    ANNOTE = "This paper is the first paper to discuss memory-guided exploration"
+}
+
+@INPROCEEDINGS{ringger-2007-AL-for-POS-tagging,
+ author = "Eric Ringger and Peter McClanahan and Robbie Haertel and George Busby and Marc Carmen and James Carroll and Kevin Seppi and Deryle Lonsdale",
+ title = "Active Learning for Part-of-Speech Tagging: Accelerating Corpus Annotation",
+ booktitle = "Proceedings of the ACL Linguistic Annotation Workshop (LAW)",
+ publisher = "Association for Computational Linguistics",
+ address = "Prague, Czech Republic",
+ year = "2007",
+ month = "June",
+ date = "June 2007",
+ page = "101-108",
+ abstract = "In the construction of a part-of-speech an- notated corpus, we are constrained by a fixed budget. A fully annotated corpus is required, but we can afford to label only a subset. We train a Maximum Entropy Mar- kov Model tagger from a labeled subset and automatically tag the remainder. This paper addresses the question of where to focus our manual tagging efforts in order to deliver an annotation of highest quality. In this context, we find that active learning is always helpful. We focus on Query by Un- certainty (QBU) and Query by Committee (QBC) and report on experiments with sev- eral baselines and new variations of QBC and QBU, inspired by weaknesses particu- lar to their use in this application. Experi- ments on English prose and poetry test these approaches and evaluate their robust- ness. The results allow us to make recom- mendations for both types of text and raise questions that will lead to further inquiry.",
+}
+
+@INPROCEEDINGS{ringger-2008-user-study,
+ author = {Eric Ringger and Marc Carmen and Robbie Haertel and Kevin Seppi and Deryle Lonsdale and Peter McClanahan and James Carroll and Noel Ellison},
+ title = {Assessing the Costs of Machine-Assisted Corpus Annotation through a User Study},
+ booktitle = {The Proceedings of the Language Resources and Evaluation Conference (LREC)},
+ year = {2008},
+ date = {May 2008},
+ address = "Morocco",
+ abstract = "Fixed, limited budgets often constrain the amount of expert annotation that can go into the construction of annotated corpora.
+Estimating the cost of annotation is the first step toward using annotation resources wisely. We present here a study of the cost of
+annotation. This study includes the participation of annotators at various skill levels and with varying backgrounds. Conducted over
+the web, the study consists of tests that simulate machine-assisted pre-annotation, requiring correction by the annotator rather than
+annotation from scratch. The study also includes tests representative of an annotation scenario involving Active Learning as it
+progresses from a naïve model to a knowledgeable model; in particular, annotators encounter pre-annotation of varying degrees of
+accuracy. The annotation interface lists tags considered likely by the annotation model in preference to other tags. We present the
+experimental parameters of the study and report both descriptive and inferential statistics on the results of the study. We conclude with
+a model for estimating the hourly cost of annotation for annotators of various skill levels. We also present models for two granularities
+of annotation: sentence at a time and word at a time.",
+}
+@book{grama-2003-intro-to-parallel-computing,
+    annote = {Describes the principles of parallel processing and discusses
+        the evaluation of parallel algorithms.},
+    author = {Ananth Grama and Anshul Gupta and George Karypis and Vipin Kumar},
+    title = {Introduction to Parallel Computing},
+    edition="Second",
+    year = {2003},
+    publisher = {Addison-Wesley},
+    address = {Harlow, England},
+}
+
+isbn = {0-201-64865-2},
+NFL
+
+@inproceedings{christensen-2001-nfl-searchable-function,
+    author = "Steffen Christensen and Franz Oppacher",
+    title = "What Can We Learn From No Free Lunch?  A First Attempt to Characterize the Concept of a Searchable Function",
+    booktitle = "Proceedings of the Genetic and Evolutionary Computation Conference ({GECCO} 2001)",
+    year = "2001",
+    pages = "1219--1226",
+    publisher = "Morgan Kauffman",
+    annote = "No Free Lunch has interesting implications for the optimization community, among which are the fact that any
+        algorithm is bound to be ineffective when applied to any of a large class of functions.  This paper attempts to find
+        ways of limiting the target function class that are meaningful and intuitive, and to prove that simple limitations on
+        the class can allow a rank-ordering of optimization algorithms.  The example limitation chosen is self-similarity,
+        which means that domain points close in space tend to produce range values that are also close.  Arguments of steepness
+        are similar, and it is shown that this assumption of self-similarity sufficiently limits the class of interesting
+        functions so that some algorithms outperform others.",
+}
+
+@book{hume-1739-human-nature,
+   author = "Hume",
+   year = "1739-1740",
+   title = "Hume's Treatise of Human Nature",
+   publisher = "Stanford University Press",
+   address = "New York",
+   annote = "This is the seminal yet informal statement of No-Free-Lunch.",
+   page = "139",
+}
+
+@article{macready-1996-what-makes-optimization-hard,
+    author = "William G. Macready and David H. Wolpert",
+    title = "What Makes an Optimization Problem Hard?",
+    journal = "Complexity",
+    volume = "5",
+    year = "1996",
+    annote = "The companion paper to the original work on No Free Lunch for optimization.  This paper begins to address the difficult question of whether some optimization problems are actually harder than others, independent of the algorithm chosen to accomplish optimization.  The possible ties to Vapnik-Chervonenkis Dimension and Entropy are mentioned but not explored as ways of measuring the complexity of an optimization problem.",
+}
+
+@techreport{mitchell-1980-the-need-for-bias,
+    author = "Mitchell, Tom M.",
+    title = "The need for biases in learning generalizations",
+    institution = "Rutgers Computer Science",
+    number = "CBM-TR-117",
+    address = "New Brunswick, New Jersey",
+    year = "1980",
+}
+url = "citeseer.ist.psu.edu/mitchell80need.html" 
+
+@techreport{wolpert-1995-nfl-for-search,
+    author = {David H Wolpert and William G Macready},
+    title = {No Free Lunch Theorems for Search},
+    year = {1995},
+    institution = "Santa Fe Institute",
+    number = "SFI-TR-05-010",
+}
+
+@book{Wolpert-1995-the-mathematics-of-generalization,
+    editor = {David H. Wolpert},
+    title = {The Mathematics of Generalization},
+    year = {1995},
+    publisher = {The Addison-Wesley Publishing Company},
+}
+
+@incollection{whitley-2006-complexity-theory-and-nfl,
+    author = "Darrel Whitley and Jean Paul Watson",
+    title = "Complexity Theory and the No Free Lunch Theorem",
+    booktitle = "Search Methodologies: Introductory Tutorials in Optimization and Decision Support Techniques",
+    editor = "Edumnd K. Burke and Graham Kendall",
+    publisher = "Springer",
+    ISBN = "0-387-23460-8",
+    year = "2006",
+    annote = "This work is a tutorial on the connections between No Free Lunch (NFL) and algorithmic complexity theory.  It provides a gentle introduction to the ideas and ramifications of NFL while discussing relevant issues such as the futility of algorithmic comparison via empirical benchmark results, the fact that rank ordering of algorithms is, in fact, possible given many kinds of non-uniform distributions.  Many good references are provided for further research in the area."
+}
+
+@article{wolpert-1995-relationship-between-PAC-SP-BF-VC,
+    author = "David H. Wolpert",
+    title = "The Relationship Between {PAC}, the Statistical Physics Framework, the Bayesian Framework, and the {VC} Framework",
+    journal = "The Mathematica of Generalization",
+    pages = "117-214",
+    year = "1995",
+    annote = "Another proof of NFL, a comparison between the various frameworks, and a discussion of how NFL can be viewed in each of them.",
+}
+
+@article{wolpert-1996-the-lack-of-distinctions,
+    author = {David H. Wolpert},
+    title = {The lack of a priori distinctions between learning algorithms},
+    journal = {Neural Computation},
+    year = {1996},
+    volume = {8},
+    pages = {1341--1390},
+    annote = "This is the seminal supervised learning NFL paper.",
+}
+
+@article{wolpert-1997-nfl-for-optimization,
+    author = "David H. Wolpert and William G. Macready",
+    title = "No Free Lunch Theorems for Optimization",
+    journal = "IEEE Transactions on Evolutionary Computation",
+    volume = "1",
+    number = "1",
+    month = "April",
+    pages = "67-82",
+    year = "1997",
+    issn = {{1089-778X}},
+    doi = {10.1109/4235.585893},
+    abstract = {A framework is developed to explore the connection between
+effective optimization algorithms and the problems they are solving. A
+number of “no free lunch” {(NFL)} theorems are presented which
+establish that for any algorithm, any elevated performance over one
+class of problems is offset by performance over another class. These
+theorems result in a geometric interpretation of what it means for an
+algorithm to be well suited to an optimization problem. Applications of
+the {NFL} theorems to information-theoretic aspects of optimization and
+benchmark measures of performance are also presented. Other issues
+addressed include time-varying optimization problems and a priori
+“head-to-head” minimax distinctions between optimization
+algorithms, distinctions that result despite the {NFL} theorems' enforcing
+of a type of uniformity over all algorithms},
+    annote = "Proofs are presented that all optimization algorithms have the same performance as random search when their behavior is averaged over all possible functions.  While unsurprising on one level, this result has received a great deal of attention because of its implications.  Though the proof applies only to discrete function optimization, it is argued that application to continuous optimization is trivial in the real world, where finite computers perform simulations or data is gathered from sensors with limited resolution.",
+   keywords = {a priori head-to-head minimax distinctions,combinatorial mathematics,elevated performance,genetic algorithms,geometric interpretation,information-theoretic aspects,information theory,no free lunch theorems,optimization,search problems,time-varying optimization},
+}
+url = "citeseer.ist.psu.edu/wolpert96no.html",
+
+@techreport{wolpert-2001-nfl-for-supervised-learning,
+    author = "David H. Wolpert",
+    title = "The Supervised Learning No-Free-Lunch Theorems",
+    institution = "NASA Ames Research Center",
+    number = "269-1",
+    year = "2001",
+    annote = "This is the accessable version of Wolpert's NFL paper for supervised learning. This paper shows that for the misclassification error rate
+        cost function and for a uniform prior over $f$, that all machine learning algorithms perform equally well, including random.",
+}
+@inproceedings{kennedy-2003-neighborhood-topologies-in-fips,
+    author="James Kennedy and Rui Mendes",
+    title="Neighborhood Topologies in Fully-Informed and Best-Of-Neighborhood
+		Particle Swarms",
+    booktitle="Proceedings of the 2003 IEEE SMC Workshop on Soft Computing in
+		Industrial Applications",
+    year="2003", 
+    month="June",
+	abstract = {We vary the way an individual in the particle swarm interacts
+		with its neighbors. Performance depends on population topology as well
+			as algorithm version. The particle swarm algorithm is based on a
+			socialpsychological model of social influence and social learning.
+			A population of candidate problem solutions, randomly initialized
+			in a high-dimensional search space, discovers optimal regions of
+			the space through a process of individuals ’ emulation of the
+			successes of their neighbors. The present paper investigates an
+			alternative implementation of social neighborhoods within the
+			particle swarm framework. In the traditional particle swarm, each
+			individual has some number of neighbors, with mutual influence
+			between them. On each iteration of the program loop, the individual
+			queries its neighbors to determine which one has had the best
+			success with the problem thus far, and uses the location of that
+			success, plus the location of its own previous best success, to
+			choose a new point in the search space to test. This represents an
+			oversimplification of the socialpsychological view that individuals
+			are more affected by sources of influence who are most successful,
+		persuasive, or otherwise prestigious. In human society it is more
+			accurate to say that the social neighborhood provides a wealth of
+			possible models whose behavior may be emulated, and individuals
+			seem to be affected by some kind of statistical summary of the
+			state of their immediate social network rather than the unique
+			performance of one individual (e.g., Latané, 1981; Granovetter,
+					1977; etc.). Thus, the present paper reports on research
+			with a version of particle swarm where the individual is influenced
+			by the successes of all its neighbors, rather than just the best
+			one. The fullyinformed particle swarm (FIPS) is compared to the
+			canonical version, using a variety of neighborhood structures.
+	},
+	annote = { Andrew: Fully-informed particle swarms do not differentiate
+		between members of a neighborhood based on the best fitness achieved.
+			Instead, each particle combines information from all particles in
+			its neighborhood when deciding where to go next.  This is
+			interesting because it removes the need to make decisions about
+			what information to use in the swarm process: use it all.
+			Amazingly enough, weighting the information from all of the
+			particles randomly is quite effective.
+	},
+}
+
+@article{mendes-2004-fully-informed-particle-swarm,
+    title = {The Fully Informed Particle Swarm: Simpler, Maybe Better},
+    volume = {8},
+    issn = {1089-778X},
+    number = {3},
+    journal = {Evolutionary Computation, IEEE Transactions on},
+    author = {R. Mendes and J. Kennedy and J. Neves},
+    year = {2004},
+	keywords = {convergence,evolutionary
+		computation,optimisation,Optimization,optimization,particle swarm
+			algorithm,particle swarm optimization,social networks,social norm
+			establishment},
+    pages = {204--210},
+	abstract = {The canonical particle swarm algorithm is a new approach to
+		optimization, drawing inspiration from group behavior and the
+			establishment of social norms. It is gaining popularity, especially
+			because of the speed of convergence and the fact that it is easy to
+			use. However, we feel that each individual is not simply influenced
+			by the best performer among his neighbors. We, thus, decided to
+			make the individuals "fully informed." The results are very
+			promising, as informed individuals seem to find better solutions in
+			all the benchmark functions.
+	},
+	annote = {},
+}
+@inproceedings{clerc-2003-tribes,
+    author = "Maurice Clerc",
+    title = "{TRIBES} - Un exemple d'optimisation par essaim particulaire sans
+		param{{\`e}}tres de contr{{\^o}}le",
+    booktitle = "Optimisation par Essaim Particulaire",
+    year = "2003",
+    address = "Paris, France",
+	abstract = {},
+	annote = { Andrew: Introduces TRIBES, a variant of PSO that automatically
+		adapts swarm size and topology. \\
+
+			Matt: I could not easily find the PDF or the abstract for this
+			paper, so they are missing.
+	},
+}
+
+@inproceedings{hu-2002-multiobjective-dynamic-neighborhood-pso,
+	title = {Multiobjective optimization using dynamic neighborhood particle
+		swarm optimization},
+	booktitle = {Proceedings of the Evolutionary Computation on 2002. CEC '02.
+		Proceedings of the 2002 Congress - Volume 02},
+	publisher = {IEEE Computer Society},
+	author = {Xiaohui Hu and R. Eberhart},
+	year = {2002},
+	pages = {1677--1681},
+	abstract = {This paper presents a particle swarm optimization (PSO)
+		algorithm for multiobjective optimization problems. PSO is modified by
+			using a dynamic neighborhood strategy, new particle memory
+			updating, and one-dimension optimization to deal with multiple
+			objectives. Several benchmark cases were tested and showed that PSO
+			could efficiently find multiple Pareto optimal solutions.
+	},
+	annote = {},
+}
+
+@inproceedings{jordan-2008-social-interaction-in-pso-fips-adaptive,
+    title = {Social Interaction in Particle Swarm Optimization, the Ranked
+		{FIPS}, and Adaptive Multi-Swarms},
+    booktitle = {Proceedings of the 10th Annual Conference on Genetic and
+		Evolutionary Computation},
+    publisher = {ACM},
+    author = {Johannes Jordan and Sabine Helwig and Rolf Wanka},
+    year = {2008},
+    keywords = {adaptive optimization,particle swarm optimization,performance
+		analysis,social interaction,subswarms},
+    pages = {49--56},
+	abstract = {The interaction among particles is a vital aspect of Particle
+		Swarm Optimization. As such, it has a strong influence on the swarm's
+			success. In this study various approaches regarding the particles'
+			communication behavior and their relationship are examined, as well
+			as possibilities to combine the approaches. A new variant of the
+			popular FIPS algorithm, the so-called Ranked FIPS, is introduced,
+		which resolves specific shortcomings of the traditional FIPS. As all
+			tested PSO variants feature distinct strengths and weaknesses, a
+			new adaptive strategy is proposed which operates on dissimiliarly
+			configured subswarms. The exchange between these subswarms is
+			solely based on particle migration. The combination of the Ranked
+			FIPS and other strategies within the so called Particle Swarm
+			Optimizer with Migration achieves a very good, yet remarkably
+			reliable performance over a wide range of recognized benchmark
+			problems.
+	},
+	annote = { Andrew: Compares the performance of several topologies and
+		communication strategies to address several drawbacks of Fully Informed
+			PSO.  The paper considers variants based on the Von Neumann
+			topology, stereotyping, FIPS, and completing graphs.  It also
+			considers using subswarms with each of these.  
+	}, 
+}
+
+@inproceedings{kennedy-1999-effects-of-topology-on-pso-performance,
+	title = {Small Worlds and Mega-Minds: Effects of Neighborhood Topology on
+		Particle Swarm Performance},
+	volume = {3},
+	booktitle = {Proceedings of the 1999 Congress on Evolutionary Computation},
+	author = {J. Kennedy},
+	year = {1999},
+	keywords = {artificial life,evolutionary computation,neighborhood
+		topology,particle swarm performance,random processes,small-world
+			manipulation,small-world randomization,social network
+			structures,sociometric structure,test functions,topology},
+	pages = {1938},
+	abstract = {The study manipulated the neighborhood topologies of particle
+		swarms optimizing four test functions. Several social network
+			structures were tested, with “small-world” randomization of a
+			specified number of links. Sociometric structure and the
+			small-world manipulation interacted with function to produce a
+			significant effect on performance 
+	},
+	annote = {},
+}
+
+@inproceedings{kennedy-2002-population-structure-and-pso-performance,
+    author="James Kennedy and Rui Mendes",
+    title="Population Structure and Particle Swarm Performance",
+    booktitle="Proceedings of the Congress on Evolutionary Computation (CEC
+        2002)",
+    address="Honolulu, Hawaii",
+    year="2002",
+	abstract = { The effects of various population topologies on the particle
+		swarm algorithm were systematically investigated. Random graphs were
+			generated to specifications, and their performance on several
+			criteria was compared. What makes a good population structure? We
+			discovered that previous assumptions may not have been correct.
+	},
+	annote = {},
+}
+
+@inproceedings{liang-2005-dynamic-multi-swarm-pso,
+	title = {Dynamic Multi-Swarm Particle Swarm Optimizer},
+	booktitle = {Proceedings of the 2005 Swarm Intelligence Symposium},
+	author = {J.J. Liang and P.N. Suganthan},
+	year = {2005},
+	keywords = {benchmark functions,dynamic multiswarm particle swarm
+		optimizer,particle swarm optimisation,swarm regrouping schedules},
+	pages = {124--129},
+	abstract = {In this paper, a novel dynamic multi-swarm particle swarm
+		optimizer (PSO) is introduced. Different from the existing multi-swarm
+			PSOs and the local version of PSO, the swarms are dynamic and the
+			swarms' size is small. The whole population is divided into many
+			small swarms, these swarms are regrouped frequently by using
+			various regrouping schedules and information is exchanged among the
+			swarms. Experiments are conducted on a set of shifted rotated
+			benchmark functions and results show its better performance when
+			compared with some recent PSO variants.
+	},
+	annote = {},
+}
+
+@inproceedings{mendes-2003-watch-thy-neighbor,
+	title = {Watch thy neighbor or how the swarm can learn from its
+		environment},
+	booktitle = {Proceedings of the IEEE Swarm Intelligence Symposium},
+	author = {R. Mendes and J. Kennedy and J. Neves},
+	year = {2003},
+	keywords = {candidate problem solution vectors,differential
+		geometry,evolutionary computation,learning by example,learning from
+			environment,optimisation,particle swarm optimization,search
+			problems,social norms,topological neighbors},
+	pages = {88--94},
+	abstract = {Particle swarm optimization is a novel algorithm where a
+		population of candidate problem solution vectors evolves "social" norms
+			by being influenced by their topological neighbors. Until now, an
+			individual was influenced by its best performance acquired in the
+			past and the best experience observed in its neighborhood. In this
+			paper, we introduce new ways an individual can be influenced by its
+			neighbors.
+	},
+	annote = {},
+}
+
+@phdthesis{mendes-2004-population-topologies-in-pso,
+    author = {Rui Mendes},
+    title = {Population Topologies and Their Influence in Particle Swarm
+	   	Performance},
+    school = {Escola de Engenharia, Universidade do Minho},
+    year = {2004},
+	abstract = {},
+	annote = { Andrew: Investigates the importance of topologies in PSO
+		performance.  The dissertation describes a variety of optimization
+			algorithms, along with a thorough survey of PSO and its variants.
+			It then reviews several graph statistics that can be used to
+			characterize particle swarm topologies.  Finally, it explores the
+			importance of these graph statistics by showing the performance of
+			various auto-generated topologies with six benchmark functions.
+	},
+}
+
+@inbook{mendes-2004-what-makes-a-successful-society,
+	title = {What Makes a Successful Society?},
+	url = {http://www.springerlink.com/content/dw4uf77y1l87ueqy},
+	journal = {Advances in Artificial Intelligence – SBIA 2004},
+	author = {Rui Mendes and José Neves},
+	year = {2004},
+	pages = {346--355},
+	abstract = {Previous studies in Particle Swarm Optimization (PSO) have
+		emphasized the role of population topologies in particle swarms. These
+			studies have shown that a relationship between the way individuals
+			in a population are organized and their aptitude to find global
+			optima exists. A study of what graph statistics are relevant is of
+			paramount importance. This work presents such a study, which will
+			provide guidelines that can be used by researchers in the field of
+			Particle Swarm Optimization (PSO) in particular and in the
+			Evolutionary Computation arena in general. Keywords: Particle Swarm
+			Optimization, Swarm Intelligence, Evolutionary Computation
+	},
+	annote = {},
+}
+
+@article{miranda-2008-stochastic-star-evolutionary-pso,
+    title = {Stochastic Star Communication Topology in Evolutionary Particle
+		Swarms},
+    volume = {4},
+    number = {2},
+    journal = {International Journal of Computational Intelligence Research},
+    pages={105--116},
+    author = {Vladimiro Miranda and Hrvoje Keko and {\'A}lvaro Jaramillo Duque},
+    year = {2008},
+	abstract = { This paper reports the results of the adoption of
+		aprobabilistically defined communication structure in a
+			specialalgorithm coined as EPSO – Evolutionary Particle
+			SwarmOptimization, which is classified as an evolutionary
+			algorithmusing a particle movement rule as the recombination
+			operator.Alternatively, EPSO may be seen as an algorithm of the
+			familyof PSO (Particle Swarm Optimization) but with a
+			self-adaptivemechanism applied to make the weights of the movement
+			ruleevolve improving the performance of the algorithm. The
+			paperpresents results showing that a probabilistically
+			controlledcommunication (to the particles of a swarm) of the
+			location ofthe best-sofar point leads to better convergence and
+			that theoptimal value of the probability of communication depends
+			onthe topology of the surface being searched. Also,
+		fullcommunication (similar to classical PSO) has in all cases beenshown
+			to be worse than probabilistically constrainedcommunication. This
+			is demonstrated by comparing results indifferent test functions and
+			also in the application of EPSO toan industrially relevant
+			application – the reactive powerplanning in large scale power
+			systems.
+	},
+	annote = { Andrew: Presents a dynamic random topology to reduce
+		communication within the context of the EPSO variant.  In this
+			topology, each particle randomly determines whether or not to use
+			the global best during each iteration.  \\
+			
+			Matt: This paper talks mostly about EPSO, which adapts weights for
+			which information source to use, but it mentions a stochastic
+			sociometry.  They don't make the same point we do, as they try to
+			put it in the light of having an adaptive sociometry, but we should
+			at least mention that random sociometry has been tried before.
+			They don't, however, make the point that you need to remember your
+			gbest or performance is horrible - they say "In other words, the
+			information broadcasted in each iteration and in a particular
+			dimension about the location of the global best could be lost of
+			become corrupted with partial loss within the communication channel
+			between particles."  They don't remember the gbest.  
+	}, 
+}
+
+@inproceedings{mohais-2004-randomized-directed-neighborhoods-in-pso,
+    title = {Randomized Directed Neighborhoods with Edge Migration in Particle
+		Swarm Optimization},
+    volume = {1},
+    booktitle = {Proceedings of the IEEE Congress on Evolutionary Computation},
+    author = {Arvind S. Mohais and Christopher Ward and Christian Posthoff},
+    year = {2004},
+	keywords = {directed graphs,directed graph structures,edge
+		migration,evolutionary computation,fitness information,inertia weight
+			PSO,neighborhood structure,optimisation,particle
+			neighborhood,particle swarm optimization,random dynamic
+			topology,randomized directed neighborhoods,randomly generated graph
+			structures,topology},
+    pages = {548--555},
+	abstract = {A key feature of particle swarm optimization algorithms is that
+		fitness information shared with individuals in a particle's
+			neighborhood. The kind of neighborhood structure that is used
+			affects the rate at which information is disseminated throughout
+			the population. Existing work has studied global and simple local
+			topologies, as well as more complex, but fixed neighborhood
+			structures. This paper looks at randomly generated, directed graph
+			structures in which information flows in one direction only, and
+			also outgoing edges randomly migrate from one source node to
+			another. Experimental evidence indicates that this random dynamic
+			topology, when used with an inertia weight PSO, performs
+			competitively with some existing methods and outperforms others.
+	},
+	annote = { Andrew: Presents a dynamic topology with randomly generated
+		neighborhoods and directed edges.  At the end of each iteration, one
+			randomly selected particle trades an edge with another randomly
+			selected member of the swarm.
+	},
+}
+
+@inproceedings{montes-de-oca-2008-convergence-behavior-of-fips,
+    title = {Convergence Behavior of the Fully Informed Particle Swarm
+		Optimization Algorithm},
+    booktitle = {Proceedings of the 10th Annual Conference on Genetic and
+		Evolutionary Computation},
+    publisher = {ACM},
+    author = {Montes de Oca, Marco A. and St{\"u}tzle, Thomas},
+    year = {2008},
+    keywords = {experiments,particle swarm optimization,swarm intelligence},
+    pages = {71--78},
+	abstract = {The fully informed particle swarm optimization algorithm (FIPS)
+		is very sensitive to changes in the population topology. The velocity
+			update rule used in FIPS considers all the neighbors of a particle
+			to update its velocity instead of just the best one as it is done
+			in most variants. It has been argued that this rule induces a
+			random behavior of the particle swarm when a fully connected
+			topology is used. This argument could explain the often observed
+			poor performance of the algorithm under that circumstance.
+	},
+	annote = { Andrew: Evaluates the behavior of Fully Informed PSO and
+		observes that it performs poorly with large swarms and fully connected
+			topologies.
+	},
+}
+
+@inproceedings{perez-2006-pso-radiation-application,
+    title = {Particle Swarm Optimization for Antenna Far-Field Radiation
+		Pattern Reconstruction},
+    booktitle = {Proceedings of the 36th European Microwave Conference},
+    author = {J.R. Perez and J. Basterrechea},
+    year = {2006},
+	keywords = {antenna far-field radiation pattern reconstruction,antenna
+		radiation patterns,Equivalence principle,equivalence
+			principle,equivalent magnetic
+			currents,Far-field,near-field,optimization,particle swarm,particle
+			swarm optimisation,particle swarm optimization,planar scanning},
+    pages = {687--690},
+	abstract = {A particle swarm optimization (PSO) based algorithm applied to
+		antenna far-field radiation pattern prediction from planar near-field
+			samples is presented. The radiation of the antenna is modeled using
+			equivalent magnetic currents (EMC) whose components are optimized
+			using a global version of PSO with asynchronous updates of the
+			swarm. An analysis of the main parameters to be tuned in PSO, along
+			with results of near-field to far-field transformation are
+			included.
+	},
+	annote = { Andrew: Applies PSO to an antenna problem and uses moderately
+		large swarms of about 1000 particles.
+	},
+}
+
+@inproceedings{richards-2003-dynamic-sociometry-in-pso,
+    title = {Dynamic Sociometry in Particle Swarm Optimization},
+    booktitle = {Proceedings of the Sixth International Conference on
+		Computational Intelligence and Natural Computing},
+    author = {Mark Richards and Dan Ventura},
+    year = {2003},
+    pages = {1557--1560},
+	abstract = {The performance of Particle Swarm Optimization isgreatly
+		affected by the size and sociometry of the swarm. Thisresearch proposes
+			a dynamic sociometry, which is shown to bemore effective on some
+			problems than the standard star and ringsociometries. The
+			performance of various combinations ofswarm size and sociometry on
+			six different test functions isqualitatively analyzed.
+	},
+	annote = { Andrew: Proposes using completing graphs to balance exploration
+		and exploitation.  Completing graphs begin with a sparse topology and
+			gradually add edges until the swarm is fully connected.
+	}, 
+}
+
+
+@article{belal-2004-parallel-models-for-pso,
+    title = "Parallel Models for Particle Swarm Optimizers",
+    author = "M. Belal and T. El-Ghazawi",
+    annote = {
+        Applies techniques from parallel Genetic Algorithms (GAs) to
+        Particle Swarm Optimization.  It reviews global GAs, migration GAs,
+        and diffusion GAs and introduces their PSO counterparts.  For each
+        parallel variant of PSO, it discusses the operation and message
+        complexity.  Although the paper does very little to discuss
+        performance and draws few conclusions, it does a good job of showing
+        the overall strategies for parallelizing PSO.},
+    journal = "International Journal of Intelligent Computing and
+        Information Sciences",
+    volume = "4",
+    number = "1",
+    pages = "100--111",
+    year = "2004",
+}
+
+@article{chang-2005-parallel-pso-with-communication-strategies,
+	title = {A Parallel Particle Swarm Optimization Algorithm with Communication Strategies},
+	author = {Jui-Fang Chang and Shu-Chuan Chu and John F. Roddick and Jeng-Shyang Pan},
+	journal = {Journal of Information Science and Engineering},
+	volume = 21,
+	year = {2005},
+	pages = {809--818},
+	annote = { Introduces a few parallel models for PSO.  It is not clear in
+		the paper if they actual ran anything in parallel, or even how they
+			parallelized their work.  It seems more like a topology paper than
+			a parallelization paper.},
+}
+
+@article{chu-2006-intelligent-parallel-pso,
+	title = {Intelligent Parallel Particle Swarm Optimization Algorithms},
+	author = {Shu-Chuan Chu and Jeng-Shyang Pan},
+	journal = {Parallel Evolutionary Computations},
+	year = {2006},
+	pages = {159--175},
+	abstract = {Some social systems of natural species, such as flocks of birds
+		and schools of fish, possess interesting collective behavior. In these
+			systems, globally sophisticated behavior emerges from local,
+		indirect communication amongst simple agents with only limited
+			capabilities. In an attempt to simulate this flocking behavior by
+			computers, Kennedy and Eberthart (1995) realized that an
+			optimization problem can be formulated as that of a flock of birds
+			flying across an area seeking a location with abundant food. This
+			observation, together with some abstraction and modification
+			techniques, led to the development of a novel optimization
+			technique---particle swarm optimization.},
+	annote = { An expansion of Chang et al. 2005 that gives a few more details.
+		Most of the ideas are the same, though.},
+}
+url = {http://dx.doi.org/10.1007/3-540-32839-4\_8},
+
+@article{gies-2003-pso-array-design,
+    author = "Dennis Gies and Yahya Rahmat-Samii",
+    title = "Particle Swarm Optimization for Reconfigurable Phase-Differentiated Array Design",
+    journal = "Microwave and Optical Technology Letters",
+    volume = "38",
+    number = "3",
+    pages = "168--175",
+    year = "2003",
+}
+
+@article{jin-2005-pso-antenna-designs,
+    author = "Nanbo Jin and Yahya Rahmat-Samii",
+    title = "Parallel Particle Swarm Optimization and Finite-Difference Time-Domain (PSO/FDTD) Algorithm for Multiband and Wide-Band Patch Antenna Designs",
+    journal = "IEEE Transactions on Antennas and Propogation",
+    volume = "53",
+    number = "11",
+    pages = "3459--3468",
+    year = "2005",
+    annote = {
+        Applies a parallel implementation of PSO, using a master-slave
+        model, to an antenna design problem.},
+}
+
+@article{koh-2006-parallel-asynchronous-pso,
+    author = "Byung-Il Koh and Alan D. George and Raphael T. Haftka and Benjamin J. Fregly",
+    title = "Parallel Asynchronous Particle Swarm Optimization",
+    journal = "International Journal of Numerical Methods in Engineering",
+    year = "2006",
+    volume = "67",
+    pages = "578--595",
+    annote = {Andrew:
+        Introduces an asynchronous parallel implementation of PSO, where
+        particles iterate independently rather than in lock-step.  Particles
+        do not wait for communication from neighbors.  This is particularly
+        effective if compute clusters are large or heterogeneous or if the
+        speed of function evaluation varies.},
+}
+
+@inproceedings{li-2005-parallelizing-pso, 
+    author={Bo Li and Koichi Wada}, 
+    title={Parallelizing Particle Swarm Optimization}, 
+    booktitle={Communications, Computers and signal Processing, 2005. PACRIM. 2005 IEEE Pacific Rim Conference on}, 
+    year={2005}, 
+    month={Aug.}, 
+    volume={}, 
+    number={}, 
+    pages={288--291}, 
+    keywords={parallel algorithms, particle swarm optimisation, telecommunication message transfer, particle swarm optimization algorithm}, 
+}
+doi={10.1109/PACRIM.2005.1517282}, 
+ISSN={ },
+
+@techreport{mostaghim-2006-multi-objective-pso-on-grids,
+    author = {Sanaz Mostaghim and J{\"{u}}rgen Branke and Hartmut Schmeck},
+    title = {Multi-Objective Particle Swarm Optimization on Computer Grids},
+    institution = {AIFB Institute},
+    number = {502},
+    type = {Technical Report},
+    month = {DEC},
+    year = {2006},
+    annote = {
+        Addresses parallel multi-objective PSO using subswarms with
+        migration between processors.},
+}
+url = {http://www.aifb.uni-karlsruhe.de/EffAlg/smo/paper-12-06.pdf},
+
+@inproceedings{parsopoulos-2004-parallel-vector-evaluated-pso,
+    author = "K. E. Parsopoulos and D. K. Tasoulis and M. N. Vrahatis",
+    title = "Multiobjective Optimization Using Parallel Vector Evaluated Particle Swarm Optimization",
+    booktitle =  "Proceedings
+        of the IASTED International Conference on Artificial Intelligence and Applications",
+    pages={823--828},
+    year = "2004",
+    annote = {
+        Describes a parallel implementation of Vector Evaluated PSO for multiobjective optimization.},
+}
+url = "http://citeseer.ist.psu.edu/article/parsopoulos04multiobjective.html"
+
+@article{schutte-2004-parallel-global-optimization-with-pso,
+    title = {Parallel Global Optimization with the Particle Swarm Algorithm},
+    volume = {61},
+    number = {13},
+    journal = {International Journal for Numerical Methods in Engineering},
+    author = {J. F. Schutte and J. A. Reinbolt and B. J. Fregly and R. T. Haftka and A. D. George},
+    month = dec,
+    year = {2004},
+    pages = {2296--2315},
+    annote = {
+        Introduces a parallel implementation of PSO using MPI with one
+        particle per processor.  The benchmark functions used include a
+        half-second delay for each evaluation, based on the observation that
+        parallelization is inappropriate if function evaluations are fast.},
+}
+url = {http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=1989676},
+doi = {10.1002/nme.1149},
+note = {PMC1989676},
+
+@inproceedings{scriven-2008-asynchronous-pso-in-unreliable-distributed-environments,
+  author    = {Ian Scriven and
+               David Ireland and
+               Andrew Lewis and
+               Sanaz Mostaghim and
+               J{\"u}rgen Branke},
+  title     = {Asynchronous Multiple Objective Particle Swarm Optimisation
+               in Unreliable Distributed Environments},
+  booktitle = {Proceedings of the IEEE Congress on Evolutionary Computation},
+  year      = {2008},
+  pages     = {2481--2486},
+  ee        = {http://dx.doi.org/10.1109/CEC.2008.4631130},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
+
+@inproceedings{scriven-2008-distributed-pso-using-peer-to-peer,
+  author    = {Ian Scriven and
+               Andrew Lewis and
+               David Ireland and
+               Junwei Lu},
+  title     = {Decentralised Distributed Multiple Objective Particle Swarm
+               Optimisation Using Peer to Peer Networks},
+  booktitle = {Proceedings of the IEEE Congress on Evolutionary Computation},
+  year      = {2008},
+  pages     = {2925--2928},
+  ee        = {http://dx.doi.org/10.1109/CEC.2008.4631191},
+  bibsource = {DBLP, http://dblp.uni-trier.de}
+}
+
+@inproceedings{venter-2005-parallel-pso-asynchronous-evaluations,
+    author = "Gerhard Venter and Jaroslaw Sobieszczanski-Sobieski",
+    title = "A Parallel Particle Swarm Optimization Algorithm Accelerated by Asynchronous Evaluations",
+    booktitle = "Proceedings of the 6th World Congresses of Structural and Multidisciplinary Optimization",
+    year = "2005",
+    annote = {
+        Introduces an parallel implementation of PSO using MPI an
+        applies it to an aerodynamics problem.  It seems to reorder
+        some operations, but the details aren't entirely clear.},
+}
+
+
+
+
+@inproceedings{bratton-2007-defining-a-standard-for-pso,
+    title = {Defining a Standard for Particle Swarm Optimization},
+    booktitle = {Proceedings of the IEEE Swarm Intelligence Symposium},
+    author = {D. Bratton and J. Kennedy},
+    year = {2007},
+    keywords = {heuristic technique,particle swarm optimisation,particle swarm optimization,performance testing,testing},
+    pages = {120--127},
+	abstract = {Particle swarm optimization has become a common heuristic
+		technique in the optimization community, with many researchers
+			exploring the concepts, issues, and applications of the algorithm.
+			In spite of this attention, there has as yet been no standard
+			definition representing exactly what is involved in modern
+			implementations of the technique. A standard is defined here which
+			is designed to be a straightforward extension of the original
+			algorithm while taking into account more recent developments that
+			can be expected to improve performance on standard measures. This
+			standard algorithm is intended for use both as a baseline for
+			performance testing of improvements to the technique, as well as to
+			represent PSO to the wider optimization community
+	},
+	annote = { Proposes a new canonical definition of PSO based on the
+		state of the art.  It recognizes that Constriction PSO has been shown
+			to consistently outperform the original algorithm and recommends
+			that it be treated as the standard form.  It also considers
+			topologies, swarm sizes, initialization, and boundary conditions
+			and makes recommendations in each of these areas.  The intent is
+			not to limit research but rather to establish a common standard to
+			compare future variants against.  This paper does a good job of
+			addressing an important problem.
+	},
+}
+
+@conference{carlisle-2001-off-the-shelf-pso,
+  title={{An Off-The-Shelf PSO}},
+  author={Carlisle, A. and Dozier, G.},
+  booktitle={Proceedings of the Workshop on Particle Swarm Optimization},
+  volume={1},
+  pages={1--6},
+  year={2001},
+  organization={Indianapolis, IN: Purdue School of Engineering and Technology,
+	  IUPUI},
+  abstract = {},
+  annote = {},
+}
+
+@article{clerc-2002-constricted-pso,
+    title = {The Particle Swarm---Explosion, Stability, and Convergence in a Multidimensional Complex Space},
+    volume = {6},
+    number = {1},
+    journal = {IEEE Transactions on Evolutionary Computation},
+    author = {Maurice Clerc and James Kennedy},
+    year = {2002},
+	keywords = {convergence,convergence of numerical methods,evolutionary
+		computation,genetic algorithms,multidimensional complex space,numerical
+			stability,optimization,particle swarm,particle trajectory,search
+			problems,search spaces,stability},
+    pages = {58--73},
+	abstract = {The particle swarm is an algorithm for finding optimal regions
+		of complex search spaces through the interaction of individuals in a
+			population of particles. This paper analyzes a particle's
+			trajectory as it moves in discrete time (the algebraic view), then
+			progresses to the view of it in continuous time (the analytical
+					view). A five-dimensional depiction is developed, which
+			describes the system completely. These analyses lead to a
+			generalized model of the algorithm, containing a set of
+			coefficients to control the system's convergence tendencies. Some
+			results of the particle swarm optimizer, implementing modifications
+			derived from the analysis, suggest methods for altering the
+			original algorithm in ways that eliminate problems and increase the
+			ability of the particle swarm to find optima of some well-studied
+			test functions
+   	},
+	annote = { Analyzes particle motion in PSO from algebraic
+		(discrete) and analytic (continuous) points of view.  The paper
+			proposes restricting velocity with a constriction coefficient to
+			guarantee convergence.  This variant, known as Constriction PSO, is
+			now the most common form of the PSO motion equations.
+	}
+
+}
+
+@conference{eberhart-1998-comparison-ga-pso,
+  title={{Comparison Between Genetic Algorithms and Particle Swarm Optimization}},
+  author={Eberhart, R. and Shi, Y.},
+  booktitle={Evolutionary Programming VII},
+  pages={611--616},
+  year={1998},
+  organization={Springer}
+}
+
+@techreport{herrera-2010-test-suite,
+	author = {F. Herrera and M. Lozano and D. Molina},
+	title = {Test Suite for the Special Issue of Soft Computing on Scalability
+		of Evolutionary Algorithms and other Metaheuristics for Large Scale
+			Continuous Optimization Problems},
+	year = {2010},
+	institution = {University of Granada},
+	abstract = {In this document, we provide the description of the 19 test
+		functions(F1-F19*) that should be used for the experimental study for
+			the SpecialIssue of Soft Computing on Scalability of Evolutionary
+			Algorithms andother Metaheuristics for Large Scale Continuous
+			Optimization Problems.In Section 1 (page 2), we report the main
+			features and properties of thefunctions F1-F11 and, in Section 2
+			(page 10), we explain the way hybridcomposition functions F12-F19*
+			are obtained combining two functionsbelonging to the set F1-F11.
+	},
+	annote = {},
+}
+
+@article{hsieh-2009-efficient-population-utilization-for-pso, 
+	author={Sheng-Ta Hsieh and Tsung-Ying Sun and Chan-Cheng Liu and
+		Shang-Jeng Tsai}, 
+	journal={Systems, Man, and Cybernetics, Part B: Cybernetics, IEEE
+		Transactions on},
+	title={Efficient Population Utilization Strategy for Particle Swarm
+		Optimizer}, 
+	year={2009}, 
+	volume={39}, 
+	number={2}, 
+	pages={444 -456}, 
+	keywords={global optimal solution;particle swarm optimizer;population
+		utilization strategy;population-based optimization technique;searching
+			ability;sharing principals;particle swarm optimisation;}, 
+	abstract = {},
+	annote = { This paper recommends changing the swarm size throughout the
+		course of PSO.  A reviewer recommended we cite this paper as related
+			work, though its applicability is only tangential because in
+			parallel you want to use all of your processors at every
+			iteration.},
+}
+doi={10.1109/TSMCB.2008.2006628}, 
+ISSN={1083-4419},
+
+@article{montes-de-oca-2009-frankensteins-pso,
+    author = {Montes de Oca, Marco A. and St\"{u}tzle, Thomas and Birattari, Mauro and Dorigo, Marco},
+    title = {Frankenstein's PSO: a Composite Particle Swarm Optimization Algorithm},
+    journal = {Transactions on Evolutionary Computation},
+    volume = {13},
+    number = {5},
+    year = {2009},
+    issn = {1089-778X},
+    pages = {1120--1132},
+    doi = {http://dx.doi.org/10.1109/TEVC.2009.2021465},
+    publisher = {IEEE Press},
+    address = {Piscataway, NJ, USA},
+}
+
+@article{montes-de-oca-2010-incremental-social-learning-pso, 
+	author={Montes de Oca, M. A. and Stü andtzle, T. and Van den Enden, K. and
+		Dorigo, M.}, 
+	journal={Systems, Man, and Cybernetics, Part B: Cybernetics, IEEE
+		Transactions on},
+	title={Incremental Social Learning in Particle Swarms}, 
+	year={2010}, 
+	volume={PP}, 
+	number={99}, 
+	pages={1 -17}, 
+	keywords={}, 
+	abstract = {},
+	annote = { Another paper describing adding particles over time that is
+		related tangentially to our work.},
+}
+doi={10.1109/TSMCB.2010.2055848}, 
+ISSN={1083-4419},
+
+
+@inproceedings{kennedy-1995-particle-swarm-optimization,
+    author = "James Kennedy and Russell C. Eberhart",
+    title = "Particle Swarm Optimization",
+    booktitle = "International Conference on Neural Networks IV",
+    year=1995,
+    address = "Piscataway, NJ",
+    pages = "1942--1948",
+	abstract = {},
+	annote = { Introduces Particle Swarm Optimization and the process
+		through which it was developed.
+	},
+}
+
+@article{poli-2008-pso-applications,
+	author = {Poli, Riccardo},
+	title = {Analysis of the publications on the applications of particle swarm
+		optimisation},
+	journal = {J. Artif. Evol. App.},
+	issue_date = {January 2008},
+	volume = {2008},
+	month = {January},
+	year = {2008},
+	issn = {1687-6229},
+	pages = {3:1--3:10},
+	articleno = {3},
+	numpages = {10},
+	url = {http://dx.doi.org/10.1155/2008/685175},
+	doi = {http://dx.doi.org/10.1155/2008/685175},
+	acmid = {1362105},
+	publisher = {Hindawi Publishing Corp.},
+	address = {New York, NY, United States},
+	abstract = {},
+	annote = { This article gives some 26 problems that PSO has been
+		applied to, including something like 60 references.  An interesting
+			kind of survey paper.
+	},
+} 
+
+@article{poli-2008-sampling-distribution-of-pso,
+	title = {Dynamics and Stability of the Sampling Distribution of Particle Swarm Optimisers via Moment Analysis},
+	volume = {8},
+	number = {2},
+	journal = {Journal of Artificial Evolution and Applications},
+	author = {Riccardo Poli},
+	year = {2008},
+	pages = {1--10},
+	abstract = {For stochastic optimisation algorithms, knowing the probability
+		distribution with which an algorithm allocates new samples in the
+			search space is very important, since this explains how the
+			algorithm really works and is a prerequisite to being able to match
+			algorithms to problems. This is the only way to beat the
+			limitations highlighted by the no-free lunch theory. Yet, the
+			sampling distribution for velocity-based particle swarm optimisers
+			has remained a mystery for the whole of the first decade of {PSO}
+		research. In this paper, a method is presented that allows one to
+			exactly determine all the characteristics of a {PSO's} sampling
+			distribution and explain how it changes over time during stagnation
+			(i.e., while particles are in search for a better personal best)
+			for a large class of {PSO's.}
+	},
+	annote = {},
+}
