@@ -1,5 +1,5 @@
 set xlabel "Time Steps"
-set ylabel "Percent of Swarms With a Best Near Zero"
+set ylabel "Percent of Swarms With a value below 1e-6"
 set key bottom right
 set clip two
 set y2tics
