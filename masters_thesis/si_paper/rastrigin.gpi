@@ -2,7 +2,7 @@ set xlabel "Time Steps"
 set ylabel "Best Function Value"
 set clip two
 set y2tics
-plot [1:999] [0:300] '-' title "SEPSO" with lines lw 4, '-' title "Pick Best" with lines lw 4, '-' title "Naive Random" with lines lw 4, '-' title "Naive Complete" with lines lw 4
+plot [1:999] [0:300] '-' title "SEPSO" with lines lw 4, '-' title "Pick Best" with lines lw 4, '-' title "Standard Random" with lines lw 4, '-' title "Standard Complete" with lines lw 4
 1 282.0979249
 2 279.690368024
 3 277.151270579

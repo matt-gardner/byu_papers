@@ -118,9 +118,9 @@ In our approach, we refactor PSO such that the computation needed for iteration
 $t+1$ can be done concurrently with the computation needed for iteration $t$.
 Thus we can perform two iterations of PSO at once.  Even with some amount of
 wasted computation, we show that this approach to parallelization in PSO often
-outperforms the naive parallelization of simply adding particles to the swarm.
-SEPSO produces results that are exactly equivalent to PSO; this is not a new
-algorithm or variant, only a new method of parallelization.
+outperforms the standard parallelization of simply adding particles to the
+swarm.  SEPSO produces results that are exactly equivalent to PSO; this is not
+a new algorithm or variant, only a new method of parallelization.
 
 However, given this new parallelization model we can relax the requirement of
 exactly reproducing PSO in an attempt to produce better results.  We present
@@ -244,9 +244,9 @@ parallelizations.
 
 Furthermore, we show that if we relax the requirements of the algorithm, no
 longer demanding that it strictly reproduce the exact behavior of standard PSO,
-we can introduce new speculative techniques that often out-perform both naive
-parallelizations of PSO and SEPSO.  These relaxations make better use of the
-information obtained from the extra exploration made by the speculative
+we can introduce new speculative techniques that often out-perform both
+standard parallelizations of PSO and SEPSO.  These relaxations make better use
+of the information obtained from the extra exploration made by the speculative
 function evaluations.  We also explore the idea that, like branch prediction in
 processors, we need not speculatively evaluate \emph{all} possible future
 positions, we can accelerate the algorithm even if we are just \emph{likely} to
@@ -960,7 +960,7 @@ and the problem is avoided.
 While the idea of speculative evaluation in particle swarm optimization is
 intriguing, the results in \sec{results} show that in many cases it requires
 too many extra evaluations to produce competitive results.  On most functions,
-the larger swarm size that can be used in naive parallelizations leads to
+the larger swarm size that can be used in standard parallelizations leads to
 better performance than is found by trying to do speculative evaluation to
 exactly reproduce PSO.  However, if we keep the idea of speculative evaluation
 while relaxing the requirement of exactly reproducing the behavior of the
@@ -1026,7 +1026,7 @@ evaluations.  If we could reliably predict which branch were going to be taken,
 we could limit ourselves to one speculative evaluation per particle instead of
 $2n+1$.  With a fixed number of processors, this would allow us to greatly
 increase the swarm size relative to that needed in the original speculative
-algorithm (e.g., with 120 processors, a naive parallelization has a swarm of
+algorithm (e.g., with 120 processors, a standard parallelization has a swarm of
 size 120, complete speculative evaluation has a swarm of size 15, and pruning
 the evaluations to only one per particle allows a swarm of size 60).  As not
 all of the branches are evaluated in any given iteration, we call this
@@ -1222,13 +1222,13 @@ to compare the different branching possibilities on various functions.
 \label{sec:setup}
 
 We ran experiments to compare our speculative parallelization of PSO to the
-naive parallelization.  At each iteration of the algorithms, we use one
+standard parallelization.  At each iteration of the algorithms, we use one
 processor to perform one function evaluation for one particle, be it
 speculative or non-speculative.  The speculative version actually performs two
 iterations of PSO at each ``iteration,'' so we instead call each ``iteration''
 a ``time step.''  As noted in the introduction, this is a reasonable
 architecture to use if the function being optimized takes longer than around
-100 milliseconds to run.
+100 milliseconds to run in our implementation.
 
 Because our interest is in exploring the most efficient use of processors, we
 must hold fixed the number of processors used at each time step in all of our
@@ -1246,15 +1246,15 @@ long-running functions, we must compare by wall-clock time with the same
 resources, not solely by the number of function evaluations.
 
 Using the same number of processors for each approach requires that our
-speculative parallelizations have a smaller swarm size than the naive
+speculative parallelizations have a smaller swarm size than the standard
 parallelization.  For each of the topologies we used, a particle has three
 neighbors including itself.  As shown in Table~\ref{tab:evals}, this results in
 $7$ speculative evaluations per particle.  With one evaluation needed for the
 original, non-speculative particle, we have $8p$ evaluations for every two
 iterations, where $p$ is the number of particles in the speculative swarm.  The
 extra evaluations required in our speculative approach would instead be used to
-evaluate particles in naive parallelizations, so we compare swarms of size
-$p$ in speculative evaluation with swarms of size $8p$ in naive approaches.
+evaluate particles in standard parallelizations, so we compare swarms of size
+$p$ in speculative evaluation with swarms of size $8p$ in standard approaches.
 
 \subsection{Running Time}
 
@@ -1293,8 +1293,8 @@ function and the communication overhead per iteration for a specific
 implementation, the actual running time can be recovered from all of our
 results.  Simply multiply the number of time steps by the sum of the function
 evaluation time and the overhead.  We wish to stress that the ``time steps'' we
-report are \emph{exactly} proportional to wall-clock time, given the
-architecture we have assumed.
+report are proportional to wall-clock time, given the architecture we have
+assumed.
 
 \subsection{Functions Used}
 
@@ -1341,8 +1341,8 @@ the order of two seconds.
 
 \subsection{Parallelization Techniques Compared}
 
-The parallelization techniques we compare are the naive parallelization (here
-labeled Naive simply for ease of reference), our original speculative
+The parallelization techniques we compare are the standard parallelization
+(here labeled Standard simply for ease of reference), our original speculative
 approach (labeled SEPSO), and the four relaxations of SEPSO discussed in
 \sec{relax}.  In presenting our results, we call the approach developed in
 \sec{pickbest} Pick Best.  The methods described in \sec{pruning} through
@@ -1363,7 +1363,7 @@ on the number of neighbors the particle has.
 
 Because pruning only requires two speculative evaluations per particle (along
 with evaluating the original particle), we can use swarms of size
-$\frac{1}{3}p$ to compare to a swarm of size $p$ with the naive
+$\frac{1}{3}p$ to compare to a swarm of size $p$ with the standard
 parallelization, instead of $\frac{1}{8}p$ with other techniques.
 
 There are also many ways to speculate several iterations ahead, and with Many
@@ -1408,8 +1408,8 @@ for those methods).  If speculative evaluation were not being performed, it is
 possible that the Complete topology would be used.  However, the Complete
 topology also requires a very large amount of interprocessor communication in
 distributed PSO, so it is still quite possible that Random would be used even
-with naive parallelizations~\cite{mcnabb-2009-large-particle-swarms}.  But,
-to be fair in our comparisons, we compare to the naive parallelization using
+with standard parallelizations~\cite{mcnabb-2009-large-particle-swarms}.  But,
+to be fair in our comparisons, we compare to the standard parallelization using
 both the Random topology and the Complete topology (labeled PSO Random and PSO
 Complete in our results).  Again, the amount of communication overhead is
 heavily dependent on implementation details which are not the focus of this
@@ -1442,8 +1442,8 @@ in local optima.  Because our speculative algorithms require significantly
 smaller swarm sizes, we would expect to not perform very well on functions such
 as Rastrigin.  Our experiments show our intuition to be correct.  In this
 experiment we used 240 processors, so SEPSO and Pick Best each had 30
-particles, and the Naive algorithms had 240 particles.  As expected, SEPSO and
-Pick Best converge quickly to worse local optima than Naive does.
+particles, and the Standard algorithms had 240 particles.  As expected, SEPSO
+and Pick Best converge quickly to worse local optima than Standard does.
 \fig{rastrigin} shows the results graphically, and \tabref{rastrigin-20} shows
 results for all of the methods we tried.
 
@@ -1457,11 +1457,11 @@ results for all of the methods we tried.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&25\%&743.4&212.0\\
+  Standard Ring&25\%&743.4&212.0\\
   \hline
-  Naive Random&100\%&372.1&86.6\\
+  Standard Random&100\%&372.1&86.6\\
   \hline
-  \textbf{Naive Complete}&\textbf{95\%}&\textbf{273.1}&\textbf{99.7}\\
+  \textbf{Standard Complete}&\textbf{95\%}&\textbf{273.1}&\textbf{99.7}\\
   \hline
   SEPSO Ring&5\%&471.0&0.0\\
   \hline
@@ -1518,8 +1518,8 @@ always successfully reaches 0 once is passes that point.
 We ran 50 trials of each experiment with Griewank, so that the curves are more
 smooth.  We show results in \fig{basic-griewank1} for swarms of size 30 and 240
 using the Ring topology.  One can see in the figure that the SEPSO approach
-finds the optimum faster than the Naive approach.  However, because the swarm
-size is so small, SEPSO gets stuck a little less than half of the time.
+finds the optimum faster than the Standard approach.  However, because the
+swarm size is so small, SEPSO gets stuck a little less than half of the time.
 
 \begin{figure}
   \centering
@@ -1538,7 +1538,7 @@ ran a set of experiments on Griewank with 800 processors, giving swarms of size
 \fig{basic-griewank2} is very similar to \fig{basic-griewank1}, except that
 speculative evaluation finds the global optimum essentially 100\% of the time.
 Thus with a few more processors, our algorithm finds the optimum on average
-twice as fast as the Naive approach without a significant loss of accuracy.
+twice as fast as the Standard approach without a significant loss of accuracy.
 
 \begin{figure}
   \centering
@@ -1591,7 +1591,7 @@ original PSO.  These results are shown in \fig{griewank-pruned}.
 With Griewank, the premature convergence problems inherent in picking the best
 child are exacerbated when speculating several iterations ahead.  When Many
 Iterations finds the optimum, it finds it quicker than any other method we
-tried, on average four times faster than Naive.  However, it also gets stuck
+tried, on average four times faster than Standard.  However, it also gets stuck
 and fails to find the optimum more than any other method.  The results are
 shown in \fig{griewank-manyiters}.   \fig{griewank-manyiters} is also
 interesting in that it highlights the trade-off between accuracy and speed in
@@ -1658,11 +1658,11 @@ on this function.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&0\%&N/A&N/A\\
+  Standard Ring&0\%&N/A&N/A\\
   \hline
-  Naive Random&0\%&N/A&N/A\\
+  Standard Random&0\%&N/A&N/A\\
   \hline
-  Naive Complete&100\%&931.0&19.1\\
+  Standard Complete&100\%&931.0&19.1\\
   \hline
   SEPSO Ring&0\%&N/A&N/A\\
   \hline
@@ -1699,13 +1699,13 @@ on this function.
 
 Schwefel 2.21 is a function similar to Sphere, but Schwefel 2.21 is benefited
 more by larger swarms than Sphere is.  Thus our speculative algorithms often
-fail outperform Naive with 240 processors because the simple speculative
+fail outperform Standard with 240 processors because the simple speculative
 methods only have 30 particles.  As we will show later, when we use 800
 processors at 50 dimensions, our methods perform much better.  However, the
 pruned versions of our methods have 80 particles and thus are able to
-outperform Naive even with only 240 processors.  Because the graph of Schwefel
-2.21 looks very similar to that of Sphere, we present all of our results in
-\tabref{schwefel-20}.
+outperform Standard even with only 240 processors.  Because the graph of
+Schwefel 2.21 looks very similar to that of Sphere, we present all of our
+results in \tabref{schwefel-20}.
 
 \begin{table}
   \caption{Summary of results for function Schwefel with 20 dimensions,
@@ -1717,11 +1717,11 @@ outperform Naive even with only 240 processors.  Because the graph of Schwefel
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&0\%&N/A&N/A\\
+  Standard Ring&0\%&N/A&N/A\\
   \hline
-  Naive Random&0\%&N/A&N/A\\
+  Standard Random&0\%&N/A&N/A\\
   \hline
-  Naive Complete&100\%&837.2&44.8\\
+  Standard Complete&100\%&837.2&44.8\\
   \hline
   SEPSO Random&0\%&N/A&N/A\\
   \hline
@@ -1752,10 +1752,11 @@ the swarm sometimes finds it and sometimes does not.  Thus we present a graph
 similar to those of Griewank, because ``average value'' graphs have a
 misleading flat line.  In \fig{bohachevsky} we show a plot with a few pertinent
 methods, while \tabref{bohachevsky-20} shows all of the results.  All of our
-speculative approaches found the optimum much quicker than Naive with a Random
-topology.  However, SEPSO was slower than Naive Complete and got stuck 25\% of
-the time.  Pick Best, Pick Best Pruned, and Many Iterations all outperformed
-Naive Complete, with Many Iterations finding the optimum about twice as fast.
+speculative approaches found the optimum much quicker than Standard with a
+Random topology.  However, SEPSO was slower than Standard Complete and got
+stuck 25\% of the time.  Pick Best, Pick Best Pruned, and Many Iterations all
+outperformed Standard Complete, with Many Iterations finding the optimum about
+twice as fast.
 
 \begin{figure}
   \centering
@@ -1776,9 +1777,9 @@ Naive Complete, with Many Iterations finding the optimum about twice as fast.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Random&100\%&472.3&6.6\\
+  Standard Random&100\%&472.3&6.6\\
   \hline
-  Naive Complete&100\%&238.2&11.2\\
+  Standard Complete&100\%&238.2&11.2\\
   \hline
   SEPSO Random&75\%&261.6&9.2\\
   \hline
@@ -1805,7 +1806,7 @@ Naive Complete, with Many Iterations finding the optimum about twice as fast.
 
 Given our observation from the 20 dimensional benchmark functions that Many
 Iterations most often outperforms other speculative approaches, we only present
-results for Many Iterations and Naive for the 50 and 500 dimensional
+results for Many Iterations and Standard for the 50 and 500 dimensional
 variants.  For these experiments we used 800 processors, as the problems are
 more difficult and speculative approaches perform best when many processors are
 available, as we showed in \sec{griewank-20}.  Many Iterations Complete showed
@@ -1817,13 +1818,13 @@ Tables~\ref{tab:rastrigin-50} through~\ref{tab:bohachevsky-50} present
 summaries of our results for each of the benchmark functions. As with the 20
 dimensional variants, our speculative methods did not perform well on
 Rastrigin, though for all other benchmarks Many Iterations significantly
-outperformed Naive.  In each table, we bold the best method, meaning that it
+outperformed Standard.  In each table, we bold the best method, meaning that it
 has at least a 90\% success rate and its average time to completion is faster
 than all other methods that have at least a 90\% success rate.  For example,
 Many Iterations Random, when it is successful, achieves the required value 6
-times faster than Naive Random.  However, because Many Iterations Random only
-has a 25\% success rate while Naive Random has a 100\% success rate, Naive
-Random is bolded.
+times faster than Standard Random.  However, because Many Iterations Random
+only has a 25\% success rate while Standard Random has a 100\% success rate,
+Standard Random is bolded.
 
 We used a double-sided t-test to test for statistical significance in these
 results, and all bolded values are statistically significant with a p-value of
@@ -1831,9 +1832,9 @@ less than $10^{-5}$.  In one instance two values are bolded because they are
 statistically tied, while both are significantly better than all other methods.
 
 A summary of the results is shown in \tabref{50dims-summary}.  For functions
-where Many Iterations outperformed Naive, we report the average speed up.  On
-all functions except Rastrigin, our methods showed an average speed up of from
-two to six times compared to previous methods.
+where Many Iterations outperformed Standard, we report the average speed up.
+On all functions except Rastrigin, our methods showed an average speed up of
+from two to six times compared to previous methods.
 
 \begin{table}
   \caption{Summary of results for function Rastrigin with 50 dimensions,
@@ -1845,11 +1846,11 @@ two to six times compared to previous methods.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&5\%&776.0&0.0\\
+  Standard Ring&5\%&776.0&0.0\\
   \hline
-  \textbf{Naive Random}&\textbf{100\%}&\textbf{593.2}&\textbf{89.5}\\
+  \textbf{Standard Random}&\textbf{100\%}&\textbf{593.2}&\textbf{89.5}\\
   \hline
-  Naive Complete&80\%&343.8&145.8\\
+  Standard Complete&80\%&343.8&145.8\\
   \hline
   Many Iterations Ring&25\%&223.8&67.1\\
   \hline
@@ -1868,11 +1869,11 @@ two to six times compared to previous methods.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&0\%&N/A&N/A\\
+  Standard Ring&0\%&N/A&N/A\\
   \hline
-  Naive Random&30\%&986.8&8.2\\
+  Standard Random&30\%&986.8&8.2\\
   \hline
-  Naive Complete&100\%&458.4&12.3\\
+  Standard Complete&100\%&458.4&12.3\\
   \hline
   Many Iterations Ring&100\%&288.7&3.9\\
   \hline
@@ -1891,11 +1892,11 @@ two to six times compared to previous methods.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&0\%&N/A&N/A\\
+  Standard Ring&0\%&N/A&N/A\\
   \hline
-  Naive Random&70\%&871.6&57.1\\
+  Standard Random&70\%&871.6&57.1\\
   \hline
-  Naive Complete&100\%&599.0&85.6\\
+  Standard Complete&100\%&599.0&85.6\\
   \hline
   \textbf{Many Iterations Ring}&\textbf{100\%}&\textbf{238.6}&\textbf{34.2}\\
   \hline
@@ -1914,7 +1915,7 @@ two to six times compared to previous methods.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&100\%&1898.5&25.7\\
+  Standard Ring&100\%&1898.5&25.7\\
   \hline
   \textbf{Many Iterations Ring}&\textbf{97\%}&\textbf{312.4}&\textbf{6.3}\\
   \hline
@@ -1931,11 +1932,11 @@ two to six times compared to previous methods.
   Algorithm&\% Complete&Mean&St. Dev.\\
   \hline
   \hline
-  Naive Ring&100\%&1434.0&62.1\\
+  Standard Ring&100\%&1434.0&62.1\\
   \hline
-  Naive Random&100\%&704.5&19.7\\
+  Standard Random&100\%&704.5&19.7\\
   \hline
-  Naive Complete&20\%&377.5&14.9\\
+  Standard Complete&20\%&377.5&14.9\\
   \hline
   \textbf{Many Iterations Ring}&\textbf{95\%}&\textbf{229.8}&\textbf{11.4}\\
   \hline
@@ -1947,7 +1948,7 @@ two to six times compared to previous methods.
 \begin{table}
   \caption{Average speed up, comparing the number of time steps to completion
   for the best speculative topology to the time steps to completion for the
-  best naive topology.  All functions have 50 dimensions.}
+  best standard topology.  All functions have 50 dimensions.}
   \label{tab:50dims-summary}
   \centering
   \begin{tabular}{|l|r|}
@@ -1971,7 +1972,7 @@ two to six times compared to previous methods.
 \label{sec:500dims}
 
 At 500 dimensions we found that the performance of constricted PSO on benchmark
-functions becomes rather dismal.  In almost all cases, Naive fails to make
+functions becomes rather dismal.  In almost all cases, Standard fails to make
 any significant progress.  Our brief search for an explanation seems to say
 that the space is too large for particles to converge to the same point, so all
 updates to the best position found come from a single particle wandering in the
@@ -1982,7 +1983,7 @@ a promising location to keep the particles' velocities from contracting
 prematurely, and in 500 dimensions the space is too large to get the collection
 of particles to the same location.
 
-The results that we present show that while Naive parallelizations suffer
+The results that we present show that while Standard parallelizations suffer
 from this problem, Many Iterations does not.  Though we can provide some
 intuition for why this might be the case, it remains as future work to provide
 a strong theoretical explanation.  The intuition is that we are speculating
@@ -2003,12 +2004,12 @@ direction the particle was just going, without constricting its velocity at
 each of those iterations.  Thus the particle is able to make progress in that
 direction instead of contracting its velocity at every iteration.
 
-Because none of the Naive approaches were successful at optimizing the 500
+Because none of the Standard approaches were successful at optimizing the 500
 dimensional benchmark functions, we do not present tables as we did for the 50
 dimensional variants.  We do, however, show a few figures demonstrating the
 results we have just explained.  \fig{sphere500} shows the function Sphere,
 \fig{griewank500} shows Griewank, and \fig{rastrigin500} shows Rastrigin.  Note
-that at 500 dimensions speculative approaches outperform naive
+that at 500 dimensions speculative approaches outperform standard
 parallelizations on Rastrigin, whereas they did not at 20 and 50 dimensions.
 
 \begin{figure}
@@ -2041,8 +2042,8 @@ parallelizations on Rastrigin, whereas they did not at 20 and 50 dimensions.
 One could argue that a fairer comparison would have modified the PSO motions
 equations so that individual particles did not contract their velocity so
 quickly when finding good locations.  However, we used the same motion
-equations for both Naive and Many Iterations; changing the motion equations
-to help Naive would also help Many Iterations, and we would expect to see
+equations for both Standard and Many Iterations; changing the motion equations
+to help Standard would also help Many Iterations, and we would expect to see
 results that are at least as compelling as those from the 50 dimensional
 benchmark functions.
 
@@ -2050,23 +2051,23 @@ benchmark functions.
 \label{sec:model}
 
 For the model fitting problem that we experimented with, we used 144
-processors.  We show results for three methods: Naive with a Random topology,
-Naive with a Subswarm topology, and Many Iterations with a Random topology.
-Naive with a Subswarm topology had eight independent subswarms of 18
-particles each, and the particles in each subswarm were connected with a Random
-topology.  In the graphs we call this method Naive Subswarms.
+processors.  We show results for three methods: Standard with a Random
+topology, Standard with a Subswarm topology, and Many Iterations with a Random
+topology.  Standard with a Subswarm topology had eight independent subswarms of
+18 particles each, and the particles in each subswarm were connected with a
+Random topology.  In the graphs we call this method Standard Subswarms.
 
 \fig{rbf} shows our results for this function.  The function value reported is
 the sum squared error of the model fit.  \fig{rbf-stuck} shows the percent of
 runs that reached a value for sum squared error of 55,000 by each time step,
 which we designate as successful.  Many Iterations took on average 126 time
-steps to reach this value, while Naive Subswarms took on average 298.  The
+steps to reach this value, while Standard Subswarms took on average 298.  The
 p-value for a t-test on this statistic is less than $10^{-8}$.  With our
 implementation of parallel PSO, each time step took on average 10.06 seconds;
 1.83 seconds of that was function evaluation time and the rest was overhead.
 With this particular implementation, then, using Many Iterations instead of
-Naive led to an average time savings of 29 minutes, which is more than half
-of the 50 minutes that Naive takes on average to reach a successful value.
+Standard led to an average time savings of 29 minutes, which is more than half
+of the 50 minutes that Standard takes on average to reach a successful value.
 
 \begin{figure}
   \centering
@@ -2103,8 +2104,8 @@ time, or the behavior can be modified in order to improve performance.  While
 exactly reproducing PSO often uses too many extra processors to be useful, when
 we allow ourselves some freedom with the algorithm we see great improvements
 over previous methods.  We have shown results that conclusively demonstrate the
-superiority of our techniques for several functions over naively adding
-particles to the swarm when extra processors are available.
+superiority of our techniques for several functions over the standard practice
+of adding particles to the swarm when extra processors are available.
 
 What we have presented is not a new variant of PSO.  We presented a new
 parallelization technique, so we compared parallelization strategies on the

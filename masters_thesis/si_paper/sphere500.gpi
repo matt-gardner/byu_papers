@@ -6,7 +6,7 @@ set logscale y2 10
 set y2tics
 set y2range [10.0:1000000.0]
 set clip two
-plot [1:1000] [10.0:1000000.0] '-' title "Naive Ring" with lines lw 4, '-' title "Naive Rand" with lines lw 4, '-' title "Naive Complete" with lines lw 4, '-' title "Many Iterations Ring" with lines lw 4, '-' title "Many Iterations Rand" with lines lw 4
+plot [1:1000] [10.0:1000000.0] '-' title "Standard Ring" with lines lw 4, '-' title "Standard Rand" with lines lw 4, '-' title "Standard Complete" with lines lw 4, '-' title "Many Iterations Ring" with lines lw 4, '-' title "Many Iterations Rand" with lines lw 4
 1 365240.812161
 2 365240.812161
 3 365240.812161

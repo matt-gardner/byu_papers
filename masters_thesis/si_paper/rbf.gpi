@@ -5,7 +5,7 @@ set clip two
 set logscale y2 10
 set y2tics
 set y2range [10000.0:10000000.0]
-plot [1:700] [10000.0:10000000.0] '-' title "Naive Random" with lines lw 4, '-' title "Naive Subswarms" with lines lw 4, '-' title "Many Iterations Random" with lines lw 4
+plot [1:700] [10000.0:10000000.0] '-' title "Standard Random" with lines lw 4, '-' title "Standard Subswarms" with lines lw 4, '-' title "Many Iterations Random" with lines lw 4
 1 5674603.13889
 2 5639737.40103
 3 5194792.73083

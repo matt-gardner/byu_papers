@@ -3,7 +3,7 @@ set ylabel "Percent of Swarms With a value below 1e-6"
 set key bottom right
 set clip two
 set y2tics
-plot [1:1000] [0:100] '-' title "Pick Best" with lines lw 4, '-' title "Naive" with lines lw 4, '-' title "Social Promotion Pruned" with lines lw 4, '-' title "Many Iterations" with lines lw 4
+plot [1:1000] [0:100] '-' title "Pick Best" with lines lw 4, '-' title "Standard" with lines lw 4, '-' title "Social Promotion Pruned" with lines lw 4, '-' title "Many Iterations" with lines lw 4
 1 0.0
 2 0.0
 3 0.0

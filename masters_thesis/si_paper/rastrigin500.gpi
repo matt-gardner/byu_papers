@@ -3,7 +3,7 @@ set ylabel "Best Function Value"
 set clip two
 set y2tics
 set y2range [2000:12000]
-plot [1:1000] [2000:12000] '-' title "Naive Ring" with lines lw 4, '-' title "Naive Rand" with lines lw 4, '-' title "Naive Complete" with lines lw 4, '-' title "Many Iterations Ring" with lines lw 4, '-' title "Many Iterations Rand" with lines lw 4
+plot [1:1000] [2000:12000] '-' title "Standard Ring" with lines lw 4, '-' title "Standard Rand" with lines lw 4, '-' title "Standard Complete" with lines lw 4, '-' title "Many Iterations Ring" with lines lw 4, '-' title "Many Iterations Rand" with lines lw 4
 1 8525.99716381
 2 8525.99716381
 3 8525.99716381
