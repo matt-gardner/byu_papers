@@ -1224,73 +1224,44 @@ to compare the different branching possibilities on various functions.
 We ran experiments to compare our speculative parallelization of PSO to the
 standard parallelization.  At each iteration of the algorithms, we use one
 processor to perform one function evaluation for one particle, be it
-speculative or non-speculative.  The speculative version actually performs two
-iterations of PSO at each ``iteration,'' so we instead call each ``iteration''
-a ``time step.''  As noted in the introduction, this is a reasonable
-architecture to use if the function being optimized takes longer than around
-100 milliseconds to run in our implementation.
+speculative or non-speculative.  The exact evaluation time at which this
+architecture becomes reasonable depends on the amount of communication overhead
+in the parallel implementation and the number of particles in the swarm.  For
+our implementation we found that time to be around 100 milliseconds for swarms
+of 50 particles.  When the swarm size increases, the minimum evaluation time at
+which this architecture should be used decreases.
 
-Because our interest is in exploring the most efficient use of processors, we
-must hold fixed the number of processors used at each time step in all of our
-experiments, giving all approaches the same number of function evaluations.
-Thus while we label our graphs with ``Time Steps,'' this is equivalent to the
-number of function evaluations used by each approach (simply multiply by the
-number of processors to transform time steps to function evaluations).  We use
-``Time Steps'' to reflect wall-clock time, as our primary interest is using
-extra processors in parallel to improve performance on functions with long
-evaluation times.  A smaller swarm running serial PSO would likely produce
-better results than we present in the same number of function evaluations, but
-because the function evaluations were not done in parallel it would take more
-wall-clock time.  When comparing the performance of parallelized algorithms on
-long-running functions, we must compare by wall-clock time with the same
-resources, not solely by the number of function evaluations.
+\subsection{Function Evaluations vs. Time Steps}
 
-Using the same number of processors for each approach requires that our
-speculative parallelizations have a smaller swarm size than the standard
-parallelization.  For each of the topologies we used, a particle has three
-neighbors including itself.  As shown in Table~\ref{tab:evals}, this results in
-$7$ speculative evaluations per particle.  With one evaluation needed for the
-original, non-speculative particle, we have $8p$ evaluations for every two
-iterations, where $p$ is the number of particles in the speculative swarm.  The
-extra evaluations required in our speculative approach would instead be used to
-evaluate particles in standard parallelizations, so we compare swarms of size
-$p$ in speculative evaluation with swarms of size $8p$ in standard approaches.
+Results in serial PSO are typically presented in terms of function evaluations.
+This is a natural abstraction from implementation details that still allows a
+comparison of the implementation-independent aspects of each algorithm.  The
+number of function evaluations performed is assumed to be proportional to
+wall-clock time, as all evaluations are performed in serial.  Only reporting
+function evaluations could hide the fact that one algorithm requires more
+overhead than another and thus actually takes more time to perform the same
+number of function evaluations; however, function evaluations are still
+considered the standard method of reporting, as evaluation times for functions
+also vary greatly and could make the additional overhead negligible.
 
-\subsection{Running Time}
+In parallel PSO on long-running functions, the natural way to present results
+is in terms of iterations, not function evaluations.  This is because when all
+function evaluations at each iteration are performed concurrently, iterations
+are the direct equivalent of wall-clock time.  It is true that with a fixed
+number of processors, function evaluations are also equivalent to wall-clock
+time.  However, reporting function evaluations in a paper on parallel PSO can
+be misleading if compared to a paper on serial PSO, as the actual wall-clock
+times corresponding to the function evaluations are not directly comparable.
+Thus we report iterations in our results instead of function evaluations.  But
+because SEPSO actually performs two iterations of PSO at each ``iteration,''
+and Social Promotion and Many Iterations make the idea of ``iterations of PSO''
+somewhat nebulus, we instead call each ``iteration'' a ``time step.''
 
-We do not report absolute time used by each algorithm, as specific time values
-are heavily implementation-dependent.  Using time steps, where at every time
-step each processor evaluates the function once, is an abstraction from
-individual implementations that still conveys all of the information necessary
-to compare algorithms.  In this paper we focus on the effects of algorithm
-choices on parallel PSO performance.  As there are inexpensive functions with
-complex landscapes and expensive functions with simple landscapes, the behavior
-of PSO with respect to the function is the main issue.
-
-For this purpose, benchmark functions are a useful and efficient tool for
-understanding the effects of PSO with expensive objective functions even though
-the benchmark functions are themselves inexpensive.  While benchmark functions
-themselves take fractions of a second to evaluate and thus have no need of the
-kind of parallelization we explore in this paper, they also have no need of
-particle swarm optimization at all, as they can be solved analytically.  Yet
-they are useful to us and to optimization researchers generally because they
-stand as surrogates for the kinds of functions practitioners are actually
-interested in, and they allow us to explore the behavior of optimization
-algorithms on several different classes of functions in an easy and
-standardized way.
-
-While the discussion of exact running times of function evaluations and
-communication overhead is appropriate, even essential, to a discussion of
-specific parallel implementations, the concern of this paper is more
-fundamental than implementation decisions.  One would not expect to see actual
-running times in place of function evaluations in a paper describing an
-innovation in the motion equations of PSO.  Similarly, actual running times in
-a paper on algorithmic decisions in parallel PSO cloud the more important
-issues of implementation-independent properties of the innovations described.
-
-That being said, given the time required for the evaluation of the objective
-function and the communication overhead per iteration for a specific
-implementation, the actual running time can be recovered from all of our
+Just as serial PSO papers do not report actual running times of their specific
+implementations, we do not report running times, favoring the abstraction of
+time steps.  That being said, given the time required for the evaluation of the
+objective function and the communication overhead per iteration for a specific
+implementation, an actual running time can be recovered from all of our
 results.  Simply multiply the number of time steps by the sum of the function
 evaluation time and the overhead.  We wish to stress that the ``time steps'' we
 report are proportional to wall-clock time, given the architecture we have
@@ -1332,22 +1303,53 @@ the boundary of the initialization region.  For example, if the initialization
 region is $[-50,50]^D$, the center is $(25)^D$.  We tested all of these
 functions in their 20 dimension, 50 dimension, and 500 dimension varieties.
 
-We also tested the parallelization methods on a real problem, that of fitting a
-model to a large quantity of data.  We generated 10,000 data points from a
-radial basis function network with 10 bases and some added Gaussian noise.  We
-then fit a radial basis function network to the data using PSO.  This amounted
-to a 30 dimensional function to optimize, with a function evaluation time on
-the order of two seconds.
+One might question the use of benchmark functions for evaluating our methods,
+as they take on the order of 1 millisecond to evaluate instead of the 100s that
+we said were required to justify our parallel architecture.  The purpose of
+exploring the behavior of an algorithm on benchmark functions, whether in
+serial or in parallel optimization research, is because benchmark functions are
+believed to represent functions that one might encounter in the real world,
+regardless of the amount of time those functions take to evaluate.  While
+benchmark functions themselves take fractions of a second to evaluate and thus
+have no need of the kind of parallelization we explore in this paper, they also
+have no need of particle swarm optimization at all, as they can be solved
+analytically.  Yet they are useful to us and to optimization researchers
+generally because they stand as surrogates for the kinds of functions
+practitioners are actually interested in, and they allow us to explore the
+behavior of optimization algorithms on several different classes of functions
+in an easy and standardized way.
+
+To aid in convincing the reader that performance on benchmark functions roughly
+corresponds to performance on real-world problems, we also tested our
+parallelization methods on a typical research problem, that of fitting a model
+to a large quantity of data.  We generated 10,000 data points from a radial
+basis function network with 10 bases and some added Gaussian noise.  We then
+fit a radial basis function network to the data using PSO.  This amounted to a
+30 dimensional function to optimize, with a function evaluation time on the
+order of two seconds.  We refer to this function as ``the model fitting
+problem.''
 
 \subsection{Parallelization Techniques Compared}
 
 The parallelization techniques we compare are the standard parallelization
 (here labeled Standard simply for ease of reference), our original speculative
-approach (labeled SEPSO), and the four relaxations of SEPSO discussed in
-\sec{relax}.  In presenting our results, we call the approach developed in
-\sec{pickbest} Pick Best.  The methods described in \sec{pruning} through
-\sec{wrong} are called Pick Best Pruned and Social Promotion Pruned, and the
-method in \sec{manyiters} we call Many Iterations.
+approach (recall that we refer to this as SEPSO), and the four relaxations of
+SEPSO discussed in \sec{relax}.  In presenting our results, we call the
+approach developed in \sec{pickbest} Pick Best.  The methods described in
+\sec{pruning} through \sec{wrong} are called Pick Best Pruned and Social
+Promotion Pruned, and the method in \sec{manyiters} we call Many Iterations.
+
+Using the same number of processors for each approach (and thus the same number
+of function evaluations per time step) requires that our speculative
+parallelizations have a smaller swarm size than the standard parallelization.
+For the topologies we used with SEPSO and Pick Best, a particle has three
+neighbors including itself.  As shown in Table~\ref{tab:evals}, this results in
+$7$ speculative evaluations per particle.  With one evaluation needed for the
+original, non-speculative particle, we have $8p$ evaluations for every two
+iterations, where $p$ is the number of particles in the speculative swarm.  The
+extra evaluations required in our speculative approach would instead be used to
+evaluate particles in standard parallelizations, so we compare swarms of size
+$p$ in speculative evaluation with swarms of size $8p$ in standard approaches.
 
 When performing pruning in Pick Best Pruned and Social Promotion Pruned, there
 are a large number of ways to prune speculative evaluations.  We experimented
@@ -1363,7 +1365,7 @@ on the number of neighbors the particle has.
 
 Because pruning only requires two speculative evaluations per particle (along
 with evaluating the original particle), we can use swarms of size
-$\frac{1}{3}p$ to compare to a swarm of size $p$ with the standard
+$\frac{1}{3}p$ when pruning to compare to a swarm of size $p$ with the standard
 parallelization, instead of $\frac{1}{8}p$ with other techniques.
 
 There are also many ways to speculate several iterations ahead, and with Many
@@ -1387,18 +1389,18 @@ For each benchmark function we report results using the topology that is widely
 considered best for that function, as reported in the literature
 (e.g.,~\cite{bratton-2007-defining-a-standard-for-pso}).  In this paper we
 limit ourselves to the Ring topology and the Complete topology, as is common
-practice, along with the parallel approximation to the Complete topology
-mentioned in \sec{pso}.  We also mentioned in \sec{related} that some related
-work can be described as changes in topology, particularly that of having
-subswarms of fully connected topologies that occasionally communicate with
-each other.  This related work focused mainly on functions with very fast
-evaluation times where such techniques drastically reduce interprocessor
-communication.  With long function evaluations these topologies are not as
-practical, as only one particle is evaluated by each processor at each
-iteration.  We experimented with a subswarm topology and found that in every
-instance except one it performed worse than either Complete or Ring, and thus
-we leave it out of the results except in the one instance where it improved
-performance.
+practice, along with the Random topology (the parallel approximation to the
+Complete topology mentioned in \sec{pso}).  We also mentioned in \sec{related}
+that some related work can be described as changes in topology, particularly
+that of having subswarms of fully connected topologies that occasionally
+communicate with each other.  This related work focused mainly on functions
+with very fast evaluation times where such techniques drastically reduce
+interprocessor communication.  With long function evaluations these topologies
+are not as practical, as only one particle is evaluated by each processor at
+each iteration.  We experimented with a subswarm topology and found that in
+every instance except one it performed worse than either Complete or Ring, and
+thus we leave it out of the results except in the one instance where it
+improved performance.
 
 Where the Complete topology would normally be preferred, we use a Random
 topology in SEPSO and Pick Best, as Complete leads to an explosion in the
@@ -1408,16 +1410,26 @@ for those methods).  If speculative evaluation were not being performed, it is
 possible that the Complete topology would be used.  However, the Complete
 topology also requires a very large amount of interprocessor communication in
 distributed PSO, so it is still quite possible that Random would be used even
-with standard parallelizations~\cite{mcnabb-2009-large-particle-swarms}.  But,
+with standard parallelizations~\citep{mcnabb-2009-large-particle-swarms}.  But,
 to be fair in our comparisons, we compare to the standard parallelization using
 both the Random topology and the Complete topology (labeled PSO Random and PSO
 Complete in our results).  Again, the amount of communication overhead is
 heavily dependent on implementation details which are not the focus of this
-paper.  A practitioner using a particular implementation can compare results
-for whichever topology is most practical given the specific implementation.
+paper.  A practitioner using a particular implementation can compare the
+results given here for whichever topology is most practical given the specific
+implementation.
 
 \section{Results}
 \label{sec:results}
+
+We frequently present tables summarizing our results.  In each table, we bold
+the ``best'' method, meaning that it has at least a 90\% success rate and its
+average time to completion is faster than all other methods that have at least
+a 90\% success rate.  We used a double-sided t-test to test for statistical
+significance in these results, and all bolded values are statistically
+significant with a p-value of less than $10^{-5}$.  In some instances two
+values are bolded because they are statistically tied, while both are
+significantly better than all other methods.
 
 We first present results in \sec{20dims} for the 20 dimensional variants of the
 benchmark functions we tested.  We give a discussion of each function
@@ -1432,20 +1444,143 @@ model fitting problem in \sec{model}.
 \subsection{20 Dimensions}
 \label{sec:20dims}
 
+\subsubsection{Sphere}
+
+First we look at Sphere, the simplest of common benchmark functions.  The
+function has a single global optimum and no other local optima.  Sphere is best
+optimized in terms of function evaluations with a small swarm using a Complete
+topology.  We expect our methods to be perfect for such functions, and our
+results show this intuition to be correct.  For this comparison we used 240
+processors, so the methods had swarms of size 30 (for SEPSO, Pick Best, and
+Many Iterations), 80 (Pick Best Pruned and Social Promotion Pruned), and 240
+(Standard).  We compared too many methods here to fit into one graph, so we
+show just a few methods in \fig{sphere-20} and in \tabref{sphere-20} we show a
+summary of the results for all methods we tested.
+
+In \fig{sphere-20} we see that Many Iterations using a Complete topology
+converges incredibly quickly on a very poor value.  We found this behavior to
+be quite consistent across functions for this method, so we rarely show results
+for Many Iterations Complete.  However, Pick Best Pruned works very well with
+Complete on this function.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.7\columnwidth]{sphere20}
+  \caption{Function Sphere with a swarm that uses 240 processors per time step,
+  comparing a pertinent subset of possible methods.}
+  \label{fig:sphere-20}
+\end{figure}
+
+\begin{table}
+  \caption{Summary of results for function Sphere with 20 dimensions,
+  measuring number of time steps to reach a value of 1e-35}
+  \label{tab:sphere-20}
+  \centering
+  \begin{tabular}{|l|r|r|r|}
+  \hline
+  Algorithm&\% Complete&Mean&St. Dev.\\
+  \hline
+  \hline
+  Standard Ring&0\%&N/A&N/A\\
+  \hline
+  Standard Random&0\%&N/A&N/A\\
+  \hline
+  Standard Complete&100\%&931.0&19.1\\
+  \hline
+  SEPSO Ring&0\%&N/A&N/A\\
+  \hline
+  SEPSO Random&85\%&972.8&15.8\\
+  \hline
+  Pick Best Ring&100\%&917.4&21.0\\
+  \hline
+  Pick Best Random&100\%&768.1&14.3\\
+  \hline
+  Pick Best Pruned Ring&100\%&967.8&9.9\\
+  \hline
+  Pick Best Pruned Random&100\%&693.5&10.4\\
+  \hline
+  \textbf{Pick Best Pruned Complete}&\textbf{100\%}&\textbf{389.6}&
+    \textbf{9.6}\\
+  \hline
+  Social Promotion Pruned Ring&0\%&N/A&N/A\\
+  \hline
+  Social Promotion Pruned Random&100\%&971.1&10.6\\
+  \hline
+  Social Promotion Pruned Complete&100\%&777.8&16.7\\
+  \hline
+  Many Iterations Ring&100\%&575.2&9.8\\
+  \hline
+  Many Iterations Random&100\%&442.4&7.1\\
+  \hline
+  Many Iterations Complete&0\%&N/A&N/A\\
+  \hline
+  \end{tabular}
+\end{table}
+
+
+\subsubsection{Schwefel 2.21}
+
+Schwefel 2.21 is a function similar to Sphere, but Schwefel 2.21 is benefited
+more by larger swarms than Sphere is.  Thus our speculative algorithms often
+fail to outperform Standard with 240 processors because the simple speculative
+methods only have 30 particles.  As we will show later, when we use 800
+processors at 50 dimensions, our methods perform much better.  However, the
+pruned versions of our methods have 80 particles and thus are able to
+outperform Standard even with only 240 processors.  Because the graph of
+Schwefel 2.21 looks very similar to that of Sphere, we simply present all of
+our results in \tabref{schwefel-20}.
+
+\begin{table}
+  \caption{Summary of results for function Schwefel with 20 dimensions,
+  measuring number of time steps to reach a value of 1e-06}
+  \label{tab:schwefel-20}
+  \centering
+  \begin{tabular}{|l|r|r|r|}
+  \hline
+  Algorithm&\% Complete&Mean&St. Dev.\\
+  \hline
+  \hline
+  Standard Ring&0\%&N/A&N/A\\
+  \hline
+  Standard Random&0\%&N/A&N/A\\
+  \hline
+  Standard Complete&100\%&837.2&44.8\\
+  \hline
+  SEPSO Random&0\%&N/A&N/A\\
+  \hline
+  Pick Best Random&5\%&938.0&0.0\\
+  \hline
+  \textbf{Pick Best Pruned Random}&\textbf{100\%}&\textbf{639.9}&\textbf{29.4}\\
+  \hline
+  \textbf{Pick Best Pruned Complete}&\textbf{100\%}&\textbf{597.7}&
+	\textbf{77.9}\\
+  \hline
+  Social Promotion Pruned Random&75\%&938.0&33.0\\
+  \hline
+  Social Promotion Pruned Complete&100\%&815.2&43.5\\
+  \hline
+  Many Iterations Random&100\%&783.5&94.5\\
+  \hline
+  Many Iterations Complete&0\%&N/A&N/A\\
+  \hline
+  \end{tabular}
+\end{table}
+
+
 \subsubsection{Rastrigin}
 
 Rastrigin is a multi-modal function that is best optimized with a large,
 Complete swarm.  It has been shown that with Rastrigin, the more particles
 there are in the swarm, the lower function value it finds, up to at least 4000
 particles~\citep{mcnabb-2009-large-particle-swarms}.  Smaller swarms get caught
-in local optima.  Because our speculative algorithms require significantly
-smaller swarm sizes, we would expect to not perform very well on functions such
-as Rastrigin.  Our experiments show our intuition to be correct.  In this
-experiment we used 240 processors, so SEPSO and Pick Best each had 30
-particles, and the Standard algorithms had 240 particles.  As expected, SEPSO
-and Pick Best converge quickly to worse local optima than Standard does.
-\fig{rastrigin} shows the results graphically, and \tabref{rastrigin-20} shows
-results for all of the methods we tried.
+in local optima and converge to poorer values.  Because our speculative
+algorithms require significantly smaller swarm sizes, we would expect to not
+perform very well on functions such as Rastrigin.  Our experiments show our
+intuition to be correct.  In this experiment we used 240 processors, so SEPSO
+and Pick Best each had 30 particles, and the Standard algorithms had 240
+particles.  As expected, SEPSO and Pick Best converge quickly to worse local
+optima than Standard does.  \fig{rastrigin} shows the results graphically, and
+\tabref{rastrigin-20} shows results for all of the methods we tried.
 
 \begin{table}
   \caption{Summary of results for function Rastrigin with 20 dimensions,
@@ -1511,20 +1646,23 @@ optimum~\citep{bratton-2007-defining-a-standard-for-pso}.  The global optimum
 of Griewank has a value of 0.  When most trials reach the global optimum but a
 few get stuck, the resultant ``average value'' graph has a flat line that is
 misleading.  Thus instead we present plots showing the percent of trials that
-have passed some threshold at each time step.  The threshold we chose for this
-case was $10^{-6}$, as that value is below any local optima and the swarm
-always successfully reaches 0 once is passes that point.
+have passed some threshold at each time step, as is common practice with these
+functions~\citep{mendes-2004-population-topologies-in-pso}.  The threshold we
+chose for this case was $10^{-6}$, as that value is below any local optima and
+the swarm always successfully reaches 0 once is passes that point.
 
 We ran 50 trials of each experiment with Griewank, so that the curves are more
-smooth.  We show results in \fig{basic-griewank1} for swarms of size 30 and 240
-using the Ring topology.  One can see in the figure that the SEPSO approach
-finds the optimum faster than the Standard approach.  However, because the
-swarm size is so small, SEPSO gets stuck a little less than half of the time.
+smooth.  We show results in \fig{basic-griewank1} for swarms of size 100 and
+800 using the Ring topology.  One can see in the figure that SEPSO reaches the
+global optimum on average close to twice as fast as Standard, while Pick Best
+is close to three times as fast and Many Iterations is even faster when it is
+successful, though it is only successful 84\% of the time.  \tabref{griewank}
+shows all of our results in tabular form.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank1}
-  \caption{Function Griewank with a swarm that uses 240 processors per time
+  \includegraphics[width=.7\columnwidth]{griewank6}
+  \caption{Function Griewank with a swarm that uses 800 processors per time
   step.  Recall that at each time step all processors evaluate the function
   once.  Instead of showing average function value, we show the percentage of
   runs that have found the global optimum by each iteration.  All algorithms
@@ -1532,26 +1670,50 @@ swarm size is so small, SEPSO gets stuck a little less than half of the time.
   \label{fig:basic-griewank1}
 \end{figure}
 
-Because the speculative algorithm got stuck with such a small swarm size, we
-ran a set of experiments on Griewank with 800 processors, giving swarms of size
-100 and 800 instead of 30 and 240.  \fig{basic-griewank2} shows the results.
-\fig{basic-griewank2} is very similar to \fig{basic-griewank1}, except that
-speculative evaluation finds the global optimum essentially 100\% of the time.
-Thus with a few more processors, our algorithm finds the optimum on average
-twice as fast as the Standard approach without a significant loss of accuracy.
+\begin{table}
+  \caption{Summary of results for function Griewank with 20 dimensions,
+  measuring number of time steps to reach a value of 1e-06}
+  \label{tab:griewank-20}
+  \centering
+  \begin{tabular}{|l|r|r|r|}
+  \hline
+  Algorithm&\% Complete&Mean&St. Dev.\\
+  \hline
+  \hline
+  Standard Ring&100\%&762.2&19.4\\
+  \hline
+  SEPSO Ring&100\%&426.0&81.0\\
+  \hline
+  \textbf{Pick Best Ring}&\textbf{100\%}&\textbf{272.0}&\textbf{17.7}\\
+  \hline
+  \textbf{Pick Best Pruned Ring}&\textbf{100\%}&\textbf{282.9}&\textbf{10.7}\\
+  \hline
+  Social Promotion Pruned Ring&100\%&482.0&16.6\\
+  \hline
+  Many Iterations Ring&84\%&183.2&49.4\\
+  \hline
+  \end{tabular}
+\end{table}
+
+We pause here to show some interesting characteristics of the speculative
+techniques we have proposed.  With 800 processors our methods perform very well
+on this function.  With 240 processors, however, the results are much more
+mixed.  Because 240 processors is near the point at which speculative
+evaluation becomes useful, it is enlightening to see the behavior of the
+various algorithms at this point.
+
+We show results in \fig{basic-griewank2} for swarms of size 30 and 240 using
+the Ring topology.  One can see in the figure that when SEPSO is successful, it
+finds the optimum much faster than Standard.  However, because the swarm size
+is so small, SEPSO gets stuck a little less than half of the time.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank2}
-  \caption{Function Griewank with a swarm that uses 800 processors per time
+  \includegraphics[width=.7\columnwidth]{griewank1}
+  \caption{Function Griewank with a swarm that uses 240 processors per time
   step.  All algorithms use the Ring topology.}
   \label{fig:basic-griewank2}
 \end{figure}
-
-In order to show the premature convergence properties of the various approaches
-we have presented, we will show results first with swarms using 240 processors,
-where these are more visible.  Then we will present an overall result for 800
-processors, where using our techniques is generally more successful.
 
 When we look at the performance of our Pick Best approach, we see that it
 greatly improves performance on Griewank.  This is somewhat counter-intuitive,
@@ -1566,8 +1728,8 @@ greediness of the approach.
   \centering
   \includegraphics[width=.7\columnwidth]{griewank3}
   \caption{Function Griewank with a swarm that uses 240 processors per time
-  step, comparing Pick Best with previous results.  All algorithms use the Ring
-  topology.}
+  step, comparing Pick Best with results from \fig{basic-griewank2}.  All
+  algorithms use the Ring topology.}
   \label{fig:griewank-pickbest}
 \end{figure}
 
@@ -1583,8 +1745,8 @@ original PSO.  These results are shown in \fig{griewank-pruned}.
   \centering
   \includegraphics[width=.7\columnwidth]{griewank4}
   \caption{Function Griewank with a swarm that uses 240 processors per time
-  step, comparing pruning with previous results.  All algorithms use the Ring
-  topology.}
+  step, comparing pruning with the best results from \fig{griewank-pickbest}.
+  All algorithms use the Ring topology.}
   \label{fig:griewank-pruned}
 \end{figure}
 
@@ -1602,147 +1764,10 @@ optimum, the less likely it is to be successful.
   \centering
   \includegraphics[width=.7\columnwidth]{griewank5}
   \caption{Function Griewank with a swarm that uses 240 processors per time
-  step, comparing speculating several iterations ahead with previous results.
-  All algorithms use the Ring topology.}
+  step, comparing speculating several iterations ahead with selections from
+  \fig{griewank-pruned}.  All algorithms use the Ring topology.}
   \label{fig:griewank-manyiters}
 \end{figure}
-
-Now that we have seen the effect that the various approaches have on speed of
-convergence and success rates, we show a result for using 800 processors, where
-most of the approaches have a 100\% success rate.  In this case, the best
-algorithm to use is the one which finds the optimum the fastest.  As can be
-seen in \fig{griewank-800}, with 800 processors the best choice is Pick Best,
-which finds the optimum on average three times as fast as standard PSO.  With
-just a few more processors, however, Many Iterations would likely have a 100\%
-success rate as well, making it the preferred choice.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.7\columnwidth]{griewank6}
-  \caption{Function Griewank with a swarm that uses 800 processors per time
-  step.  All algorithms use the Ring topology.}
-  \label{fig:griewank-800}
-\end{figure}
-
-\subsubsection{Sphere}
-
-Next we go to Sphere, the simplest of common benchmark functions.  The function
-has no local optima (only a single global optimum) and is best optimized in
-terms of function evaluations with a small swarm using a Complete topology.  We
-expect our methods to be perfect for such functions, and our results show this
-intuition to be correct.  We compared too many methods here to fit into one
-graph, so we show just a few methods in \fig{sphere-20} and in
-\tabref{sphere-20} we show a summary of the results for all methods we tested.
-
-In \fig{sphere-20} we see that Many Iterations using a Complete topology
-converges incredibly quickly on a very poor value.  We found this behavior to
-be quite consistent across functions, so we rarely show results for Many
-Iterations Complete.  However, Pick Best Pruned works very well with Complete
-on this function.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.7\columnwidth]{sphere20}
-  \caption{Function Sphere with a swarm that uses 240 processors per time step,
-  comparing a pertinent subset of possible methods.}
-  \label{fig:sphere-20}
-\end{figure}
-
-\begin{table}
-  \caption{Summary of results for function Sphere with 20 dimensions,
-  measuring number of time steps to reach a value of 1e-35}
-  \label{tab:sphere-20}
-  \centering
-  \begin{tabular}{|l|r|r|r|}
-  \hline
-  Algorithm&\% Complete&Mean&St. Dev.\\
-  \hline
-  \hline
-  Standard Ring&0\%&N/A&N/A\\
-  \hline
-  Standard Random&0\%&N/A&N/A\\
-  \hline
-  Standard Complete&100\%&931.0&19.1\\
-  \hline
-  SEPSO Ring&0\%&N/A&N/A\\
-  \hline
-  SEPSO Random&85\%&972.8&15.8\\
-  \hline
-  Pick Best Ring&100\%&917.4&21.0\\
-  \hline
-  Pick Best Random&100\%&768.1&14.3\\
-  \hline
-  Pick Best Pruned Ring&100\%&967.8&9.9\\
-  \hline
-  Pick Best Pruned Random&100\%&693.5&10.4\\
-  \hline
-  \textbf{Pick Best Pruned Complete}&\textbf{100\%}&\textbf{389.6}&
-    \textbf{9.6}\\
-  \hline
-  Social Promotion Pruned Ring&0\%&N/A&N/A\\
-  \hline
-  Social Promotion Pruned Random&100\%&971.1&10.6\\
-  \hline
-  Social Promotion Pruned Complete&100\%&777.8&16.7\\
-  \hline
-  Many Iterations Ring&100\%&575.2&9.8\\
-  \hline
-  Many Iterations Random&100\%&442.4&7.1\\
-  \hline
-  Many Iterations Complete&0\%&N/A&N/A\\
-  \hline
-  \end{tabular}
-\end{table}
-
-
-\subsubsection{Schwefel 2.21}
-
-Schwefel 2.21 is a function similar to Sphere, but Schwefel 2.21 is benefited
-more by larger swarms than Sphere is.  Thus our speculative algorithms often
-fail outperform Standard with 240 processors because the simple speculative
-methods only have 30 particles.  As we will show later, when we use 800
-processors at 50 dimensions, our methods perform much better.  However, the
-pruned versions of our methods have 80 particles and thus are able to
-outperform Standard even with only 240 processors.  Because the graph of
-Schwefel 2.21 looks very similar to that of Sphere, we simply present all of
-our results in \tabref{schwefel-20}.
-
-\begin{table}
-  \caption{Summary of results for function Schwefel with 20 dimensions,
-  measuring number of time steps to reach a value of 1e-06}
-  \label{tab:schwefel-20}
-  \centering
-  \begin{tabular}{|l|r|r|r|}
-  \hline
-  Algorithm&\% Complete&Mean&St. Dev.\\
-  \hline
-  \hline
-  Standard Ring&0\%&N/A&N/A\\
-  \hline
-  Standard Random&0\%&N/A&N/A\\
-  \hline
-  Standard Complete&100\%&837.2&44.8\\
-  \hline
-  SEPSO Random&0\%&N/A&N/A\\
-  \hline
-  Pick Best Random&5\%&938.0&0.0\\
-  \hline
-  \textbf{Pick Best Pruned Random}&\textbf{100\%}&\textbf{639.9}&\textbf{29.4}\\
-  \hline
-  \textbf{Pick Best Pruned Complete}&\textbf{100\%}&\textbf{597.7}&
-	\textbf{77.9}\\
-  \hline
-  Social Promotion Pruned Random&75\%&938.0&33.0\\
-  \hline
-  Social Promotion Pruned Complete&100\%&815.2&43.5\\
-  \hline
-  Many Iterations Random&100\%&783.5&94.5\\
-  \hline
-  Many Iterations Complete&0\%&N/A&N/A\\
-  \hline
-  \end{tabular}
-\end{table}
-
 
 \subsubsection{Bohachevsky}
 
@@ -1787,11 +1812,11 @@ twice as fast.
   \hline
   Pick Best Pruned Random&100\%&189.7&3.4\\
   \hline
-  Pick Best Pruned Complete&FIXME!&FIXME!&FIXME!\\
+  Pick Best Pruned Complete&25\%&105.4&3.9\\
   \hline
   Social Promotion Pruned Random&100\%&260.3&6.5\\
   \hline
-  Social Promotion Pruned Complete&FIXME!&FIXME!&FIXME!\\
+  Social Promotion Pruned Complete&90\%&197.9&12.2\\
   \hline
   \textbf{Many Iterations Random}&\textbf{94\%}&\textbf{118.2}&\textbf{2.6}\\
   \hline
@@ -1818,18 +1843,7 @@ Tables~\ref{tab:rastrigin-50} through~\ref{tab:bohachevsky-50} present
 summaries of our results for each of the benchmark functions. As with the 20
 dimensional variants, our speculative methods did not perform well on
 Rastrigin, though for all other benchmarks Many Iterations significantly
-outperformed Standard.  In each table, we bold the best method, meaning that it
-has at least a 90\% success rate and its average time to completion is faster
-than all other methods that have at least a 90\% success rate.  For example,
-Many Iterations Random, when it is successful, achieves the required value 6
-times faster than Standard Random.  However, because Many Iterations Random
-only has a 25\% success rate while Standard Random has a 100\% success rate,
-Standard Random is bolded.
-
-We used a double-sided t-test to test for statistical significance in these
-results, and all bolded values are statistically significant with a p-value of
-less than $10^{-5}$.  In one instance two values are bolded because they are
-statistically tied, while both are significantly better than all other methods.
+outperformed Standard.
 
 A summary of the results is shown in \tabref{50dims-summary}.  For functions
 where Many Iterations outperformed Standard, we report the average speed up.
@@ -1973,10 +1987,10 @@ from two to six times compared to previous methods.
 
 At 500 dimensions we found that the performance of constricted PSO on benchmark
 functions becomes rather dismal.  In almost all cases, Standard fails to make
-any significant progress.  Our brief search for an explanation seems to say
-that the space is too large for particles to converge to the same point, so all
-updates to the best position found come from a single particle wandering in the
-space.  Every time that single particle finds a new best position, its velocity
+any significant progress.  Our search for an explanation seems to say that the
+space is too large for particles to converge to the same point, so all updates
+to the best position found come from a single particle wandering in the space.
+Every time that single particle finds a new best position, its velocity
 contracts, so the particle is unable to make significant progress on its own.
 In constricted PSO it is necessary to have a collection of particles exploring
 a promising location to keep the particles' velocities from contracting
@@ -1992,17 +2006,6 @@ contract.  The particular branches we selected corresponded to not having
 received a new value for $\pbest$ nor $\nbest$.  In those branches, the
 particle continues in the same direction it was going, without a contraction in
 velocity.
-
-For example, suppose a particle finds a new good position and updates its
-values for $\pbest$ and $\nbest$, and that its velocity is such that it will
-continue updating $\pbest$ and $\nbest$ if it continues in the same direction.
-At that point, its velocity contracts, due to the motion equations in
-constricted PSO (the social and cognitive components drop to zero and all that
-is left is momentum, which is then constricted).  However, at that point we
-speculate three iterations ahead along a path that is in roughly the same
-direction the particle was just going, without constricting its velocity at
-each of those iterations.  Thus the particle is able to make progress in that
-direction instead of contracting its velocity at every iteration.
 
 Because none of the Standard approaches were successful at optimizing the 500
 dimensional benchmark functions, we do not present tables as we did for the 50
@@ -2050,12 +2053,12 @@ benchmark functions.
 \subsection{Model Fitting}
 \label{sec:model}
 
-For the model fitting problem that we experimented with, we used 144
-processors.  We show results for three methods: Standard with a Random
-topology, Standard with a Subswarm topology, and Many Iterations with a Random
-topology.  Standard with a Subswarm topology had eight independent subswarms of
-18 particles each, and the particles in each subswarm were connected with a
-Random topology.  In the graphs we call this method Standard Subswarms.
+For the model fitting problem we used 144 processors.  We show results for
+three methods: Standard with a Random topology, Standard with a Subswarm
+topology, and Many Iterations with a Random topology.  Standard with a Subswarm
+topology had eight independent subswarms of 18 particles each, and the
+particles in each subswarm were connected with a Random topology.  In the
+graphs we call this method Standard Subswarms.
 
 \fig{rbf} shows our results for this function.  The function value reported is
 the sum squared error of the model fit.  \fig{rbf-stuck} shows the percent of
@@ -2065,9 +2068,8 @@ steps to reach this value, while Standard Subswarms took on average 298.  The
 p-value for a t-test on this statistic is less than $10^{-8}$.  With our
 implementation of parallel PSO, each time step took on average 10.06 seconds;
 1.83 seconds of that was function evaluation time and the rest was overhead.
-With this particular implementation, then, using Many Iterations instead of
-Standard led to an average time savings of 29 minutes, which is more than half
-of the 50 minutes that Standard takes on average to reach a successful value.
+With this particular implementation, then, Many Iterations takes on average 21
+minutes to reach a successful value, while Standard takes 50 minutes.
 
 \begin{figure}
   \centering
@@ -2098,14 +2100,15 @@ swarm size.  In an increasingly parallel world, such advancements will prove to
 be crucial to the continued effectiveness of PSO.
 
 We have detailed how to perform speculative evaluation in PSO in several
-different parallel frameworks.  Using this methodology, the behavior of the
+different parallel architectures.  Using this methodology, the behavior of the
 original PSO algorithm can either be exactly reproduced, two iterations at a
 time, or the behavior can be modified in order to improve performance.  While
-exactly reproducing PSO often uses too many extra processors to be useful, when
-we allow ourselves some freedom with the algorithm we see great improvements
-over previous methods.  We have shown results that conclusively demonstrate the
-superiority of our techniques for several functions over the standard practice
-of adding particles to the swarm when extra processors are available.
+exactly reproducing PSO sometimes uses too many extra processors to be useful,
+when we allow ourselves some freedom with the algorithm we see great
+improvements over previous methods.  We have shown results that conclusively
+demonstrate the superiority of our techniques for several functions over the
+standard practice of adding particles to the swarm when extra processors are
+available.
 
 What we have presented is not a new variant of PSO.  We presented a new
 parallelization technique, so we compared parallelization strategies on the
@@ -2118,12 +2121,13 @@ variant for each of the parallelization techniques tested is justified.
 We have given five different possible approaches to speculative evaluation,
 each of which has different properties.  These approaches perform differently
 on different functions and at different swarm sizes, as would be expected by
-the No Free Lunch Theorem~\citep{wolpert-1997-nfl-for-optimization}.  We have
-given a brief evaluation of the premature convergence properties of these
-methods on deceptive functions when a smaller number of processors is
-available.  We have also shown evidence that when many processors are available
-by far the best thing to do in most cases is to speculate as far ahead as the
-extra processors allow.
+the No Free Lunch Theorem for
+Optimization~\citep{wolpert-1997-nfl-for-optimization}.  We have given a brief
+evaluation of the premature convergence properties of these methods on
+deceptive functions when a smaller number of processors is available.  We have
+also shown evidence that when many processors are available by far the best
+thing to do in most cases is to speculate as far ahead as the extra processors
+allow.
 
 Though our methods show great improvements on some functions, they do not work
 for all functions.  As is commonly known, in PSO there is a trade-off between
@@ -2131,9 +2135,9 @@ exploration and exploitation.  Some functions need only minimal exploration,
 and some never seem to have enough.  Increasing the swarm size is a natural way
 to increase exploration in a parallel environment.  However, once ``enough''
 exploration has been reached for any particular function, adding additional
-particles adds only incremental benefits.  A better use of the additional
-processors, as we have shown, is to perform some amount of speculative
-evaluation.
+particles adds only incremental benefits.  At this point, a better use of the
+additional processors, as we have shown, is to perform some amount of
+speculative evaluation.
 
 Large parallel clusters are often required to successfully optimize practical
 modern problems.  To properly use PSO with such clusters, a balance needs to be
@@ -2145,8 +2149,7 @@ methods in the parallelization of PSO.
 \section{Future Work}
 \label{sec:future}
 
-We have presented a new paradigm for parallelizing the particle swarm
-optimization algorithm, focusing on PSO itself and not all of its variants.  It
+In this work we have focused on PSO itself and not all of its variants.  It
 remains as future work to apply speculative approaches to recent and popular
 PSO variants, such as the Fully Informed Particle
 Swarm~\citep{mendes-2004-fully-informed-particle-swarm}.  While our methods
@@ -2162,8 +2165,7 @@ If this method were extended to parallel PSO, most processors would be idle in
 the first few iterations, while more would be utilized at the end.  During
 iterations where there are many un-utilized processors, a natural use of them
 would be speculative evaluation, performing two or more of those iterations at
-a time.  Thus our methods have the potential to further improve the parallel
-performance of recently proposed variations of PSO.
+a time.
 
 The issues of the sampling distribution of speculative relaxations, branch
 statistics, and why standard PSO fails at 500 dimensions were briefly mentioned
@@ -2182,23 +2184,11 @@ parallel.
 We opened the door to speculative parallelization methods in PSO and described
 the possible speculative evaluations to perform as an infinite tree from which
 branches are selected.  However, we only presented a few of the countless
-possibilities for selecting those branches.  Perhaps in Many Iterations it
-would be better to randomly sample branches from seventh iteration, instead
-of a fixed combination of the next three.  It remains as future work to do a
-more exhaustive comparison of possible pruning techniques.
-
-Our methods for determining which speculative evaluations to perform were
-independent of the particle; all particles performed the same number and type
-of evaluations.  Another way to allocate speculative evaluations is to somehow
-use the performance of each particle to determine how many and which extra
-evaluations it can have.  We imagine that the benefits of intelligently and
-dynamically deciding which particles get extra evaluations could produce very
-good results.  Future work could explore the use of a centralized allocator for
-extra processors or ideas in the multi-robot task allocation literature, such
-as auctions, to better assign processors to particles for speculative
-evaluations.  While such methods involve extra communication, with long-running
-function evaluations the extra overhead of intelligently allocating resources
-would likely be negligible.
+possibilities for selecting those branches.  Our methods for determining which
+speculative evaluations to perform were independent of the particle; all
+particles performed the same number and type of evaluations.  Another way to
+allocate speculative evaluations is to somehow use the performance of each
+particle to determine how many and which extra evaluations it can have.
 
 Any other optimization algorithm that only depends on current sampling
 positions when computing the next position to sample can be parallelized with
