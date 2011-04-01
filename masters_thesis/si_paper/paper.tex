@@ -266,10 +266,10 @@ The balance of this paper is organized as follows. \sec{pso} describes the
 particle swarm optimization algorithm, and \sec{related} gives a brief overview
 of previous parallelization techniques for this algorithm.  \sec{sepso} shows
 mathematically how speculative evaluation can be done in parallel PSO to
-perform two iterations at once, then \sec{implementation} gives information on
-how to implement this method.  In \sec{relax}, we discuss various methods of
-improving the performance of speculative evaluation in PSO, all of which break
-the requirement of strictly reproducing the behavior of the original algorithm.
+perform two iterations at once, leaving implementation concerns to the
+appendices.  In \sec{relax}, we discuss various methods of improving the
+performance of speculative evaluation in PSO, all of which break the
+requirement of strictly reproducing the behavior of the original algorithm.
 \sec{setup} describes the experiments we ran, and \sec{results} presents the
 results of those experiments.  In \sec{conclusion} and \sec{future} we conclude
 and discuss future work.
@@ -310,7 +310,7 @@ neighborhood best) is the best position the neighbors of the current particle
 have seen~\citep{bratton-2007-defining-a-standard-for-pso}.  The parameters \(
 \ncoeff \), \( \pcoeff \), and \( \constriction \) are given prescribed values
 required to ensure convergence (2.05, 2.05, and .73,
-respectively)~\citep{clerc-2002-constricted-pso}. 
+respectively)~\citep{clerc-2002-constricted-pso}.
 
 Changing the way neighbors are defined, usually called the ``topology,'' has a
 significant effect on the performance of the algorithm.  In the Ring topology,
@@ -942,7 +942,7 @@ however, allow for the possibility of using the Complete topology in
 speculative evaluation while avoiding the explosion in the number of
 evaluations it would otherwise entail.
 
-Becuase there are a few branches with very high probabilities in the topologies
+Because there are a few branches with very high probabilities in the topologies
 we are interested in, we can have hope that cutting out some of the evaluations
 that have low probability will lead to an increase in overall performance.  In
 order to implement this kind of pruning, the only change that needs to be made
@@ -1035,7 +1035,7 @@ function evaluations at each iteration are performed concurrently, iterations
 are the direct equivalent of wall-clock time.  Thus we report iterations in our
 results instead of function evaluations.  But because SEPSO actually performs
 two iterations of PSO at each ``iteration,'' and Social Promotion and Many
-Iterations make the idea of ``iterations of PSO'' somewhat nebulus, we instead
+Iterations make the idea of ``iterations of PSO'' somewhat nebulous, we instead
 call each ``iteration'' a ``time step.''
 
 Just as serial PSO papers do not report actual running times of their specific
@@ -1437,8 +1437,8 @@ smooth.  We show results in \fig{basic-griewank1} for swarms of size 100 and
 800 using the Ring topology.  One can see in the figure that SEPSO reaches the
 global optimum on average close to twice as fast as Standard, while Pick Best
 is close to three times as fast and Many Iterations is even faster when it is
-successful, though it is only successful 84\% of the time.  \tabref{griewank}
-shows all of our results in tabular form.
+successful, though it is only successful 84\% of the time.
+\tabref{griewank-20} shows all of our results in tabular form.
 
 \begin{figure}
   \centering
@@ -1551,6 +1551,20 @@ optimum, the less likely it is to be successful.
   algorithms use the Ring topology.}
   \label{fig:griewank-manyiters}
 \end{figure}
+
+Note here that \fig{griewank-manyiters} is interesting to compare to
+\fig{basic-griewank1}.  The ordering of the methods in terms of the number of
+time steps to completion is the same in both figures.  What is different is
+that at 240 processors, most of our methods fail to find the optimum 100\% of
+the time, while at 800 processors, all but Many Iterations succeed 100\% of the
+time, and Many Iterations is very close.  At some point between 240 and 800
+processors, SEPSO and Pick Best become successful, and at that point it is by
+far better to use speculative methods than standard parallelizations.  We can
+also assume that at some point above 800 processors, Many Iterations will be
+become successful and will be the preferred method.  Once there are enough
+particles in the swarm to guarantee success when optimizing a function, the
+best use of additional processors is to speculate as far ahead as possible,
+speeding up the progress of the algorithm.
 
 \subsubsection{Bohachevsky}
 
@@ -1994,7 +2008,7 @@ messages to and from other particles.  Finally we discuss the further
 complications of a dynamic topology such as Random, where a particle's
 neighbors change from one iteration to another.
 
-\subsection{Terminology}
+\subsection*{Terminology}
 
 To aid in describing our methodology, we introduce a few terms.  A particle's
 set of \emph{speculative children} is the set of all possible next iteration
@@ -2019,7 +2033,7 @@ neighbors, it is denoted as $\nonbest{\p}_t$.  Only when the particle has
 updated its neighborhood best is it a complete particle at iteration $t$.  It
 is then simply denoted as $\p_t$.
 
-\subsection{Centralized Algorithms}
+\subsection*{Centralized Algorithms}
 
 In a centralized, or Master-Slave, parallel PSO algorithm, one machine, the
 master, keeps track of all necessary information, and all other machines are
@@ -2112,7 +2126,7 @@ $\pset_{t+1}$.  That set of particles can subsequently be used to produce the
 sets $\noeval{\pset}_{t+2}$ and $\noeval{\sset}_{t+3}$ (steps 1 and 2 in
 \alg{centralized}), and the process repeats itself.
 
-\subsection{Distributed Algorithms}
+\subsection*{Distributed Algorithms}
 
 \label{sec:distributed}
 
@@ -2167,7 +2181,7 @@ with only one round of communication per two iterations.  However, the
 methodology is tedious and distracting from the present discussion, so we defer
 its description to Appendix B.
 
-\subsection{Dynamic Topologies}
+\subsection*{Dynamic Topologies}
 
 Performing speculative evaluation in PSO with a dynamic topology (where
 neighbors change from iteration to iteration) raises a sticky issue of its own.
