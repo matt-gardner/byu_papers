@@ -1,0 +1,20 @@
+Matthew was born in Mountain View, California and grew up very interested in
+physics.  His interests moved to computer science, however, while spending time
+as a Spanish-English interpreter.  He became fascinated with the problem of
+machine interpretation and other areas of natural language processing.  While
+at Brigham Young University he started working in the Applied Machine Learning
+lab and published several papers in academic conferences, including the
+Congress on Evolutionary Computation (CEC) and Parallel Problem Solving from
+Nature (PPSN).  During his undergraduate career he also spent a summer as an
+intern at Google, Inc., where he developed a system that used machine learning
+techniques to attribute phone calls advertisers received to specific ads played
+on TV.  Matthew graduated from BYU summa cum laude and with university honors.
+For his doctoral work he plans to pursue the problem that originally interested
+him in computer science, machine interpretation.  His dream is to build a
+system that can accurately interpret emotion in speech between languages.
+
+Outside of the lab, Matthew enjoys spending time with his family.  He has a
+one-year-old daughter that he loves to make laugh and another child on the way.
+He and his wife enjoy playing flute and harp duets together.  He also enjoys
+learning languages, so far learning English, Spanish, Slovene and ancient
+Greek.
