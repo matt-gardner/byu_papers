@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{psfrag}
 
 %PSO Stuff
 \DeclareMathOperator{\URand}{U}
@@ -14,6 +15,12 @@
 \providecommand{\pbest}{\ensuremath{\Vec{b}_p}}
 \providecommand{\constriction}{\ensuremath{\chi}}
 \providecommand{\coeff}{\ensuremath{\phi}}
+\providecommand{\nURand}{\ensuremath{U^\neigh}}
+\providecommand{\pURand}{\ensuremath{U^\pers}}
+\providecommand{\ncoeff}{\ensuremath{\phi^\neigh}}
+\providecommand{\pcoeff}{\ensuremath{\phi^\pers}}
+\providecommand{\pers}{\ensuremath{P}}
+\providecommand{\neigh}{\ensuremath{N}}
 
 %SpecExPSO Stuff
 \providecommand{\noeval}[1]{\ensuremath{#1^{-e}}}
@@ -26,8 +33,75 @@
 \providecommand{\n}{\ensuremath{n}}
 \providecommand{\nset}{\ensuremath{\mathbf{n}}}
 \providecommand{\nnset}{\ensuremath{\mathbf{nn}}}
+\providecommand{\leftnbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\leftind}}}
+\providecommand{\rightnbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\rightind}}}
+\providecommand{\nbestbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\neigh}}}
+\providecommand{\pbestbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\pers}}}
+\providecommand{\pposbold}{\ensuremath{\Vec{\mathbf{x}}}}
+\providecommand{\leftn}{\ensuremath{\Vec{x}^\leftind}}
+\providecommand{\rightn}{\ensuremath{\Vec{x}^\rightind}}
+\providecommand{\leftind}{\ensuremath{L}}
+\providecommand{\rightind}{\ensuremath{R}}
+\providecommand{\casexn}{\ensuremath{(S,-)}}
+\providecommand{\casexx}{\ensuremath{(S,S)}}
+\providecommand{\casexl}{\ensuremath{(S,\leftind)}}
+\providecommand{\casexr}{\ensuremath{(S,\rightind)}}
+\providecommand{\casepn}{\ensuremath{(-,-)}}
+\providecommand{\casepl}{\ensuremath{(-,\leftind)}}
+\providecommand{\casepr}{\ensuremath{(-,\rightind)}}
+\providecommand{\casepN}{\ensuremath{(-,N)}}
+\providecommand{\casexN}{\ensuremath{(S,N)}}
 
-\title{A Speculative Approach to Parallelization in Particle Swarm Optimization}
+\psfrag{equation 1}{$\ppos_{t-1} +
+  \constriction \bigl[ \pvel_{t-1} +
+	\pcoeff\pURand_{t-1}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t-1}) + 
+	\ncoeff\nURand_{t-1}\otimes(\nbestbold_{\mathbf{t-1}} - \ppos_{t-1})
+  \bigr]$
+}
+\psfrag{equation --}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\nbestbold_{\mathbf{t-1}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation -l}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\leftnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation -r}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\rightnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation s-}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\nbestbold_{\mathbf{t-1}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation sl}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\leftnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation sr}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\rightnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation ss}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\title[A Speculative Approach to Parallelization in PSO]{A Speculative Approach
+to Parallelization in Particle Swarm Optimization}
 \author{Matthew Gardner}
 \date{\today}
 
@@ -36,13 +110,20 @@
   \titlepage
 \end{frame}
 
-\section{Optimization}
+\begin{frame}
+  \frametitle{Thesis Statement}
+When many processors are available, a speculative approach to the
+parallelization of PSO can yield dramatic improvements in the performance of
+the algorithm on expensive functions compared to previous parallelization
+techniques.
+\end{frame}
+
+\section{Particle Swarm Optimization}
 \begin{frame}
   \frametitle{Optimization}
   \includegraphics[width=\textwidth]{cosine}
 \end{frame}
 
-\section{Particle Swarm Optimization}
 \subsection{Basic Idea}
 \begin{frame}
   \frametitle{Particle Swarm Optimization}
@@ -60,18 +141,6 @@
 		  \right] \\
 	  \ppos_{t+1} &= \ppos_t + \pvel_{t+1}
   \end{align*}
-\end{frame}
-
-\subsection{Who's My Neighbor?}
-\begin{frame}
-  \frametitle{Who's My Neighbor?}
-  \includegraphics[width=\textwidth]{gbest_and_lbest}
-\end{frame}
-
-\subsection{No Free Lunch}
-\begin{frame}
-  \frametitle{No Free Lunch!}
-  \includegraphics[width=.6\textwidth]{no-free-lunch}
 \end{frame}
 
 \section{Speculative Evaluation}
@@ -94,95 +163,43 @@
   \end{align*}
   \pause
   \begin{center}
-	\begin{tabular}{cc}
-	  $\pbest$ updated&Source of $\nbest$ update\\
+	\begin{tabular}{lcc}
+	  Identifier&Source of $\pbest$ update&Source of $\nbest$ update\\
 	  \hline
 	  \hline
-	  No update&No update\\
+	  $\casepn$&No update&No update\\
 	  \hline
-	  No update&Neighbor 1\\
+	  $\casexn$&Self&No update\\
 	  \hline
-	  No update&Neighbor 2\\
+	  $\casexx$&Self&Self\\
 	  \hline
-	  Updated&No update\\
+	  $\casepl$&No update&Left Neighbor\\
 	  \hline
-	  Updated&Neighbor 1\\
+	  $\casexl$&Self&Left Neighbor\\
 	  \hline
-	  Updated&Neighbor 2\\
+	  $\casepr$&No update&Right Neighbor\\
 	  \hline
-	  Updated&The particle itself\\
+	  $\casexr$&Self&Right Neighbor\\
 	  \hline
 	\end{tabular}
   \end{center}
 \end{frame}
 
-\begin{frame}
-  \begin{center}
-\begin{algorithm}[H]
-  \caption{Speculative Evaluation in a Centralized PSO}
-  \label{alg:centralized}
-  \begin{algorithmic}[1]
-	\STATE Move all $\p_{t-1}$ to $\noeval{\p}_t$
-	\STATE For each $\noeval{\p}_t$, get its neighbors $\noeval{\nset}_t$ and
-	  generate $\noeval{\sset}_{t+1}$
-	\STATE Evaluate all $\noeval{\p}_t$ and $\noeval{\sset}_{t+1}$ in parallel
-	\STATE Update personal best for each $\noeval{\p}_t$ and
-	  $\noeval{\s}_{t+1}$, creating $\nonbest{\p}_t$ and $\nonbest{\s}_{t+1}$
-	\STATE Update neighborhood best for each $\nonbest{\p}_t$, creating
-	  $\pset_t$
-	\FORALL{$\p_t$}
-	\STATE Pick $\nonbest{\s}_{t+1}$ from $\nonbest{\sset}_{t+1}$ that matches
-	the branch taken by $\p_t$ \\ (Or, pick $\nonbest{\s}_{t+1}$ from
-	$\nonbest{\sset}_{t+1}$ that has the highest value)
-	\STATE Pass along personal and neighborhood best values obtained by $\p_t$,
-	  making $\nonbest{\p}_{t+1}$
-	\ENDFOR
-	\STATE Update neighborhood best for each $\nonbest{\p}_{t+1}$, creating
-	  $\pset_{t+1}$
-	\STATE Repeat
-  \end{algorithmic}
-\end{algorithm}
-  \end{center}
-\end{frame}
+\subsection{Relaxations}
 
-\subsection{Results}
 \begin{frame}
-  \begin{center}
-	\frametitle{Results---Sphere}
-	\[f(\Vec{x}) = \sum_{i=1}^D x_i^2\]
-	\includegraphics[width=.6\textwidth]{sphere1}
-  \end{center}
-\end{frame}
-\begin{frame}
-  \begin{center}
-	\frametitle{Results---Griewank (240 Processors)}
-	\[f(\Vec{x}) = \frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D
-	\cos\left(\frac{x_i}{\sqrt{i}}\right) + 1\]
-	\includegraphics[width=.6\textwidth]{griewank1}
-  \end{center}
-\end{frame}
-\begin{frame}
-  \begin{center}
-	\frametitle{Results---Griewank (800 Processors)}
-	\[f(\Vec{x}) = \frac{1}{4000} \sum_{i=1}^D x_i^2 - \Pi_{i=1}^D
-	\cos\left(\frac{x_i}{\sqrt{i}}\right) + 1\]
-	\includegraphics[width=.6\textwidth]{griewank2}
-  \end{center}
-\end{frame}
-\begin{frame}
-  \begin{center}
-	\frametitle{Results---Rastrigin}
-	\[f(\Vec{x}) = \sum_{i=1}^D \left(x_i^2 - 10\cos\left(2\pi x_i\right) +
-	10\right)\]
-	\includegraphics[width=.6\textwidth]{rastrigin}
-  \end{center}
+  \frametitle{Branch Pruning}
+  \includegraphics[height=.8\textheight]{speculative_evaluation}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Questions?}
-  \begin{center}
-	\Huge \textrm{The End}
-  \end{center}
+  \frametitle{Branch Pruning}
+  \includegraphics[height=.8\textheight]{pruning}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Several Iterations Ahead}
+  \includegraphics[width=\textwidth]{manyiters}
 \end{frame}
 
 \end{document}
