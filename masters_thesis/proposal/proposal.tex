@@ -183,18 +183,8 @@ Optimization}
 % 1 to 2 paragraphs
 
 Particle swarm optimization (PSO) is an evolutionary algorithm that has proven
-effective at solving complicated optimization problems.  Since its inception,
-however, PSO has been run primarily in serial on a single machine.  With the
-world's computing resources increasingly coming from large clusters of
-processors, the parallelization of the algorithm is important to its continued
-relevance.  PSO has previously been parallelized primarily by distributing the
-computation corresponding to particles across multiple processors.  In these
-approaches, additional processors can only add more particles to the swarm.
-However, in many cases this is not efficient when scaled to very large swarm
-sizes (on very large clusters).  Current methods cannot answer well the
-question, ``What do you do with 1000 processors when 50 or 100 particles is the
-most efficient swarm size?''  In this project we attempt to answer that
-question with a speculative approach to the parallelization of PSO motivated by
+effective at solving complicated optimization problems.  In this project we
+present a speculative approach to the parallelization of PSO motivated by
 speculative execution in modern computer hardware.
 
 In our approach, we refactor PSO such that the computation needed for iteration
@@ -447,9 +437,9 @@ work.
 % 1 to 2 sentences
 
 When many processors are available, a speculative approach to the
-parallelization of PSO can yield dramatic improvements in the performance of
-the algorithm on expensive functions compared to previous parallelization
-techniques.
+parallelization of particle swarm optimization can yield dramatic improvements
+in the performance of the algorithm on expensive functions compared to previous
+parallelization techniques.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -606,16 +596,16 @@ subswarms implementation that uses several smaller, independent swarms.
 \item Completed: Implement speculative evaluation in PSO and several
   improvements on it.
 
-\item March 11, 2011: Finish running experiments and incorporate the results
-  into the thesis.
+\item May 13, 2011: Finish running experiments and start incorporating the
+  results into the thesis.
   
-\item March 15, 2011: Give final draft of thesis to advisor for review.
+\item May 30, 2011: Give final draft of thesis to advisor for review.
 
-\item March 22, 2011: submit thesis to second committee member for review.
+\item June 10, 2011: submit thesis to second committee member for review.
 
-\item April 5, 2011: submit thesis to third committee member for review.
+\item June 30, 2011: submit thesis to third committee member for review.
 
-\item April 19, 2011: defend thesis.
+\item July 15, 2011: defend thesis.
 
 \end{itemize}
 
