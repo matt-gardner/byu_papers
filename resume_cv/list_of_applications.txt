@@ -25,6 +25,10 @@ NAACL Scholarship to Johns Hopkins NLP Summer School: accepted (2010)
 "The Topic Browser: An Interactive Tool for Browsing Topic Models" submitted to
 a NIPS workshop: accepted (2010)
 
+Admission to PhD Program at CMU: accepted (2011)
+
+Admission to PhD Program at UMass Amherst: accepted (2011)
+
 
 ==============
 Rejected:
@@ -46,6 +50,12 @@ Phi Kappa Phi Graduate Fellowship: rejected (2010)
 "A Speculative Approach to Particle Swarm Optimization" submitted to
 Transactions on Evolutionary Computation: rejected (2010)
 
+Admission to PhD Program at UC Berkeley: rejected (2011)
+
+Hertz Foundation Graduate Research Fellowship: finalist (1 of 50 in the nation
+in all of physical sciences; a finalist itself is kind of a big deal), but
+rejected (2011)
+
 
 ==============
 Waiting:
@@ -54,6 +64,10 @@ Waiting:
 "A Speculative Approach to Particle Swarm Optimization" submitted to
 Swarm Intelligence: waiting (2010)
 
+National Science Foundation Graduate Research Fellowship: waiting (2011)
+
+National Defense Science and Engineering Graduate Research Fellowship: waiting
+(2011)
 
 
 
