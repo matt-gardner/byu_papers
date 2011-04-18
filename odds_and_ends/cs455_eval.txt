@@ -1,0 +1,40 @@
+I have two main points of feedback on this class.  The first is that I found
+that the quizzes were rather poorly written.  A very large percentage of the
+questions were ambiguous.  For instance, "which line has more area, a
+vertical/horizontal line or a diagonal line," with no reference to endpoints,
+or questions that ask which of some options is "best," without defining what
+best means.  The quizzes were littered with ambiguous wording, which I found
+unfortunate and unnecessary given that we have precise mathematical language at
+our disposal in this discipline.
+
+My second point is that the grading incentives were not calculated to maximize
+the learning of the students.  Students almost always figure out the minimum
+they need to do to get their desired grade in the class, and do that much and
+nothing more.  Posting previous quizzes online and giving really large amounts
+of extra credit on projects, while students really appreciate it, does not
+create an incentive to learn anything.  For example, I paid a lot of attention
+in class and studied a fair amount for the first quiz, and I got an A.  The
+next three quizzes I thought I did the same preparation, but I averaged a B on
+them (mostly because of the ambiguity problems mentioned above).  So I stopped
+paying attention in class (and didn't even go the last three weeks), and just
+read the old quizzes online and went to the review session for the last three
+quizzes, and I averaged a 90%.  I couldn't really tell you anything at all
+about how to implement Bezier or B-spline curves, or how to do ray-tracing, but
+because I read the old quizzes I was able to get an A- on the quizzes.
+
+Also, the extra credit on the projects made the class incredibly easy.  I
+appreciate the intent to allow students to earn more credit for doing more than
+is required in implementing the OpenGL spec.  However, when for projects 3 and
+4 you can get 100 points on the project by doing hardly anything more than
+looking at the man pages for the functions and copying their matrices, you
+don't really learn anything about implementing a graphics library.  Especially
+when the projects are worth 50% of the overall grade, and it's not hard at all
+to get 105% or more on the projects (as extra credit is retroactively applied),
+you can average a 70% or worse on the quizzes and still have an A in the class.
+
+Now, this all said, I thought the grading scheme was rather nice, because I was
+able to finish the projects early, get a lot of easy extra credit, stop going
+to class, and still get an A.  But my A doesn't mean that I actually learned
+anything.  At least certainly not as much as the course outline would suggest
+that I know having gotten an A.  I suppose that's what grade inflation is,
+isn't it?
