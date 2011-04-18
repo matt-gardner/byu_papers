@@ -1008,13 +1008,13 @@ to compare the different branching possibilities on various functions.
 
 We ran experiments to compare our speculative parallelization of PSO to the
 standard parallelization.  At each iteration of the algorithms, we use one
-processor to perform one function evaluation for one particle, be it
-speculative or non-speculative.  The exact evaluation time at which this
-architecture becomes reasonable depends on the amount of communication overhead
-in the parallel implementation and the number of particles in the swarm.  For
-our implementation we found that time to be around 100 milliseconds for swarms
-of 50 particles.  When the swarm size increases, the minimum evaluation time at
-which this architecture should be used decreases.
+processor to perform one function evaluation.  The exact evaluation time at
+which this architecture becomes reasonable depends on the amount of
+communication overhead in the parallel implementation and the number of
+particles in the swarm.  For our implementation we found that time to be around
+100 milliseconds for swarms of 50 particles.  When the swarm size increases,
+the minimum evaluation time at which this architecture should be used
+decreases.
 
 \subsection{Function Evaluations vs. Time Steps}
 
@@ -1040,13 +1040,12 @@ call each ``iteration'' a ``time step.''
 
 Just as serial PSO papers do not report actual running times of their specific
 implementations, we do not report running times, favoring the abstraction of
-time steps.  That being said, given the time required for the evaluation of the
+time steps.  However, given the time required for the evaluation of the
 objective function and the communication overhead per iteration for a specific
-implementation, an actual running time can be recovered from all of our
-results.  Simply multiply the number of time steps by the sum of the function
-evaluation time and the overhead.  We wish to stress that the ``time steps'' we
-report are proportional to wall-clock time, given the architecture we have
-assumed.
+implementation, a running time can be estimated from all of our results.
+Simply multiply the number of time steps by the sum of the function evaluation
+time and the overhead.  We wish to stress that the ``time steps'' we report are
+proportional to wall-clock time, given the architecture we have assumed.
 
 \subsection{Functions Used}
 
@@ -1084,9 +1083,9 @@ the boundary of the initialization region.  For example, if the initialization
 region is $[-50,50]^D$, the center is $(25)^D$.  We tested all of these
 functions in their 20 dimension, 50 dimension, and 500 dimension varieties.
 
-One might question the use of benchmark functions for evaluating our methods,
-as they take on the order of 1 millisecond to evaluate instead of the 100s that
-we said were required to justify our parallel architecture.  The purpose of
+We find benchmark functions useful in comparing algorithms, even though they
+only take on the order of 1 millisecond to evaluate instead of the 100s that we
+said were required to justify our parallel architecture.  The purpose of
 exploring the behavior of an algorithm on benchmark functions, whether in
 serial or in parallel optimization research, is because benchmark functions are
 believed to represent functions that one might encounter in the real world,
@@ -1100,7 +1099,7 @@ practitioners are actually interested in, and they allow us to explore the
 behavior of optimization algorithms on several different classes of functions
 in an easy and standardized way.
 
-To aid in convincing the reader that performance on benchmark functions roughly
+To provide additional evidence that performance on benchmark functions roughly
 corresponds to performance on real-world problems, we also tested our
 parallelization methods on a typical research problem, that of fitting a model
 to a large quantity of data.  We generated 10,000 data points from a radial
@@ -1226,6 +1225,7 @@ model fitting problem in \sec{model}.
 \label{sec:20dims}
 
 \subsubsection{Sphere}
+\label{sec:sphere20dims}
 
 First we look at Sphere, the simplest of common benchmark functions.  The
 function has a single global optimum and no other local optima.  Sphere is best
@@ -1559,12 +1559,31 @@ that at 240 processors, most of our methods fail to find the optimum 100\% of
 the time, while at 800 processors, all but Many Iterations succeed 100\% of the
 time, and Many Iterations is very close.  At some point between 240 and 800
 processors, SEPSO and Pick Best become successful, and at that point it is by
-far better to use speculative methods than standard parallelizations.  We can
-also assume that at some point above 800 processors, Many Iterations will be
-become successful and will be the preferred method.  Once there are enough
-particles in the swarm to guarantee success when optimizing a function, the
-best use of additional processors is to speculate as far ahead as possible,
-speeding up the progress of the algorithm.
+far better to use speculative methods than standard parallelizations.  At some
+number above 800 processors, Many Iterations will be become successful and will
+be the preferred method.
+
+To further show this point, we present results using 1920 processors on the
+20-dimensional Griewank function in \fig{griewank-all}.  With 1920 processors
+Many Iterations finds the optimum 100\% of the time.  What is interesting is
+that while going from 240 processors to 1920 processors, the standard method of
+parallelization only decreased its time to completion by 5.9\%.  That is, the
+extra 1680 processors in standard parallelizations provide \emph{no appreciable
+benefit}.  In contrast, Many Iterations with 1920 processors has the same swarm
+size of 240 particles and uses the additional processors for speculative
+evaluation, giving a decrease in time to completion of 78.9\%, or a factor of
+almost 5.  Once there are enough particles in the swarm to guarantee success
+when optimizing a function, the best use of additional processors is to
+speculate as far ahead as possible, speeding up the progress of the algorithm.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.7\columnwidth]{griewankall}
+  \caption{Function Griewank with 20 dimensions, comparing the performance of
+  standard and speculative parallelizations as the number of processors
+  increases.  All algorithms use the Ring topology.}
+  \label{fig:griewank-all}
+\end{figure}
 
 \subsubsection{Bohachevsky}
 
@@ -1884,6 +1903,34 @@ minutes to reach a successful value, while Standard takes 50 minutes.
   \label{fig:rbf-stuck}
 \end{figure}
 
+\subsection{Bare Bones PSO}
+\label{sec:bare-results}
+
+In order to demonstrate that our methods are applicable across PSO variants, we
+ran experiments with Bare Bones PSO.  For this simple experiment we use the
+Sphere function with 20 dimensions, taking the best Standard algorithm and the
+best speculative algorithm on that function, which in this case is Standard
+Complete and Pick Best Pruned Complete, as shown in \sec{sphere20dims}.
+\fig{bare-bones} shows the results of running each of those algorithms with the
+Bare Bones PSO equations.  We see a decrease in time to completion between
+Standard and speculative parallelizations of 40\%.  While this is not quite as
+large a speed up as the 60\% seen with constricted PSO, it is still a
+significant decrease in time.  The key point of this experiment is that our
+methods still show improvements over Standard parallelizations in PSO variants
+other than the standard constricted PSO.  Our intent is not to give an
+exhaustive listing of PSO variants and compare parallelization strategies with
+each one; instead we offer evidence supporting our claim that speculative
+evaluation should see similar increases in performance across most or all PSO
+variants.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.7\columnwidth]{bare_bones}
+  \caption{Results for optimizing the 20-dimensional Sphere function with Bare
+  Bones PSO.  We use 240 processors for each method, so each time step
+  corresponds to 240 function evaluations.}
+  \label{fig:bare-bones}
+\end{figure}
 
 \section{Conclusions}
 \label{sec:conclusion}
