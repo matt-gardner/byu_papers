@@ -1,5 +1,78 @@
-\documentclass[smallcondensed]{svjour3}
+\documentclass[ms,electronic,twosidetoc,letterpaper,chaptercenter,parttop,equalmargins]{byumsphd}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thesis formating stuff
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Title}{A Speculative Approach to Parallelization\\
+in Particle Swarm Optimization}
+\newcommand{\Author}{Matthew Gardner}
+\newcommand{\GraduationMonth}{August}
+\newcommand{\GraduationYear}{2011}
+
+\usepackage[
+    bookmarks=true,
+    bookmarksnumbered=true,
+    breaklinks=false,
+    raiselinks=true,
+    pdfborder={0 0 0},
+    colorlinks=false,
+    plainpages=false,
+    ]{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{natbib}
+\hypersetup{%
+    pdftitle=\Title,%
+    pdfauthor=\Author,%
+    pdfsubject={PhD Dissertation, BYU CS Department: %
+                Degree Granted \GraduationMonth~\GraduationYear, Document Created \today},%
+    pdfkeywords={BYU, thesis, dissertation, LaTeX},%
+}
+\newcommand{\ItemSep}{\itemsep 0pt}
+\let\oldenum=\enumerate
+\renewcommand{\enumerate}{\oldenum \ItemSep}
+\let\olditem=\itemize
+\renewcommand{\itemize}{\olditem \ItemSep}
+\let\olddesc=\description
+\renewcommand{\description}{\olddesc \ItemSep}
+
+% Important settings for the byumsphd class.
+\title{\Title}
+\author{\Author}
+
+\committeechair{Kevin~Seppi}
+\committeemembera{Dan~Ventura}
+\committeememberb{David~Embley}
+
+\monthgraduated{\GraduationMonth}
+\yeargraduated{\GraduationYear}
+\yearcopyrighted{\GraduationYear}
+
+\department{Computer~Science}
+\graduatecoordinator{Kent~E.~Seamons}
+%\collegedean{Thomas~W.~Sederberg}
+%\collegedeantitle{Associate~Dean}
+
+% Remove all widows an orphans.  This is not normally recommended, but in a
+% paper dissertation there is no reasonable way around it; you can't exactly
+% rewrite already-published content to fix the problem.
+\clubpenalty 10000
+\widowpenalty 10000
+
+% Allow pages to have extra blank space at the bottom in order to accommodate
+% removal of widows and orphans.
+\raggedbottom
+
+% Produce nicely formatted paragraphs. There is nothing additional to do.  In
+% case you get some problems, surround your text with
+% \begin{sloppy} ... \end{sloppy}. If that does not work, try
+% \microtypesetup{protrusion=false} ... \microtypesetup{protrusion=true}
+\usepackage{microtype}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For the content of the document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb}
 \usepackage{algorithm}
@@ -73,46 +146,12 @@
 %Other math
 \providecommand{\prob}{\ensuremath{\mathrm{Pr}}}
 
-\title{A Speculative Approach to Parallelization in Particle Swarm
-Optimization}
-
-
-\date{Received: date / Accepted: date}
-
-\author{Matthew Gardner, Andrew McNabb, and Kevin Seppi}
-
-\institute{M. Gardner \at
-Brigham Young University.
-3361 TMCB, Provo, UT 84604
-Tel.: 801-422-8717
-Fax: 801-422-0169
-\email{mjg82@byu.edu}
-\and
-A. McNabb \at
-Brigham Young University.
-3361 TMCB, Provo, UT 84604
-\email{a@cs.byu.edu}
-\and
-K. Seppi \at
-Brigham Young University.
-3361 TMCB, Provo, UT 84604
-\email{k@cs.byu.edu}
-}
-
-\begin{document}
-\maketitle
-
-\begin{abstract}
+\documentabstract{%
 
 Particle swarm optimization (PSO) has previously been parallelized primarily by
 distributing the computation corresponding to particles across multiple
-processors.  In these approaches, adding processors can only increase the swarm
-size.  However, in many cases this is not efficient when scaled to very large
-swarm sizes (on very large clusters).  Current methods cannot answer well the
-question, ``How can 1000 processors be fully utilized when 50 or 100 particles
-is the most efficient swarm size?''  In this paper we attempt to answer that
-question with a speculative approach to the parallelization of PSO that we
-refer to as SEPSO.
+processors.  In this thesis we present a speculative approach to the
+parallelization of PSO that we refer to as SEPSO.
 
 In our approach, we refactor PSO such that the computation needed for iteration
 $t+1$ can be done concurrently with the computation needed for iteration $t$.
@@ -128,14 +167,21 @@ several such relaxations, including keeping the best speculative position
 evaluated instead of the one corresponding to the standard behavior of PSO, and
 speculating several iterations ahead instead of just one.  We show that these
 methods dramatically improve the performance of parallel PSO in many cases.
+}
+\documentkeywords{%
+Parallel algorithms, optimization methods, particle swarm optimization,
+peculative decomposition
+}
 
-\keywords{Parallel algorithms \and Optimization methods \and Particle swarm
-optimization \and Speculative Decomposition}
 
-\end{abstract}
+\begin{document}
 
+% Produce the preamble
+\microtypesetup{protrusion=false}
+\maketitle
+\microtypesetup{protrusion=true}
 
-\section{Introduction}
+\chapter{Introduction}
 \label{sec:intro}
 
 Particle swarm optimization (PSO) has been found to be a highly robust and
@@ -495,7 +541,7 @@ previous section.  The adaptation of our methods to asynchronous PSO
 parallelization methods should be straightforward, though it is left to future
 work.
 
-\section{Speculative Evaluation in PSO}
+\chapter{Speculative Evaluation in PSO}
 \label{sec:sepso}
 
 PSO can be trivially parallelized by assigning each particle's computation to
@@ -540,7 +586,7 @@ of the PSO algorithm.  The section also introduces some notation used later in
 the paper.  \sec{topology} gives a brief discussion of how the topology used
 affects the amount of speculative computation needed.
 
-\subsection{Refactoring the PSO Equations}
+\section{Refactoring the PSO Equations}
 \label{sec:proof}
 
 To perform two iterations at a time we must first refactor PSO such that the
@@ -713,7 +759,7 @@ have been computed.  We call the set of computations
 $\{\ofunc(\specpos_{t+1}^{c}) : \casegen \in \caseset\}$ ``speculative
 children'' because only one of them is needed.
 
-\subsection{Topology in Speculative Evaluation}
+\section{Topology in Speculative Evaluation}
 \label{sec:topology}
 
 The number of speculative evaluations needed per particle depends on the number
@@ -741,7 +787,7 @@ approximate the Complete topology.  In~\sec{results} we report results for
 SEPSO using both the Ring topology and the Random topology on a number of
 common benchmark functions.
 
-\section{Relaxing the Requirements}
+\chapter{Relaxing the Requirements}
 \label{sec:relax}
 
 Refactoring the PSO equations led us to find that speculative approaches are
@@ -767,7 +813,7 @@ PSO, because they receive different information.  These kinds of relaxations
 are fairly typical in the parallelization of
 PSO~\citep{koh-2006-parallel-asynchronous-pso}.
 
-\subsection{Pick the Best Child}
+\section{Pick the Best Child}
 \label{sec:pickbest}
 
 In performing speculative evaluation as we have described it, $2n+1$
@@ -803,7 +849,7 @@ in the case of our original speculative algorithm, or the standard selection
 operator based on fitness, in the case of this Pick Best technique.
 
 
-\subsection{Pruning the Speculative Evaluations}
+\section{Pruning the Speculative Evaluations}
 \label{sec:pruning}
 
 Because the SEPSO requires so many extra evaluations, a natural step to take is
@@ -824,7 +870,7 @@ $2n+1$ possible evaluations to a few likely candidates, we can decrease the
 amount of computation required to do speculative evaluation and improve our
 performance.
 
-\subsection{Branch Statistics}
+\section{Branch Statistics}
 \label{sec:statistics}
 
 In Table~\ref{tab:evals} we presented all possible branches that a particle
@@ -950,7 +996,7 @@ to \alg{centralized} is in Step 2, where the speculative children are
 generated.  Instead of generating all possible speculative children, generate
 the subset of the children that is desired.
 
-\subsection{Recovering from Pruning Too Much}
+\section{Recovering from Pruning Too Much}
 \label{sec:wrong}
 
 When not all of the branches are evaluated, there is some probability of not
@@ -974,7 +1020,7 @@ matter, because we simply accept the child that had the best value.  In most of
 the experiments that we ran, it turned out that picking the best child
 performed better than keeping the particle back an iteration.
 
-\subsection{More than one iteration ahead}
+\section{More than one iteration ahead}
 \label{sec:manyiters}
 
 We need not simply produce speculative children for the next iteration.  We can
@@ -1003,7 +1049,7 @@ more fruitful to try.  In our experiments we try just one of the countless
 possibilities, but one that turns out to work very well.  More work is needed
 to compare the different branching possibilities on various functions.
 
-\section{Experimental Setup}
+\chapter{Experimental Setup}
 \label{sec:setup}
 
 We ran experiments to compare our speculative parallelization of PSO to the
@@ -1016,7 +1062,7 @@ particles in the swarm.  For our implementation we found that time to be around
 the minimum evaluation time at which this architecture should be used
 decreases.
 
-\subsection{Function Evaluations vs. Time Steps}
+\section{Function Evaluations vs. Time Steps}
 
 Results in serial PSO are typically presented in terms of function evaluations.
 This is a natural abstraction from implementation details that still allows a
@@ -1047,7 +1093,7 @@ Simply multiply the number of time steps by the sum of the function evaluation
 time and the overhead.  We wish to stress that the ``time steps'' we report are
 proportional to wall-clock time, given the architecture we have assumed.
 
-\subsection{Functions Used}
+\section{Functions Used}
 
 We experimented with five common benchmark problems defined
 in~\citep{herrera-2010-test-suite}: Rastrigin, Sphere, Schwefel 2.21, Griewank,
@@ -1109,7 +1155,7 @@ fit a radial basis function network to the data using PSO.  This amounted to a
 order of two seconds.  We refer to this function as ``the model fitting
 problem.''
 
-\subsection{Parallelization Techniques Compared}
+\section{Parallelization Techniques Compared}
 
 The parallelization techniques we compare are the standard parallelization
 (here labeled Standard simply for ease of reference), our original speculative
@@ -1163,7 +1209,7 @@ Pruned and Social Promotion Pruned, this choice of branches allows the use of
 arbitrarily dense topologies, as the number of speculative evaluations per
 particle is independent of the number of neighbors the particle has.
 
-\subsection{Topologies}
+\section{Topologies}
 
 For each benchmark function we report results using the topology that is widely
 considered best for that function, as reported in the literature
@@ -1199,7 +1245,7 @@ paper.  A practitioner using a particular implementation can compare the
 results given here for whichever topology is most practical given the specific
 implementation.
 
-\section{Results}
+\chapter{Results}
 \label{sec:results}
 
 We frequently present tables summarizing our results.  In each table, we bold
@@ -1221,11 +1267,10 @@ those in 20 dimensions.  We finish our discussion of benchmark functions with
 their 500 dimensional variants in \sec{500dims}, and we discuss results on the
 model fitting problem in \sec{model}.
 
-\subsection{20 Dimensions}
+\section{20 Dimensions}
 \label{sec:20dims}
 
-\subsubsection{Sphere}
-\label{sec:sphere20dims}
+\subsection{Sphere}
 
 First we look at Sphere, the simplest of common benchmark functions.  The
 function has a single global optimum and no other local optima.  Sphere is best
@@ -1300,7 +1345,7 @@ Complete on this function.
 \end{table}
 
 
-\subsubsection{Schwefel 2.21}
+\subsection{Schwefel 2.21}
 
 Schwefel 2.21 is a function similar to Sphere, but Schwefel 2.21 is benefited
 more by larger swarms than Sphere is.  Thus our speculative algorithms often
@@ -1349,7 +1394,7 @@ our results in \tabref{schwefel-20}.
 \end{table}
 
 
-\subsubsection{Rastrigin}
+\subsection{Rastrigin}
 
 Rastrigin is a multi-modal function that is best optimized with a large,
 Complete swarm.  It has been shown that with Rastrigin, the more particles
@@ -1418,7 +1463,7 @@ optima than Standard does.  \fig{rastrigin} shows the results graphically, and
   \label{fig:rastrigin}
 \end{figure}
 
-\subsubsection{Griewank}
+\subsection{Griewank}
 \label{sec:griewank-20}
 
 It is generally recommended to use the Ring topology when optimizing the
@@ -1585,7 +1630,7 @@ speculate as far ahead as possible, speeding up the progress of the algorithm.
   \label{fig:griewank-all}
 \end{figure}
 
-\subsubsection{Bohachevsky}
+\subsection{Bohachevsky}
 
 Bohachevsky is a unimodal function best optimized with a Complete swarm.  It is
 similar to Griewank in that there is a global optimum with a value of 0, and
@@ -1642,7 +1687,7 @@ fast.
 \end{table}
 
 
-\subsection{50 Dimensions}
+\section{50 Dimensions}
 \label{sec:50dims}
 
 Given our observation from the 20 dimensional benchmark functions that Many
@@ -1799,7 +1844,7 @@ from two to six times compared to previous methods.
   \end{tabular}
 \end{table}
 
-\subsection{500 Dimensions}
+\section{500 Dimensions}
 \label{sec:500dims}
 
 At 500 dimensions the performance of constricted PSO on benchmark functions
@@ -1864,7 +1909,7 @@ to help Standard would also help Many Iterations, and we would expect to see
 results that are at least as compelling as those from the 50 dimensional
 benchmark functions.
 
-\subsection{Model Fitting}
+\section{Model Fitting}
 \label{sec:model}
 
 For the model fitting problem we used 144 processors.  We show results for
@@ -1903,36 +1948,8 @@ minutes to reach a successful value, while Standard takes 50 minutes.
   \label{fig:rbf-stuck}
 \end{figure}
 
-\subsection{Bare Bones PSO}
-\label{sec:bare-results}
 
-In order to demonstrate that our methods are applicable across PSO variants, we
-ran experiments with Bare Bones PSO.  For this simple experiment we use the
-Sphere function with 20 dimensions, taking the best Standard algorithm and the
-best speculative algorithm on that function, which in this case is Standard
-Complete and Pick Best Pruned Complete, as shown in \sec{sphere20dims}.
-\fig{bare-bones} shows the results of running each of those algorithms with the
-Bare Bones PSO equations.  We see a decrease in time to completion between
-Standard and speculative parallelizations of 40\%.  While this is not quite as
-large a speed up as the 60\% seen with constricted PSO, it is still a
-significant decrease in time.  The key point of this experiment is that our
-methods still show improvements over Standard parallelizations in PSO variants
-other than the standard constricted PSO.  Our intent is not to give an
-exhaustive listing of PSO variants and compare parallelization strategies with
-each one; instead we offer evidence supporting our claim that speculative
-evaluation should see similar increases in performance across most or all PSO
-variants.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=.7\columnwidth]{bare_bones}
-  \caption{Results for optimizing the 20-dimensional Sphere function with Bare
-  Bones PSO.  We use 240 processors for each method, so each time step
-  corresponds to 240 function evaluations.}
-  \label{fig:bare-bones}
-\end{figure}
-
-\section{Conclusions}
+\chapter{Conclusions}
 \label{sec:conclusion}
 
 We have described a new technique for using processors in parallel PSO to
@@ -1988,7 +2005,7 @@ increase the speed of the algorithm.  This work is a first step in that
 direction that opens the door to many future improvements on speculative
 methods in the parallelization of PSO.
 
-\section{Future Work}
+\chapter{Future Work}
 \label{sec:future}
 
 In this work we have focused on PSO itself and not all of its variants.  It
@@ -2040,7 +2057,9 @@ size there would be an unwieldy amount of possible future individuals, but the
 potential exists to modify the algorithm to use some kind of speculative
 evaluation.
 
-\section*{Appendix A---Implementing Speculative Evaluation}
+
+\appendix
+\chapter{Implementing Speculative Evaluation}
 \label{sec:implementation}
 
 It is not trivial in some parallel architectures to determine which speculative
@@ -2055,7 +2074,7 @@ messages to and from other particles.  Finally we discuss the further
 complications of a dynamic topology such as Random, where a particle's
 neighbors change from one iteration to another.
 
-\subsection*{Terminology}
+\section{Terminology}
 
 To aid in describing our methodology, we introduce a few terms.  A particle's
 set of \emph{speculative children} is the set of all possible next iteration
@@ -2080,7 +2099,7 @@ neighbors, it is denoted as $\nonbest{\p}_t$.  Only when the particle has
 updated its neighborhood best is it a complete particle at iteration $t$.  It
 is then simply denoted as $\p_t$.
 
-\subsection*{Centralized Algorithms}
+\section{Centralized Algorithms}
 
 In a centralized, or Master-Slave, parallel PSO algorithm, one machine, the
 master, keeps track of all necessary information, and all other machines are
@@ -2173,7 +2192,7 @@ $\pset_{t+1}$.  That set of particles can subsequently be used to produce the
 sets $\noeval{\pset}_{t+2}$ and $\noeval{\sset}_{t+3}$ (steps 1 and 2 in
 \alg{centralized}), and the process repeats itself.
 
-\subsection*{Distributed Algorithms}
+\section{Distributed Algorithms}
 
 \label{sec:distributed}
 
@@ -2228,7 +2247,7 @@ with only one round of communication per two iterations.  However, the
 methodology is tedious and distracting from the present discussion, so we defer
 its description to Appendix B.
 
-\subsection*{Dynamic Topologies}
+\section{Dynamic Topologies}
 
 Performing speculative evaluation in PSO with a dynamic topology (where
 neighbors change from iteration to iteration) raises a sticky issue of its own.
@@ -2256,7 +2275,7 @@ $\noeval{\nset}_{t+2}$ before calculating the next possible positions for
 $\noeval{\sset}_{t+3}$, there are still only $2n+1$ possible next positions,
 and the problem is avoided.
 
-\section*{Appendix B---Alternate form of message passing}
+\chapter{Alternate form of message passing}
 
 Here we describe a method that requires only one round of communication for
 each pair of iterations, which happens at step 5 of \alg{centralized}.  Many
@@ -2437,7 +2456,7 @@ message passing, so we have described how speculative evaluation can be
 performed in those circumstances.
 
 
-\bibliographystyle{apa-good}
+\bibliographystyle{plainnat}
 \bibliography{%
 ../../../bib/aml/bib,%
 ../../../bib/nfl/bib,%

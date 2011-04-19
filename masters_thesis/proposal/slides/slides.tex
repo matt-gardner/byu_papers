@@ -11,8 +11,8 @@
 \DeclareMathOperator{\URand}{U}
 \providecommand{\ppos}{\ensuremath{\Vec{x}}}
 \providecommand{\pvel}{\ensuremath{\Vec{v}}}
-\providecommand{\nbest}{\ensuremath{\Vec{b}_n}}
-\providecommand{\pbest}{\ensuremath{\Vec{b}_p}}
+\providecommand{\nbest}{\ensuremath{\Vec{b}^n}}
+\providecommand{\pbest}{\ensuremath{\Vec{b}^p}}
 \providecommand{\constriction}{\ensuremath{\chi}}
 \providecommand{\coeff}{\ensuremath{\phi}}
 \providecommand{\nURand}{\ensuremath{U^\neigh}}
@@ -110,14 +110,6 @@ to Parallelization in Particle Swarm Optimization}
   \titlepage
 \end{frame}
 
-\begin{frame}
-  \frametitle{Thesis Statement}
-When many processors are available, a speculative approach to the
-parallelization of PSO can yield dramatic improvements in the performance of
-the algorithm on expensive functions compared to previous parallelization
-techniques.
-\end{frame}
-
 \section{Particle Swarm Optimization}
 \begin{frame}
   \frametitle{Optimization}
@@ -136,11 +128,32 @@ techniques.
   \begin{align*}
 	  \pvel_{t+1} &=
 		  \constriction \left[ \pvel_t +
-			  \coeff_1\URand()\otimes(\pbest - \ppos_t) +
-			  \coeff_2\URand()\otimes(\nbest - \ppos_t)
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
 		  \right] \\
 	  \ppos_{t+1} &= \ppos_t + \pvel_{t+1}
   \end{align*}
+
+  \begin{center}
+	\includegraphics[width=.45\textwidth]{gbest_and_lbest}
+  \end{center}
+
+  \pause
+
+  \begin{enumerate}
+	\item Evaluate function $f$ for each particle's position $x_t$
+	\item Determine updates to $\pbest_t$ and $\nbest_t$
+	\item Evaluate motion equations
+  \end{enumerate}
+\end{frame}
+
+\subsection{The Problem}
+\begin{frame}
+  \frametitle{The Problem}
+  \includegraphics[height=.32\textwidth]{single_processor}
+  \includegraphics[height=.32\textwidth]{few_processors}
+  \includegraphics[height=.32\textwidth]{one_per_processor}
+  \includegraphics[height=.32\textwidth]{extra_processors}
 \end{frame}
 
 \section{Speculative Evaluation}
@@ -148,44 +161,104 @@ techniques.
 \subsection{Speculative Execution}
 \begin{frame}
   \frametitle{Speculative Execution}
-  \includegraphics[width=\textwidth]{branching}
+  \begin{center}
+	\includegraphics[height=.7\textheight]{branching}
+  \end{center}
 \end{frame}
 
-\subsection{Speculative Evaluation in PSO}
+\subsection{Reproducing PSO}
+
 \begin{frame}
   \frametitle{Speculative Evaluation in PSO}
   \begin{align*}
 	  \pvel_{t+1} &=
 		  \constriction \left[ \pvel_t +
-			  \coeff_1\URand()\otimes(\pbest - \ppos_t) +
-			  \coeff_2\URand()\otimes(\nbest - \ppos_t)
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
 		  \right]
   \end{align*}
-  \pause
+  \begin{enumerate}
+	\item Evaluate function $f$ for each particle's position $x_t$
+	\item Determine updates to $\pbest_t$ and $\nbest_t$
+	\item Evaluate motion equations
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Speculative Evaluation in PSO}
+  \begin{align*}
+	  \pvel_{t+1} &=
+		  \constriction \left[ \pvel_t +
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
+		  \right]
+  \end{align*}
+  \begin{enumerate}
+	\item Evaluate function $f$ for each particle's position $x_t$
+	\item \textbf{Determine updates to $\pbest_t$ and $\nbest_t$}
+	\item Evaluate motion equations
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Speculative Evaluation in PSO}
+  \begin{align*}
+	  \pvel_{t+1} &=
+		  \constriction \left[ \pvel_t +
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
+		  \right]
+  \end{align*}
   \begin{center}
 	\begin{tabular}{lcc}
 	  Identifier&Source of $\pbest$ update&Source of $\nbest$ update\\
 	  \hline
 	  \hline
-	  $\casepn$&No update&No update\\
+	  $\casepn$&No update ($\pbest_{t-1}$)&No update ($\nbest_{t-1}$)\\
 	  \hline
-	  $\casexn$&Self&No update\\
+	  $\casexn$&Self ($\ppos_t$)&No update ($\nbest_{t-1}$)\\
 	  \hline
-	  $\casexx$&Self&Self\\
+	  $\casexx$&Self ($\ppos_t$)&Self ($\ppos_t$)\\
 	  \hline
-	  $\casepl$&No update&Left Neighbor\\
+	  $\casepl$&No update ($\pbest_{t-1}$)&Left Neighbor ($\leftn_t$)\\
 	  \hline
-	  $\casexl$&Self&Left Neighbor\\
+	  $\casexl$&Self ($\ppos_t$)&Left Neighbor ($\leftn_t$)\\
 	  \hline
-	  $\casepr$&No update&Right Neighbor\\
+	  $\casepr$&No update ($\pbest_{t-1}$)&Right Neighbor ($\rightn_t$)\\
 	  \hline
-	  $\casexr$&Self&Right Neighbor\\
+	  $\casexr$&Self ($\ppos_t$)&Right Neighbor ($\rightn_t$)\\
 	  \hline
 	\end{tabular}
   \end{center}
 \end{frame}
 
-\subsection{Relaxations}
+\begin{frame}
+  \frametitle{Speculative Evaluation in PSO}
+  \includegraphics[height=.8\textheight]{speculative_evaluation}
+\end{frame}
+
+\subsection{Relaxing the Algorithm}
+
+\begin{frame}
+  \frametitle{Thesis Statement}
+When many processors are available, a speculative approach to the
+parallelization of PSO can yield dramatic improvements in the performance of
+the algorithm on expensive functions compared to previous parallelization
+techniques.
+
+\mbox{}
+
+\pause
+This entails:
+\begin{itemize}
+  \item Proving the correctness of reproducing PSO
+  \item Branch pruning
+  \item Speculating several iterations ahead
+  \item A thorough exploration of the algorithms with many benchmark functions
+	and several topologies
+\end{itemize}
+\end{frame}
+
 
 \begin{frame}
   \frametitle{Branch Pruning}
@@ -200,6 +273,26 @@ techniques.
 \begin{frame}
   \frametitle{Several Iterations Ahead}
   \includegraphics[width=\textwidth]{manyiters}
+\end{frame}
+
+\section{Validation}
+
+\begin{frame}
+  \frametitle{Validation}
+  \begin{itemize}
+	\item Compare speculative approaches with previous parallelizations
+	  \begin{itemize}
+		\item Standard Parallelization
+		\item SEPSO
+		\item Pick Best
+		\item Pick Best Pruned
+		\item Social Promotion Pruned
+		\item Many Iterations
+	  \end{itemize}
+	\item Using Ring, Random and (where feasible) Complete topologies
+	\item 5 Benchmark functions, at 20, 50, and 500 dimensions
+	\item Model fitting problem
+  \end{itemize}
 \end{frame}
 
 \end{document}
