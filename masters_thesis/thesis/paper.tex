@@ -42,7 +42,7 @@ in Particle Swarm Optimization}
 
 \committeechair{Kevin~Seppi}
 \committeemembera{Dan~Ventura}
-\committeememberb{David~Embley}
+\committeememberb{David~W.~Embley}
 
 \monthgraduated{\GraduationMonth}
 \yeargraduated{\GraduationYear}
@@ -166,11 +166,13 @@ exactly reproducing PSO in an attempt to produce better results.  We present
 several such relaxations, including keeping the best speculative position
 evaluated instead of the one corresponding to the standard behavior of PSO, and
 speculating several iterations ahead instead of just one.  We show that these
-methods dramatically improve the performance of parallel PSO in many cases.
+methods dramatically improve the performance of parallel PSO in many cases,
+giving speed ups of up to six times compared to previous parallelization
+techniques.
 }
 \documentkeywords{%
 Parallel algorithms, optimization methods, particle swarm optimization,
-peculative decomposition
+speculative decomposition
 }
 
 
@@ -870,7 +872,7 @@ $2n+1$ possible evaluations to a few likely candidates, we can decrease the
 amount of computation required to do speculative evaluation and improve our
 performance.
 
-\section{Branch Statistics}
+\subsection{Branch Statistics}
 \label{sec:statistics}
 
 In Table~\ref{tab:evals} we presented all possible branches that a particle
@@ -996,7 +998,7 @@ to \alg{centralized} is in Step 2, where the speculative children are
 generated.  Instead of generating all possible speculative children, generate
 the subset of the children that is desired.
 
-\section{Recovering from Pruning Too Much}
+\subsection{Recovering from Pruning Too Much}
 \label{sec:wrong}
 
 When not all of the branches are evaluated, there is some probability of not
@@ -1040,14 +1042,15 @@ highest value.
 
 The question of which branches to take in this infinite tree is an intriguing
 one that we can only begin to explore here.  If the branch corresponding to
-stagnation has a 75\% chance of being taken, as in the Random topology with
-most functions, we could speculate three iterations ahead on that branch and
-still have a 42\% chance of predicting correctly.  However, intuition would say
-that perhaps it is better to hope that the particle is productive instead of
-stagnant, so a branch where the particle updates its personal best might be
-more fruitful to try.  In our experiments we try just one of the countless
-possibilities, but one that turns out to work very well.  More work is needed
-to compare the different branching possibilities on various functions.
+stagnation, \casepn, has a 75\% chance of being taken, as in the Random
+topology with most functions, we could speculate three iterations ahead on that
+branch and still have a 42\% chance of predicting correctly.  However,
+intuition would say that perhaps it is better to hope that the particle is
+productive instead of stagnant, so a branch where the particle updates its
+personal best might be more fruitful to try.  In our experiments we try just
+one of the countless possibilities, but one that turns out to work very well.
+More work is needed to compare the different branching possibilities on various
+functions.
 
 \chapter{Experimental Setup}
 \label{sec:setup}
@@ -1928,7 +1931,7 @@ p-value for a t-test on this statistic is less than $10^{-8}$.  With our
 implementation of parallel PSO, each time step took on average 10.06 seconds;
 1.83 seconds of that was function evaluation time and the rest was overhead.
 With this particular implementation, then, Many Iterations takes on average 21
-minutes to reach a successful value, while Standard takes 50 minutes.
+minutes to reach a successful value, while Standard Subswarms takes 50 minutes.
 
 \begin{figure}
   \centering
@@ -1967,7 +1970,8 @@ when we allow ourselves some freedom with the algorithm we see great
 improvements over previous methods.  We have shown results that conclusively
 demonstrate the superiority of our techniques for several functions over the
 standard practice of adding particles to the swarm when extra processors are
-available.
+available, giving speed ups of up to six compared to previous parallelization
+techniques.
 
 What we have presented is not a new variant of PSO.  We presented a new
 parallelization technique, so we compared parallelization strategies on the
