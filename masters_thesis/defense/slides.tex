@@ -1,0 +1,420 @@
+\documentclass{beamer}
+\usepackage{beamerthemeshadow}
+\beamertemplatetransparentcovereddynamic
+%\setbeamertemplate{navigation symbols}{}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{psfrag}
+
+%PSO Stuff
+\DeclareMathOperator{\URand}{U}
+\providecommand{\ppos}{\ensuremath{\Vec{x}}}
+\providecommand{\pvel}{\ensuremath{\Vec{v}}}
+\providecommand{\nbest}{\ensuremath{\Vec{b}^n}}
+\providecommand{\pbest}{\ensuremath{\Vec{b}^p}}
+\providecommand{\constriction}{\ensuremath{\chi}}
+\providecommand{\coeff}{\ensuremath{\phi}}
+\providecommand{\nURand}{\ensuremath{U^\neigh}}
+\providecommand{\pURand}{\ensuremath{U^\pers}}
+\providecommand{\ncoeff}{\ensuremath{\phi^\neigh}}
+\providecommand{\pcoeff}{\ensuremath{\phi^\pers}}
+\providecommand{\pers}{\ensuremath{P}}
+\providecommand{\neigh}{\ensuremath{N}}
+
+%SpecExPSO Stuff
+\providecommand{\noeval}[1]{\ensuremath{#1^{-e}}}
+\providecommand{\nonbest}[1]{\ensuremath{#1^{-n}}}
+\providecommand{\p}{\ensuremath{p}}
+\providecommand{\pset}{\ensuremath{\mathbf{p}}}
+\providecommand{\s}{\ensuremath{s}}
+\providecommand{\sset}{\ensuremath{\mathbf{s}}}
+\providecommand{\nsset}{\ensuremath{\mathbf{ns}}}
+\providecommand{\n}{\ensuremath{n}}
+\providecommand{\nset}{\ensuremath{\mathbf{n}}}
+\providecommand{\nnset}{\ensuremath{\mathbf{nn}}}
+\providecommand{\leftnbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\leftind}}}
+\providecommand{\rightnbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\rightind}}}
+\providecommand{\nbestbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\neigh}}}
+\providecommand{\pbestbold}{\ensuremath{\Vec{\mathbf{x}}^\mathbf{\pers}}}
+\providecommand{\pposbold}{\ensuremath{\Vec{\mathbf{x}}}}
+\providecommand{\leftn}{\ensuremath{\Vec{x}^\leftind}}
+\providecommand{\rightn}{\ensuremath{\Vec{x}^\rightind}}
+\providecommand{\leftind}{\ensuremath{L}}
+\providecommand{\rightind}{\ensuremath{R}}
+\providecommand{\casexn}{\ensuremath{(S,-)}}
+\providecommand{\casexx}{\ensuremath{(S,S)}}
+\providecommand{\casexl}{\ensuremath{(S,\leftind)}}
+\providecommand{\casexr}{\ensuremath{(S,\rightind)}}
+\providecommand{\casepn}{\ensuremath{(-,-)}}
+\providecommand{\casepl}{\ensuremath{(-,\leftind)}}
+\providecommand{\casepr}{\ensuremath{(-,\rightind)}}
+\providecommand{\casepN}{\ensuremath{(-,N)}}
+\providecommand{\casexN}{\ensuremath{(S,N)}}
+
+\psfrag{equation 1}{$\ppos_{t-1} +
+  \constriction \bigl[ \pvel_{t-1} +
+	\pcoeff\pURand_{t-1}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t-1}) + 
+	\ncoeff\nURand_{t-1}\otimes(\nbestbold_{\mathbf{t-1}} - \ppos_{t-1})
+  \bigr]$
+}
+\psfrag{equation --}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\nbestbold_{\mathbf{t-1}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation -l}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\leftnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation -r}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pbestbold_{\mathbf{t-1}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\rightnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation s-}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\nbestbold_{\mathbf{t-1}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation sl}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\leftnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation sr}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\rightnbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\psfrag{equation ss}{$\ppos_{t} +
+  \constriction \bigl[ \pvel_{t} +
+	\pcoeff\pURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t}) + 
+	\ncoeff\nURand_{t}\otimes(\pposbold_{\mathbf{t}} - \ppos_{t})
+  \bigr]$
+}
+\title[A Speculative Approach to Parallelization in PSO]{A Speculative Approach
+to Parallelization in Particle Swarm Optimization}
+\author{Matthew Gardner}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Particle Swarm Optimization}
+\begin{frame}
+  \frametitle{Optimization}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{cosine}
+  \end{center}
+\end{frame}
+
+\subsection{Basic Idea}
+\begin{frame}
+  \frametitle{Particle Swarm Optimization}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{birds}
+  \end{center}
+\end{frame}
+
+\subsection{The Math}
+\begin{frame}
+  \frametitle{PSO Equations}
+  \begin{align*}
+	  \pvel_{t+1} &=
+		  \constriction \left[ \pvel_t +
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
+		  \right] \\
+	  \ppos_{t+1} &= \ppos_t + \pvel_{t+1}
+  \end{align*}
+
+  \begin{center}
+	\includegraphics[width=.45\textwidth]{gbest_and_lbest}
+  \end{center}
+
+  \pause
+
+  \begin{enumerate}
+	\item Evaluate function $f$ for each particle's position $x_t$
+	\item Determine updates to $\pbest_t$ and $\nbest_t$
+	\item Evaluate motion equations
+  \end{enumerate}
+\end{frame}
+
+\subsection{The Problem}
+\begin{frame}
+  \frametitle{The Problem}
+  \includegraphics[height=.305\textwidth]{single_processor}
+  \includegraphics[height=.305\textwidth]{few_processors}
+  \includegraphics[height=.305\textwidth]{one_per_processor}
+  \includegraphics[height=.305\textwidth]{extra_processors}
+\end{frame}
+
+\section{Speculative Evaluation}
+
+\subsection{Speculative Execution}
+\begin{frame}
+  \frametitle{Speculative Execution}
+  \begin{center}
+	\includegraphics[height=.7\textheight]{branching}
+  \end{center}
+\end{frame}
+
+\subsection{Reproducing PSO}
+
+\begin{frame}
+  \frametitle{Speculative Evaluation in PSO}
+  \begin{align*}
+	  \pvel_{t+1} &=
+		  \constriction \left[ \pvel_t +
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
+		  \right]
+  \end{align*}
+  \begin{enumerate}
+	\item Evaluate function $f$ for each particle's position $x_t$
+	\item Determine updates to $\pbest_t$ and $\nbest_t$
+	\item Evaluate motion equations
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Speculative Evaluation in PSO}
+  \begin{align*}
+	  \pvel_{t+1} &=
+		  \constriction \left[ \pvel_t +
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
+		  \right]
+  \end{align*}
+  \begin{enumerate}
+	\item Evaluate function $f$ for each particle's position $x_t$
+	\item \textbf{Determine updates to $\pbest_t$ and $\nbest_t$}
+	\item Evaluate motion equations
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Speculative Evaluation in PSO}
+  \begin{align*}
+	  \pvel_{t+1} &=
+		  \constriction \left[ \pvel_t +
+			  \coeff_1\URand()\otimes(\pbest_t - \ppos_t) +
+			  \coeff_2\URand()\otimes(\nbest_t - \ppos_t)
+		  \right]
+  \end{align*}
+  \begin{center}
+	\begin{tabular}{lcc}
+	  Identifier&Source of $\pbest$ update&Source of $\nbest$ update\\
+	  \hline
+	  \hline
+	  $\casepn$&No update ($\pbest_{t-1}$)&No update ($\nbest_{t-1}$)\\
+	  \hline
+	  $\casexn$&Self ($\ppos_t$)&No update ($\nbest_{t-1}$)\\
+	  \hline
+	  $\casexx$&Self ($\ppos_t$)&Self ($\ppos_t$)\\
+	  \hline
+	  $\casepl$&No update ($\pbest_{t-1}$)&Left Neighbor ($\leftn_t$)\\
+	  \hline
+	  $\casexl$&Self ($\ppos_t$)&Left Neighbor ($\leftn_t$)\\
+	  \hline
+	  $\casepr$&No update ($\pbest_{t-1}$)&Right Neighbor ($\rightn_t$)\\
+	  \hline
+	  $\casexr$&Self ($\ppos_t$)&Right Neighbor ($\rightn_t$)\\
+	  \hline
+	\end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Speculative Evaluation in PSO}
+  \begin{center}
+	\includegraphics[height=.8\textheight]{speculative_evaluation}
+  \end{center}
+\end{frame}
+
+\subsection{Relaxing the Algorithm}
+
+\begin{frame}
+  \frametitle{Thesis Statement}
+When many processors are available, a speculative approach to the
+parallelization of PSO can yield dramatic improvements in the performance of
+the algorithm on expensive functions compared to previous parallelization
+techniques.
+
+\mbox{}
+
+\pause
+This entails:
+\begin{itemize}
+  \item Proving the correctness of reproducing PSO
+  \item Branch pruning
+  \item Speculating several iterations ahead
+  \item A thorough exploration of the algorithms with many benchmark functions
+	and several topologies
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Branch Pruning}
+  \begin{center}
+	\includegraphics[height=.8\textheight]{speculative_evaluation}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Branch Pruning}
+  \begin{center}
+	\includegraphics[height=.8\textheight]{pruning}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Several Iterations Ahead}
+  \begin{center}
+	\includegraphics[width=\textwidth]{manyiters}
+  \end{center}
+\end{frame}
+
+\section{Results}
+
+\subsection{Experimental Setup}
+\begin{frame}
+  \frametitle{Experiments}
+  \begin{itemize}
+	\item Compare speculative approaches with previous parallelizations
+	  \begin{itemize}
+		\item Standard Parallelization
+		\item SEPSO
+		\item Pick Best
+		\item Pick Best Pruned
+		\item Social Promotion Pruned
+		\item Many Iterations
+	  \end{itemize}
+	\item Using Ring, Random and (where feasible) Complete topologies
+	\item 5 Benchmark functions, at 20, 50, and 500 dimensions
+	\item Varying number of processors (240--1920)
+	\item Model fitting problem
+	\item Over 120 individual experiments, at least 20 runs each
+  \end{itemize}
+\end{frame}
+
+\subsection{20 Dimensional Griewank}
+\begin{frame}
+  \frametitle{20 Dimensional Griewank}
+  \begin{center}
+	In two dimensions:
+	\includegraphics[width=.8\textwidth]{griewank_image}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{20 Dimensional Griewank}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{griewankstandard}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{20 Dimensional Griewank}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{griewanksepso}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{20 Dimensional Griewank}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{griewankall}
+  \end{center}
+\end{frame}
+
+\subsection{Overview}
+
+\begin{frame}
+  \frametitle{50 Dimensional Results}
+  \begin{center}
+	\begin{tabular}{|l|r|}
+	  \hline
+	  Function&Speed Up Factor\\
+	  \hline
+	  \hline
+	  Rastrigin&N/A\\
+	  \hline
+	  Sphere&1.84\\
+	  \hline
+	  Schwefel&2.51\\
+	  \hline
+	  Griewank&6.08\\
+	  \hline
+	  Bohachevsky&3.07\\
+	  \hline
+	  Model fitting&2.37\\
+	  \hline
+	\end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Conclusion}
+  When many processors are available, a speculative approach to the
+  parallelization of PSO can yield dramatic improvements in the performance of
+  the algorithm on expensive functions compared to previous parallelization
+  techniques.
+\end{frame}
+
+\begin{frame}
+  \frametitle{20 Dimensional Griewank}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{griewank5}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{20 Dimensional Griewank}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{griewank6}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{20 Dimensional Rastrigin}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{rastrigin}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{500 Dimensional Rastrigin}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{rastrigin500}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{RBF with 10 bases}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{rbf}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{RBF with 10 bases}
+  \begin{center}
+	\includegraphics[width=.8\textwidth]{rbf_stuck}
+  \end{center}
+\end{frame}
+
+\end{document}
