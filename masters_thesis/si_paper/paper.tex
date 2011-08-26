@@ -1021,7 +1021,7 @@ which this architecture should be used decreases.
 
 A general rule of thumb for when this architecture is useful is when the
 combined function evaluation time is greater than the communication overhead
-for a single iteration; i.e., $f*p > o+f$, where $f$ is the function evaluation
+for a single iteration; i.e., $t*p > o+t$, where $t$ is the function evaluation
 time, $p$ is the desired number of particles (in our case $p$ is equal to the
 number of available processors), and $o$ is the amount of overhead per
 iteration.  The amount of overhead per iteration will vary based on the
@@ -1067,26 +1067,27 @@ in~\citep{herrera-2010-test-suite}: Rastrigin, Sphere, Schwefel 2.21, Griewank,
 and Bohachevsky.
 
 Rastrigin is initialized in $[-5.12,5.12]^D$ and is defined as:
-\[f(\Vec{x}) = \sum_{i=1}^D\left(z_i^2 - 10\cos\left(2\pi z_i\right) +
-10\right), z=x-c\]
+\[f_{Rastrigin}(\Vec{x}) = \sum_{i=1}^D\left(z_i^2 - 10\cos\left(2\pi
+z_i\right) + 10\right), z=x-c\]
 
 Sphere is initialized in $[-50,50]^D$ and is defined as:
-\[f(\Vec{x}) = \sum_{i=1}^D z_i^2, z=x-c\]
+\[f_{Sphere}(\Vec{x}) = \sum_{i=1}^D z_i^2, z=x-c\]
 
 Schwefel 2.21 is initialized in $[-500,500]^D$ and is defined as:
-\[f(\Vec{x}) = \max_i{|z_i|, 1 \leq i \leq D}, z=x-c\]
+\[f_{Schwefel}(\Vec{x}) = \max_i{|z_i|, 1 \leq i \leq D}, z=x-c\]
 
 Griewank is initialized in $[-600,600]^D$ and is defined as:
-\[f(\Vec{x}) = \frac{1}{4000}\sum_{i=1}^D z_i^2 - \Pi_{i=1}^D
+\[f_{Griewank}(\Vec{x}) = \frac{1}{4000}\sum_{i=1}^D z_i^2 - \Pi_{i=1}^D
 \cos\left(\frac{z_i}{\sqrt{i}} \right) + 1, z=x-c\]
 
 And Bohachevsky is initialized in $[-15,15]^D$ and is defined as:
-\[f(\Vec{x}) = \sum_{i=1}^D(x_i^2+2x_{i+1}^2-.3\cos(3\pi x_i)-.4\cos(4\pi
-x_{i+1})+.7)\]
+\[f_{Bohachevsky}(\Vec{x}) = \sum_{i=1}^D(x_i^2+2x_{i+1}^2-.3\cos(3\pi
+x_i)-.4\cos(4\pi x_{i+1})+.7)\]
 
 In computing the branch statistics in \sec{statistics}, we also used the
 Rosenbrock function.  That function is defined as:
-\[f(\Vec{x}) = \sum_{i=1}^D \left(100(x_{i+1}-x_i^2)+(x_i-1)^2\right)\]
+\[f_{Rosenbrock}(\Vec{x}) = \sum_{i=1}^D
+\left(100(x_{i+1}-x_i^2)+(x_i-1)^2\right)\]
 
 The $c$ in the function definitions is a shifted center, in order to avoid
 origin-seeking bias in the PSO algorithm and its
@@ -1227,11 +1228,13 @@ implementation.
 We frequently present tables summarizing our results.  In each table, we bold
 the ``best'' method, meaning that it has at least a 90\% success rate and its
 average time to completion is faster than all other methods that have at least
-a 90\% success rate.  We used a double-sided t-test to test for statistical
-significance in these results, and all bolded values are statistically
-significant with a p-value of less than $10^{-5}$.  In some instances two
-values are bolded because they are statistically tied, while both are
-significantly better than all other methods.
+a 90\% success rate\footnote{``Success rate'' here means that the algorithm
+reached some predefined value which is mentioned in the table or figure
+wherever a success rate is reported.}.  We used a double-sided t-test to test
+for statistical significance in these results, and all bolded values are
+statistically significant with a p-value of less than $10^{-5}$.  In some
+instances two values are bolded because they are statistically tied, while both
+are significantly better than all other methods.
 
 We first present results in \sec{20dims} for the 20 dimensional variants of the
 benchmark functions we tested.  We give a discussion of each function
@@ -1324,15 +1327,16 @@ Complete on this function.
 
 \subsubsection{Schwefel 2.21}
 
-Schwefel 2.21 is a function similar to Sphere, but Schwefel 2.21 is benefited
-more by larger swarms than Sphere is.  Thus our speculative algorithms often
-fail to outperform Standard with 240 processors because the simple speculative
-methods only have 30 particles.  As we will show later, when we use 800
-processors at 50 dimensions, our methods perform much better.  However, the
-pruned versions of our methods have 80 particles and thus are able to
-outperform Standard even with only 240 processors.  Because the graph of
-Schwefel 2.21 looks very similar to that of Sphere, we simply present all of
-our results in \tabref{schwefel-20}.
+Schwefel 2.21 is a function similar to Sphere (in that they are both unimodal),
+but Schwefel 2.21 is benefited more by larger swarms than Sphere is (as it is
+harder to optimize).  Thus our speculative algorithms often fail to outperform
+Standard with 240 processors because the simple speculative methods only have
+30 particles.  As we will show later, when we use 800 processors at 50
+dimensions, our methods perform much better.  However, the pruned versions of
+our methods have 80 particles and thus are able to outperform Standard even
+with only 240 processors.  Because the graph of Schwefel 2.21 looks very
+similar to that of Sphere, we simply present all of our results in
+\tabref{schwefel-20}.
 
 \begin{table}
   \caption{Summary of results for function Schwefel with 20 dimensions,
@@ -1984,7 +1988,7 @@ thing to do in most cases is to speculate as far ahead as the extra processors
 allow.  This point is shown in a single graph in \fig{griewank-all}.  In that
 case, the extra processors in standard parallelizations provided \emph{no
 appreciable benefit.}  In contrast, speculative methods allow additional
-processors to provide arbitrarily high speed ups, as the more processors are
+processors to provide additional speed ups, as the more processors are
 available the farther ahead the algorithm can speculate.
 
 Though our methods show great improvements on some functions, they do not work
