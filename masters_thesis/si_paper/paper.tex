@@ -25,8 +25,8 @@
 \providecommand{\neigh}{\ensuremath{N}}
 \providecommand{\leftind}{\ensuremath{L}}
 \providecommand{\rightind}{\ensuremath{R}}
-\providecommand{\nURand}{\ensuremath{U^\neigh}}
-\providecommand{\pURand}{\ensuremath{U^\pers}}
+\providecommand{\nURand}{\ensuremath{\Vec{U}^\neigh}}
+\providecommand{\pURand}{\ensuremath{\Vec{U}^\pers}}
 \providecommand{\ppos}{\ensuremath{\Vec{x}}}
 \providecommand{\fppos}{\ensuremath{\Vec{fx}}}
 \providecommand{\pvel}{\ensuremath{\Vec{v}}}
@@ -43,8 +43,8 @@
 
 %SpecExPSO Stuff
 \providecommand{\indic}{\ensuremath{I}}
-\providecommand{\specvel}{\ensuremath{\vec{V}}}
-\providecommand{\specpos}{\ensuremath{\vec{X}}}
+\providecommand{\specvel}{\ensuremath{\Vec{V}}}
+\providecommand{\specpos}{\ensuremath{\Vec{X}}}
 \providecommand{\leftn}{\ensuremath{\Vec{x}^\leftind}}
 \providecommand{\rightn}{\ensuremath{\Vec{x}^\rightind}}
 \providecommand{\caseset}{\ensuremath{\mathcal{C}}}
@@ -242,8 +242,8 @@ particles, producing better results in less wall-clock time.
 We refer to this parallelization technique as ``speculative evaluation in
 particle swarm optimization'', or SEPSO.  It is important to note here that
 SEPSO is not a variant of PSO.  We simply propose a new way to think about the
-parallelization of PSO that we show performs better in many cases than previous
-parallelizations.
+parallelization of PSO that we show takes fewer iterations to reach the same
+level of fitness than previous parallelizations in many instances.
 
 Furthermore, we show that if we relax the requirements of the algorithm, no
 longer demanding that it strictly reproduce the exact behavior of standard PSO,
@@ -279,10 +279,11 @@ and discuss future work.
 
 Particle swarm optimization was proposed in 1995 by James Kennedy and Russell
 Eberhart~\citep{kennedy-1995-particle-swarm-optimization}.  The algorithm is
-used to intelligently search a multi-dimensional space by mimicking the
-swarming and flocking behavior of birds and other animals. It is a social
-algorithm that depends on interaction between particles to quickly and
-consistently approximate the optimal solution to a given objective function.
+used to intelligently search a multi-dimensional space in a way that is
+inspired by the swarming and flocking behavior of birds and other animals. It
+is a social algorithm that depends on interaction between particles to quickly
+and consistently approximate the optimal solution to a given objective
+function.
 
 The motion of particles through the search space has three components: an
 inertial component that gives particles momentum as they move, a cognitive
@@ -290,8 +291,9 @@ component where particles remember the best solution they have found and are
 attracted back to that place, and a social component by which particles are
 attracted to the best solution that any of their neighbors have found.
 
-At each iteration of constricted PSO, the position $\ppos_t$ and velocity
-$\pvel_t$ of each particle are updated as follows:
+At each iteration of constricted PSO~\citep{clerc-2002-constricted-pso}, the
+position $\ppos_t$ and velocity $\pvel_t$ of each particle are updated as
+follows:
 \begin{align}
 \label{eq:velupdate}
 	\pvel_{t+1} &=
@@ -780,9 +782,9 @@ the speculative child that matches the branch that the original PSO would have
 taken, we take the child that has the best value.  The methodology is exactly
 the same as with SEPSO except for the process of choosing which speculative
 child to accept.  The only change needed in \alg{centralized} (see Appendix A)
-is in step 7, where $\noeval{\s}_{t+1}$ with the best value is chosen from
-$\noeval{\sset}_{t+1}$ instead of with the matching branch.  We call this
-technique Pick Best.
+is in step 7, where the speculative child $\noeval{\s}_{t+1}$ with the best
+value is chosen from the set $\noeval{\sset}_{t+1}$ instead of the child with
+the matching branch.  We call this technique Pick Best.
 
 This can be thought of as drawing a number of samples from the next iteration
 and accepting the best one.  Speculative particles that move in good directions
