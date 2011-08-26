@@ -127,7 +127,8 @@ exactly reproducing PSO in an attempt to produce better results.  We present
 several such relaxations, including keeping the best speculative position
 evaluated instead of the one corresponding to the standard behavior of PSO, and
 speculating several iterations ahead instead of just one.  We show that these
-methods dramatically improve the performance of parallel PSO in many cases.
+methods dramatically improve the performance of parallel PSO in many cases,
+giving speed ups of up to six compared to previous parallelization techniques.
 
 \keywords{Parallel algorithms \and Optimization methods \and Particle swarm
 optimization \and Speculative Decomposition}
@@ -151,9 +152,10 @@ develop parallel implementations of PSO, publishing many papers on the subject.
 The methods they have used include various synchronous algorithms
 \citep{parsopoulos-2004-parallel-vector-evaluated-pso} and asynchronous
 algorithms \citep{mostaghim-2006-multi-objective-pso-on-grids}.  Parallelizing
-the evaluation of the objective function can also be done in some cases, though
-that is not an adaption of the PSO algorithm itself and thus is not the focus
-of this paper.
+the evaluation of the objective function can also be done in some cases using
+standard techniques \citep{grama-2003-intro-to-parallel-computing}, though that
+is not an adaption of the PSO algorithm itself and thus is not the focus of
+this paper.
 
 These previous parallel techniques distribute the computation needed by the
 particles in the swarm over the available processors.  If more processors are
@@ -400,8 +402,8 @@ communication from its neighbors before proceeding.  The benefits of the
 synchronous PSO include its simplicity, repeatability, and comparability with
 standard PSO, which may be essential in research applications.
 
-Asynchronous parallel
-PSO~\citep{venter-2005-parallel-pso-asynchronous-evaluations,
+Asynchronous parallel particle swarm
+optimization~\citep{venter-2005-parallel-pso-asynchronous-evaluations,
 koh-2006-parallel-asynchronous-pso} is a modification to the standard algorithm
 which removes the synchronization point at the end of each iteration.  Instead,
 particles iterate independently and communicate asynchronously.  In a typical
@@ -826,7 +828,7 @@ $2n+1$ possible evaluations to a few likely candidates, we can decrease the
 amount of computation required to do speculative evaluation and improve our
 performance.
 
-\subsection{Branch Statistics}
+\subsubsection{Branch Statistics}
 \label{sec:statistics}
 
 In Table~\ref{tab:evals} we presented all possible branches that a particle
@@ -952,7 +954,7 @@ to \alg{centralized} is in Step 2, where the speculative children are
 generated.  Instead of generating all possible speculative children, generate
 the subset of the children that is desired.
 
-\subsection{Recovering from Pruning Too Much}
+\subsubsection{Recovering from Pruning Too Much}
 \label{sec:wrong}
 
 When not all of the branches are evaluated, there is some probability of not
@@ -972,9 +974,7 @@ Promotion.
 
 Another possibility is to pick the best child, as described in \sec{pickbest}.
 This ignores the fact that the branch might have been wrong; it does not
-matter, because we simply accept the child that had the best value.  In most of
-the experiments that we ran, it turned out that picking the best child
-performed better than keeping the particle back an iteration.
+matter, because we simply accept the child that had the best value.
 
 \subsection{More than one iteration ahead}
 \label{sec:manyiters}
@@ -996,27 +996,38 @@ highest value.
 
 The question of which branches to take in this infinite tree is an intriguing
 one that we can only begin to explore here.  If the branch corresponding to
-stagnation has a 75\% chance of being taken, as in the Random topology with
-most functions, we could speculate three iterations ahead on that branch and
-still have a 42\% chance of predicting correctly.  However, intuition would say
-that perhaps it is better to hope that the particle is productive instead of
-stagnant, so a branch where the particle updates its personal best might be
-more fruitful to try.  In our experiments we try just one of the countless
-possibilities, but one that turns out to work very well.  More work is needed
-to compare the different branching possibilities on various functions.
+stagnation, \casepn, has a 75\% chance of being taken, as in the Random
+topology with most functions, we could speculate three iterations ahead on that
+branch and still have a 42\% chance of predicting correctly.  However,
+intuition would say that perhaps it is better to hope that the particle is
+productive instead of stagnant, so a branch where the particle updates its
+personal best might be more fruitful to try.  In our experiments we try just
+one of the countless possibilities, but one that turns out to work very well.
+More work is needed to compare the different branching possibilities on various
+functions.
 
 \section{Experimental Setup}
 \label{sec:setup}
 
-We ran experiments to compare our speculative parallelization of PSO to the
-standard parallelization.  At each iteration of the algorithms, we use one
-processor to perform one function evaluation.  The exact evaluation time at
-which this architecture becomes reasonable depends on the amount of
-communication overhead in the parallel implementation and the number of
-particles in the swarm.  For our implementation we found that time to be around
-100 milliseconds for swarms of 50 particles.  When the swarm size increases,
-the minimum evaluation time at which this architecture should be used
-decreases.
+\subsection{Parallel Architecture}
+
+At each iteration of the algorithms, we use one processor to perform one
+function evaluation.  The exact evaluation time at which this architecture
+becomes reasonable depends on the amount of communication overhead in the
+parallel implementation and the number of particles in the swarm.  For our
+implementation we found that time to be around 100 milliseconds for swarms of
+50 particles.  When the swarm size increases, the minimum evaluation time at
+which this architecture should be used decreases.
+
+A general rule of thumb for when this architecture is useful is when the
+combined function evaluation time is greater than the communication overhead
+for a single iteration; i.e., $f*p > o+f$, where $f$ is the function evaluation
+time, $p$ is the desired number of particles (in our case $p$ is equal to the
+number of available processors), and $o$ is the amount of overhead per
+iteration.  The amount of overhead per iteration will vary based on the
+communication topology and the number of particles, so this is only an
+approximation, but it can provide rough estimates of function evaluation times
+at which this parallel architecture should be used.
 
 \subsection{Function Evaluations vs. Time Steps}
 
@@ -1101,7 +1112,7 @@ practitioners are actually interested in, and they allow us to explore the
 behavior of optimization algorithms on several different classes of functions
 in an easy and standardized way.
 
-To provide additional evidence that performance on benchmark functions roughly
+To provide additional evidence that performance on benchmark functions
 corresponds to performance on real-world problems, we also tested our
 parallelization methods on a typical research problem, that of fitting a model
 to a large quantity of data.  We generated 10,000 data points from a radial
@@ -1118,8 +1129,8 @@ The parallelization techniques we compare are the standard parallelization
 approach (recall that we refer to this as SEPSO), and the four relaxations of
 SEPSO discussed in \sec{relax}.  In presenting our results, we call the
 approach developed in \sec{pickbest} Pick Best.  The methods described in
-\sec{pruning} through \sec{wrong} are called Pick Best Pruned and Social
-Promotion Pruned, and the method in \sec{manyiters} we call Many Iterations.
+\sec{pruning} are called Pick Best Pruned and Social Promotion Pruned, and the
+method in \sec{manyiters} we call Many Iterations.
 
 Using the same number of processors for each approach (and thus the same number
 of function evaluations per time step) requires that our speculative
@@ -1164,6 +1175,15 @@ ahead followed branch \casepn\ on all three iterations.  As with Pick Best
 Pruned and Social Promotion Pruned, this choice of branches allows the use of
 arbitrarily dense topologies, as the number of speculative evaluations per
 particle is independent of the number of neighbors the particle has.
+
+Finally, to show that our methods are orthogonal to traditional PSO variants,
+we show results of parallelizing a variation of the PSO motion equations, Bare
+Bones PSO~\citep{kennedy-2003-bare-bones-pso}, with both standard
+parallelizations and our speculative approaches.  Our intent is not to
+exhaustively compare parallelization strategies on all possible PSO variants,
+but to show some evidence that speculative approaches are generally applicable
+and successful across PSO variants.  These results are shown in
+\sec{bare-results}.
 
 \subsection{Topologies}
 
@@ -1423,8 +1443,8 @@ optima than Standard does.  \fig{rastrigin} shows the results graphically, and
 \subsubsection{Griewank}
 \label{sec:griewank-20}
 
-It is generally recommended to use the Ring topology when optimizing the
-Griewank function, as Complete is prone to premature convergence on a local
+It is recommended in the literature to use the Ring topology when optimizing
+the Griewank function, as Complete is prone to premature convergence on a local
 optimum~\citep{bratton-2007-defining-a-standard-for-pso}.  The global optimum
 of Griewank has a value of 0.  When most trials reach the global optimum but a
 few get stuck, the resultant ``average value'' graph has a flat line that is
@@ -1807,14 +1827,14 @@ from two to six times compared to previous methods.
 At 500 dimensions the performance of constricted PSO on benchmark functions
 becomes rather dismal.  In almost all cases, Standard fails to make any
 significant progress.  Our search for an explanation seems to say that the
-space is too large for particles to converge to the same point, so all updates
-to the best position found come from a single particle wandering in the space.
-Every time that single particle finds a new best position, its velocity
-contracts, so the particle is unable to make significant progress on its own.
-In constricted PSO it is necessary to have a collection of particles exploring
-a promising location to keep the particles' velocities from contracting
-prematurely, and in 500 dimensions the space is too large to get the collection
-of particles to the same location.
+space is too large for particles to converge to the same point (due to
+overshooting in some dimension), so all updates to the best position found come
+from a single particle wandering in the space.  Every time that single particle
+finds a new best position, its velocity contracts, so the particle is unable to
+make significant progress on its own.  In constricted PSO it is necessary to
+have a collection of particles exploring a promising location to keep the
+particles' velocities from contracting prematurely, and in 500 dimensions the
+space is too large to get the collection of particles to the same location.
 
 The results that we present show that while Standard parallelizations suffer
 from this problem, Many Iterations does not.  Though we can provide some
@@ -1858,14 +1878,6 @@ parallelizations on Rastrigin, whereas they did not at 20 and 50 dimensions.
   \label{fig:rastrigin500}
 \end{figure}
 
-One could argue that a fairer comparison would have modified the PSO motions
-equations so that individual particles did not contract their velocity so
-quickly when finding good locations.  However, we used the same motion
-equations for both Standard and Many Iterations; changing the motion equations
-to help Standard would also help Many Iterations, and we would expect to see
-results that are at least as compelling as those from the 50 dimensional
-benchmark functions.
-
 \subsection{Model Fitting}
 \label{sec:model}
 
@@ -1885,7 +1897,7 @@ p-value for a t-test on this statistic is less than $10^{-8}$.  With our
 implementation of parallel PSO, each time step took on average 10.06 seconds;
 1.83 seconds of that was function evaluation time and the rest was overhead.
 With this particular implementation, then, Many Iterations takes on average 21
-minutes to reach a successful value, while Standard takes 50 minutes.
+minutes to reach a successful value, while Standard Subswarms takes 50 minutes.
 
 \begin{figure}
   \centering
@@ -1914,16 +1926,12 @@ Sphere function with 20 dimensions, taking the best Standard algorithm and the
 best speculative algorithm on that function, which in this case is Standard
 Complete and Pick Best Pruned Complete, as shown in \sec{sphere20dims}.
 \fig{bare-bones} shows the results of running each of those algorithms with the
-Bare Bones PSO equations.  We see a decrease in time to completion between
-Standard and speculative parallelizations of 40\%.  While this is not quite as
-large a speed up as the 60\% seen with constricted PSO, it is still a
+Bare Bones PSO equations.  We see a speed up of 1.6 when using speculative
+parallelizations instead of Standard techniques.  While this is not quite as
+large a speed up as the 2.5 seen with constricted PSO, it is still a
 significant decrease in time.  The key point of this experiment is that our
 methods still show improvements over Standard parallelizations in PSO variants
-other than the standard constricted PSO.  Our intent is not to give an
-exhaustive listing of PSO variants and compare parallelization strategies with
-each one; instead we offer evidence supporting our claim that speculative
-evaluation should see similar increases in performance across most or all PSO
-variants.
+other than the standard constricted PSO.
 
 \begin{figure}
   \centering
@@ -1952,7 +1960,8 @@ when we allow ourselves some freedom with the algorithm we see great
 improvements over previous methods.  We have shown results that conclusively
 demonstrate the superiority of our techniques for several functions over the
 standard practice of adding particles to the swarm when extra processors are
-available.
+available, giving speed ups of up to six compared to previous parallelization
+techniques.
 
 What we have presented is not a new variant of PSO.  We presented a new
 parallelization technique, so we compared parallelization strategies on the
@@ -1960,7 +1969,8 @@ same algorithm, the original PSO.  Our most promising techniques do change the
 behavior of the PSO algorithm slightly, as do some other previously proposed
 parallelization techniques, such as asynchronous PSO.  However, our methods are
 applicable to almost all PSO variants, and so a comparison using the same
-variant for each of the parallelization techniques tested is justified.
+variant for each of the parallelization techniques tested is justified.  We
+presented results on a separate PSO variant that give evidence for this claim.
 
 We have given five different possible approaches to speculative evaluation,
 each of which has different properties.  These approaches perform differently
@@ -1971,17 +1981,22 @@ evaluation of the premature convergence properties of these methods on
 deceptive functions when a smaller number of processors is available.  We have
 also shown evidence that when many processors are available by far the best
 thing to do in most cases is to speculate as far ahead as the extra processors
-allow.
+allow.  This point is shown in a single graph in \fig{griewank-all}.  In that
+case, the extra processors in standard parallelizations provided \emph{no
+appreciable benefit.}  In contrast, speculative methods allow additional
+processors to provide arbitrarily high speed ups, as the more processors are
+available the farther ahead the algorithm can speculate.
 
 Though our methods show great improvements on some functions, they do not work
-for all functions.  As is commonly known, in PSO there is a trade-off between
-exploration and exploitation.  Some functions need only minimal exploration,
-and some never seem to have enough.  Increasing the swarm size is a natural way
-to increase exploration in a parallel environment.  However, once ``enough''
-exploration has been reached for any particular function, adding additional
-particles adds only incremental benefits.  At this point, a better use of the
-additional processors, as we have shown, is to perform some amount of
-speculative evaluation.
+for all functions at the swarm sizes we were able to experiment with.  As is
+commonly known, in PSO there is a trade-off between exploration and
+exploitation.  Some functions need only minimal exploration, and some never
+seem to have enough.  Increasing the swarm size is a natural way to increase
+exploration in a parallel environment.  However, once ``enough'' exploration
+has been reached for any particular function, adding additional particles adds
+only incremental benefits.  At this point, a better use of the additional
+processors, as we have shown, is to perform some amount of speculative
+evaluation.
 
 Large parallel clusters are often required to successfully optimize practical
 modern problems.  To properly use PSO with such clusters, a balance needs to be
@@ -2042,7 +2057,9 @@ size there would be an unwieldy amount of possible future individuals, but the
 potential exists to modify the algorithm to use some kind of speculative
 evaluation.
 
-\section*{Appendix A---Implementing Speculative Evaluation}
+\appendix
+
+\section{Implementing Speculative Evaluation}
 \label{sec:implementation}
 
 It is not trivial in some parallel architectures to determine which speculative
@@ -2057,7 +2074,7 @@ messages to and from other particles.  Finally we discuss the further
 complications of a dynamic topology such as Random, where a particle's
 neighbors change from one iteration to another.
 
-\subsection*{Terminology}
+\subsection{Terminology}
 
 To aid in describing our methodology, we introduce a few terms.  A particle's
 set of \emph{speculative children} is the set of all possible next iteration
@@ -2082,7 +2099,7 @@ neighbors, it is denoted as $\nonbest{\p}_t$.  Only when the particle has
 updated its neighborhood best is it a complete particle at iteration $t$.  It
 is then simply denoted as $\p_t$.
 
-\subsection*{Centralized Algorithms}
+\subsection{Centralized Algorithms}
 
 In a centralized, or Master-Slave, parallel PSO algorithm, one machine, the
 master, keeps track of all necessary information, and all other machines are
@@ -2175,7 +2192,7 @@ $\pset_{t+1}$.  That set of particles can subsequently be used to produce the
 sets $\noeval{\pset}_{t+2}$ and $\noeval{\sset}_{t+3}$ (steps 1 and 2 in
 \alg{centralized}), and the process repeats itself.
 
-\subsection*{Distributed Algorithms}
+\subsection{Distributed Algorithms}
 
 \label{sec:distributed}
 
@@ -2230,7 +2247,7 @@ with only one round of communication per two iterations.  However, the
 methodology is tedious and distracting from the present discussion, so we defer
 its description to Appendix B.
 
-\subsection*{Dynamic Topologies}
+\subsection{Dynamic Topologies}
 
 Performing speculative evaluation in PSO with a dynamic topology (where
 neighbors change from iteration to iteration) raises a sticky issue of its own.
@@ -2258,7 +2275,7 @@ $\noeval{\nset}_{t+2}$ before calculating the next possible positions for
 $\noeval{\sset}_{t+3}$, there are still only $2n+1$ possible next positions,
 and the problem is avoided.
 
-\section*{Appendix B---Alternate form of message passing}
+\section{Alternate form of message passing}
 
 Here we describe a method that requires only one round of communication for
 each pair of iterations, which happens at step 5 of \alg{centralized}.  Many
