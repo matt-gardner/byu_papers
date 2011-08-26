@@ -3,6 +3,13 @@
 
 \begin{document}
 
+We apologize for the long delay in responding to your feedback.  This was due
+to our extensive modifications and improvements to the paper.  We have run over
+three processor years worth of additional experiments, greatly expanding the
+results section, and we restructured the middle section of the paper, hopefully
+improving readability.  Specific comments from the reviewers, with our response
+to each comment, are found below.
+
 \section*{Associate Editor Comments}
 
 \subsection*{AE.1}
@@ -13,17 +20,19 @@ taxonomy. Then, also include comparisons with these approaches. You currently
 compare only with a naive approach and adaptations of your approach.
 
 Response: We added a Related Work section (now section 3), describing previous
-approaches at parallelizing PSO.  As we note in the paper, most of the related
-work is orthogonal to innovations we describe, so it is difficult to determine
-what other methods to compare against.  The majority of previous papers on the
-parallelization of PSO deal with functions with very short evaluation times, so
-they propose topologies that limit communication between processors on
-different machines.  Those methods work very well for those functions, but when
-you are dealing with functions whose evaluation takes over a second, the
-benefits of the limited communication become negligible.  We did, however,
-experiment with one of the topologies proposed for fast running functions.  We
-found that in almost all cases simply using a Complete topology gave better
-performance.  We make note of all of this in the paper, mostly in section 3.
+approaches at parallelizing PSO.  We also compared to all applicable methods
+that we described.
+
+Prior algorithmic research is divided into two camps.  Either this research
+focuses on implementing PSO in specific parallel architectures, or they adapt
+the algorithm to be better suited to parallel computation.  Work on adapting
+the algorithm to parallel computation (where this paper fits) has focused on
+functions with very short evaluation times.  We focus on long-running
+functions, such as are found in prior application papers, but requires very
+different methods than those for functions with short evaluation times.  Thus
+most prior algorithmic advances are not very successful in our domain, as we
+show in the paper.  The sections to refer to on this subject are section 3,
+section 6.5, and section 7.4.
 
 \subsection*{AE.2}
 
@@ -41,22 +50,28 @@ parallelization has benefit. For the functions that you use, there is not real
 not for parallelization. Linked to this, when will parallelization be
 beneficial?
 
-Response: We added a section dealing with this issue (section 7.1).  We also
-added experiments on a function that takes on the order of 2 seconds to
-evaluate, providing a little more motivation for the parallelization of PSO.
+Response: We added experiments on a real-world function that takes longer to
+evaluate (fitting a model to a large amount of data), providing more motivation
+for the parallelization of PSO (those results are shown in section 7.4).  We
+also added some discussion of these issues in the Experimental Setup section.
+Section 6.1 discusses when the parallel architecture that we propose is useful
+in contrast to other architectures, and section 6.3 discusses our use of
+benchmark functions to evaluate our methods.
+
 
 \subsection*{AE.4}
 
 Reviewer comments: Please re-organize section 3: You start with a very long
 theoretical discussion, and only then get to section 3.1.
 
-Response: Good point.  We realized that we tried to cram too much into a single
-section, so we split the two main parts of it into two separate sections.
-There is now a section devoted entirely to the mathematics of the method (now
-Section 4) and a separate section describing its implementation (Section 5).
-We also put subsections in the new Section 4 to guide the reader a little
-better through the section, and gave an intuitive description of speculative
-evaluation before jumping into the math.
+Response: Good point.  We also realized that we tried to cram too much into a
+single section, so we split the two main parts of it into two separate
+sections.  There is now a section devoted entirely to the mathematics of the
+method (Section 4) and a separate section describing its implementation
+(which we moved to the appendix, as we thought it was important, but
+distracting from the main discussion).  We also put subsections in the new
+Section 4 to guide the reader a little better through the section, and gave an
+intuitive description of speculative evaluation before jumping into the math.
 
 \section*{Reviewer 1 Comments}
 
@@ -70,7 +85,8 @@ to most contributions focused on algorithms rather than on problems.
 Response: This is a fair criticism, as it is true that experimentation with a
 problem is required before one can know how best to solve it.  We added two
 paragraphs to the end of section 2 to further make this point, making more
-prominent reference to the No Free Lunch theorems.
+prominent reference to the No Free Lunch theorems.  We also added experiments
+on a real-world problem, which is found in section 7.4
 
 \subsection*{1.2}
 
@@ -81,9 +97,12 @@ appreciate the significance of some result or conclusion if he/she hasn't
 understood what the authors are talking about. I recommend the authors to
 restructure the whole paper but in particular Sections 3 and 4.
 
-Response: We substantially reorganized Section 3, as noted above, and we added
-more subsections throughout the paper, helping to guide the reader through the
-ideas.  We believe that the paper is now much more clear.
+Response: We substantially reorganized Section 3, as noted above under AE.4,
+and we added more subsections throughout the paper, helping to guide the reader
+through the ideas.  We removed most of the forward pointers in section 4,
+focusing simply on describing the methods and leaving the comparison to the
+results section, as you suggested.  We believe that the paper is now much more
+clear.
 
 \subsection*{1.3}
 
@@ -93,24 +112,21 @@ other letters to denote a particle's personal best position and a particle's
 neighborhood's best position. I know that the authors are using superscripts to
 distinguish between these concepts but they don't really help.
 
-Response: We had a long discussion about notation before writing our paper, and
-we thought that because the personal best and neighborhood bests are positions,
-using an x to denote it would be more intuitive.  However, we see your point
-that it can be confusing for other reasons.  We changed the x to a b when
-referring to best positions, while still using the N and P superscripts to
-differentiate between which best is being referred to.
+Response: We changed the x to a b when referring to best positions, while still
+using the N and P superscripts to differentiate between which best is being
+referred to.  We hope the change in notation is helpful.
 
 \subsection*{1.4}
 
 Reviewer comments: Using ``rounds of evaluations'' is confusing, and results
 should be reported in terms of wall clock time.
 
-Response: Rounds of evaluations correspond exactly to wall clock time, as we
-describe in what is now section 7.1, and the second paragraph of section 7
-proper.  However, we realize that the term is not a commonly used one, so we
-changed ``rounds of evaluations'' to ``time steps'' in hopes of better
-conveying our meaning.  We also added some text in the description mentioned
-above that hopefully further clarifies this point.
+Response: We realize that ``rounds of evaluations'' is not a commonly used
+term, so we changed ``rounds of evaluations'' to ``time steps'' in hopes of
+better conveying our meaning.  We also added a section in the experimental
+setup that discusses the issue of wall clock time (section 6.2), saying clearly
+that time steps (or rounds of evaluations, as we used to call them), are
+directly proportional to wall clock time.
 
 \subsection*{1.5}
 
@@ -125,9 +141,9 @@ versions (which in my eyes, are new PSO variants) with those of other
 state-of-the-art algorithms.
 
 Response: We ran quite a few more experiments to bring our results closer to
-Herrera et al. experimental protocol.  Their protocol wasn't entirely
+the experimental protocol of Herrera et al.  Their protocol wasn't entirely
 applicable, as they suggested running a specific number of function evaluations
-instead of iterations (which, as we state in section 7, is the proper
+instead of iterations (which, as we state in section 6.2, is the proper
 comparison for parallel algorithms on long running functions).  But we added
 experiments for 50 dimensional functions and 500 dimensional functions.
 
@@ -138,7 +154,9 @@ with this issue (``What we have presented\ldots''), clearly stating that our
 methods do in fact change the behavior of PSO, but that they do so in a way
 that is applicable to almost all PSO variants.  Thus a fair comparison is to
 pick a particular variant and compare parallelization techniques with it.  It
-made sense to pick the original PSO for this comparison.
+made sense to pick the standard PSO for this comparison.  To further show this
+point, we also ran a simple comparison of our parallelization techniques using
+a different PSO variant, Bare Bones PSO.  Those results are in section 7.5.
 
 \subsection*{1.6}
 
@@ -148,15 +166,15 @@ understand what the authors mean.
 
 Response: We had a paragraph explaining this in the introduction, though the
 analogy to processors lacked an explicit connection to the word
-``speculative.''  We added a sentence at the end of that paragraph to address
-this issue.
+``speculative.''  We added text at the end of that paragraph to address this
+issue.
 
 \subsection*{1.7}
 
 Reviewer comments: The authors can cite Poli's paper about applications of PSO
 algorithms in the first paragraph of the paper.
 
-Response: We added the citation after the first sentence of the paper.
+Response: We added the citation as suggested.
 
 \subsection*{1.8}
 
@@ -170,10 +188,14 @@ Social Learning in Particle Swarms'' by Montes de Oca and others published in
 IEEE SMCB and ``Efficient Population Utilization Strategy for Particle Swarm
 Optimizer'' by Hsieh and others in the same journal.
 
-Response: We added a paragraph in our related work section discussing these
+Response: We added a paragraph in our new related work section discussing these
 methods (the last paragraph of the section).  We also added a paragraph to
 future work discussing how these methods are particularly amenable to
 speculative evaluation when parallelized (the second paragraph of the section).
+
+There is also now a graph in section 7.1.4 that clearly shows what we mean.  It
+is Figure 10, showing what happens when processors are added with standard
+parallelizations versus with our methods.
 
 \subsection*{1.9}
 
@@ -184,7 +206,7 @@ in some problems, it is the solution quality what matters. In that case, adding
 particles \emph{and} computational budget may indeed be the best thing to do.
 
 Response: This is very much related to the previous item, and so the response
-to that item is relevant here.  We also added some text to to the introduction
+to that item is relevant here.  We also added some text to the introduction
 (paragraph beginning with ``In this paper we consider\ldots'') to better
 explain our intent; that is, given a fixed computational budget, how can
 processors be used most efficiently?  The text we added in this and the
@@ -209,7 +231,7 @@ Section 3.
 
 Response: We fixed section 3 by splitting it into two sections and reorganizing
 some parts, making the examples that were there more clear.  Hopefully the
-section is satisfactory now.
+section is now satisfactory.
 
 \subsection*{1.12}
 
@@ -219,7 +241,7 @@ children, then fewer CPUs are going to be used.
 
 Response: Pruning allows for the use of a larger swarm with the same number of
 processors.  We realized that this was never explicitly stated in the text, so
-we added a few sentences to the description of pruning (now section 6.2) to
+we added a few sentences to the description of pruning (now section 5.2) to
 make it clear.  The text added to the introduction explaining our purpose of
 fully utilizing resources also addresses this issue, though somewhat
 indirectly.
@@ -248,9 +270,12 @@ removed the paragraph from our text.
 Reviewer comments: All figures are not clear. The authors should find line
 styles that are more distinguishable.
 
-Response: ...
-
-NOT DONE
+Response: We had Gnuplot render the figures in gray mode, using line styles
+that are easier to distinguish in black and white.  Hopefully that solves the
+problem.  That does lose color in the figures, though.  If color is desirable,
+we can find line styles and colors that are both acceptable.  We also put most
+of our results into tables, so the reader does not have to rely as much on
+interpreting figures.
 
 \subsection*{1.15}
 
@@ -334,13 +359,13 @@ behavior, while Rastrigin does not (the relevant figures in that paper are 2, 4
 and 6).  As those results are previously published and cited in our paper, we
 felt it unnecessary to reduplicate the figures, though we make mention of the
 conclusions.  However, our own figures also answer your question.  The fact
-that our methods outperform the na\"ive parallelization is in itself evidence
+that our methods outperform the standard parallelization is in itself evidence
 for this claim.  Recall that when our figures say SEPSO, that is equivalent to
 running PSO with a swarm size one eighth the size, doing twice as many
-iterations.  Figures 9 and 10 illustrate the point that for some swarm sizes
-you are correct and it is better to have a larger swarm size.  However, once
-enough processors are available to have a large enough swarm even with SEPSO,
-it is better by far to do speculative evaluation.
+iterations.  The direct answer to your question is in what is now Figure 10
+(which we added to the paper).  We show that adding particles beyond 240 for a
+20 dimensional Griewank function provides no appreciable benefit, while using
+speculative methods gives dramatic improvements.
 
 Increasing the swarm size increases the diversity, as you say (the McNabb et
 al. paper makes the same point).  But at some point there is enough diversity,
@@ -357,8 +382,8 @@ is not proposing a new algorithm in the introduction.
 
 Response: We found only one part of the introduction that mentioned the paper
 not proposing a new algorithm.  That part had two sentences, and we deleted the
-second one to soften the point a little.  It was an over-reaction to comments
-by previous reviewers.  We also fixed a similar statement in the conclusion.
+second one to soften the point a little.  We also fixed a similar statement in
+the conclusion.
 
 \subsection*{3.2}
 

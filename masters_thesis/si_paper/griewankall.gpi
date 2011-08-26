@@ -2,7 +2,7 @@ set title "Griewank 20 dims"
 set xlabel "Time Steps"
 set ylabel "Percent of Swarms Below 1e-06"
 set clip two
-plot [1:1000] [0:100] '-' title "Standard 240" with lines lw 4, '-' title "Standard 800" with lines lw 4, '-' title "Standard 1920" with lines lw 4, '-' title "Many Iterations 240" with lines lw 4, '-' title "Many Iterations 800" with lines lw 4, '-' title "Many Iterations 1920" with lines lw 4
+plot [1:1000] [0:100] '-' title "Standard 240" with lines lw 4, '-' title "Standard 800" with lines lw 4, '-' title "Standard 1920" with lines lw 4, '-' title "Many Iterations 240" with lines lw 4, '-' title "Many Iterations 800" with lines lw 4, '-' title "Many Iterations 1920" with lines lw 4 lc rgb "#442266"
 1 0.0
 2 0.0
 3 0.0
