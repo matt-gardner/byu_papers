@@ -106,21 +106,22 @@ Brigham Young University.
 
 Particle swarm optimization (PSO) has previously been parallelized primarily by
 distributing the computation corresponding to particles across multiple
-processors.  In these approaches, adding processors can only increase the swarm
-size.  However, in many cases this is not efficient when scaled to very large
-swarm sizes (on very large clusters).  Current methods cannot answer well the
-question, ``How can 1000 processors be fully utilized when 50 or 100 particles
-is the most efficient swarm size?''  In this paper we attempt to answer that
-question with a speculative approach to the parallelization of PSO that we
-refer to as SEPSO.
+processors.  In these approaches, the only benefit of additional processors is
+an increased swarm size.  However, in many cases this is not efficient when
+scaled to very large swarm sizes (on very large clusters).  Current methods
+cannot answer well the question: ``How can 1000 processors be fully utilized
+when 50 or 100 particles is the most efficient swarm size?''  In this paper we
+attempt to answer that question with a speculative approach to the
+parallelization of PSO that we refer to as SEPSO.
 
 In our approach, we refactor PSO such that the computation needed for iteration
 $t+1$ can be done concurrently with the computation needed for iteration $t$.
 Thus we can perform two iterations of PSO at once.  Even with some amount of
 wasted computation, we show that this approach to parallelization in PSO often
 outperforms the standard parallelization of simply adding particles to the
-swarm.  SEPSO produces results that are exactly equivalent to PSO; this is not
-a new algorithm or variant, only a new method of parallelization.
+swarm.  SEPSO produces results that are exactly equivalent to PSO; that is,
+SEPSO is a new method of parallelization and not a new PSO algorithm or
+variant.
 
 However, given this new parallelization model we can relax the requirement of
 exactly reproducing PSO in an attempt to produce better results.  We present
@@ -141,11 +142,12 @@ optimization \and Speculative Decomposition}
 
 Particle swarm optimization (PSO) has been found to be a highly robust and
 effective algorithm for solving many types of optimization
-problems~\citep{poli-2008-pso-applications}.  For much of the algorithm's
-history, PSO was run serially on a single machine.  However, the world's
-computing power is increasingly coming from large clusters of processors.  In
-order to efficiently utilize these resources for computationally intensive
-problems, PSO needs to run in parallel.
+problems~\citep{poli-2008-pso-applications,
+poli-2007-particle-swarm-optimization}.  For much of the algorithm's history,
+PSO was run serially on a single machine.  However, the world's computing power
+is increasingly coming from large clusters of processors.  In order to
+efficiently utilize these resources for computationally intensive problems, PSO
+needs to run in parallel.
 
 Within the last few years, researchers have begun to recognize the need to
 develop parallel implementations of PSO, publishing many papers on the subject.
@@ -196,9 +198,9 @@ implementation.
 \begin{figure}
   \centering
   \includegraphics[width=.7\columnwidth]{evals_sphere}
-  \caption{Function Sphere with various swarm sizes, comparing performance with
-  the number of function evaluations performed.  Error bars show median and
-  10th and 90th percentiles.}
+  \caption{Function Sphere with various swarm sizes, showing performance after
+  a set number of function evaluations.  Error bars show mean and 10th and 90th
+  percentiles.}
   \label{fig:evals-sphere}
 \end{figure}
 
@@ -264,9 +266,9 @@ standard PSO would have done.  A further improvement we explore is speculating
 several iterations ahead instead of just one, which is made possible by pruning
 the number of speculative evaluations.
 
-The balance of this paper is organized as follows. \sec{pso} describes the
-particle swarm optimization algorithm, and \sec{related} gives a brief overview
-of previous parallelization techniques for this algorithm.  \sec{sepso} shows
+This paper is organized as follows. \sec{pso} describes the particle swarm
+optimization algorithm, and \sec{related} gives a brief overview of previous
+parallelization techniques for this algorithm.  \sec{sepso} shows
 mathematically how speculative evaluation can be done in parallel PSO to
 perform two iterations at once, leaving implementation concerns to the
 appendices.  In \sec{relax}, we discuss various methods of improving the
@@ -291,7 +293,9 @@ The motion of particles through the search space has three components: an
 inertial component that gives particles momentum as they move, a cognitive
 component where particles remember the best solution they have found and are
 attracted back to that place, and a social component by which particles are
-attracted to the best solution that any of their neighbors have found.
+attracted to the best solution that any of their neighbors have found.  We use
+the constricted PSO algorithm, which was recommended as the standard for PSO
+research~\citep{bratton-2007-defining-a-standard-for-pso}.
 
 At each iteration of constricted PSO~\citep{clerc-2002-constricted-pso}, the
 position $\ppos_t$ and velocity $\pvel_t$ of each particle are updated as
@@ -366,7 +370,7 @@ The idea of speculative decomposition in the parallelization literature is not
 new \citep{grama-2003-intro-to-parallel-computing}.  In the field of function
 optimization, simulated annealing has previously been parallelized using this
 technique~\citep{witte-1991-parallel-simulated-annealing-speculative}, though
-we are not aware of other evolutionary or swarm-intelligence based algorithms
+we are not aware of other evolutionary or swarm intelligence based algorithms
 having been parallelized with speculative decomposition.
 
 There have been several parallelizations of PSO presented in the literature.
@@ -381,17 +385,17 @@ fundamental decision to make in parallel PSO is which parallel architecture to
 use.  Several architectures have been proposed, including Master-Slave, fully
 distributed (sometimes called ``diffusion''), and reformulating PSO into
 Google's MapReduce framework~\citep{belal-2004-parallel-models-for-pso,
-mcnabb-2007-parallel-pso-using-mapreduce}.  A somewhat orthogonal
-implementation decision when parallelizing PSO is whether to have synchronous
-communication or asynchronous communication.
+mcnabb-2007-parallel-pso-using-mapreduce}.
 
-Synchronous parallel implementations of PSO reproduce the standard serial
-algorithm exactly.  This approach was first described analytically by
-\citet{belal-2004-parallel-models-for-pso} and first implemented by
-\citet{schutte-2004-parallel-global-optimization-with-pso}.  In a typical
-master-slave algorithm, the master assigns tasks to slave processors, and in
-parallel PSO, each task consists primarily of a function evaluation.  Updating
-the particle's position and value may also be included in the
+An important part of the parallel architecture is the type of interprocessor
+communication used.  PSO has previously been parallelized with both synchronous
+and asynchronous communication.  Synchronous parallel implementations of PSO
+reproduce the standard serial algorithm exactly.  This approach was first
+described analytically by \citet{belal-2004-parallel-models-for-pso} and first
+implemented by \citet{schutte-2004-parallel-global-optimization-with-pso}.  In
+a typical master-slave algorithm, the master assigns tasks to slave processors,
+and in parallel PSO, each task consists primarily of a function evaluation.
+Updating the particle's position and value may also be included in the
 task~\citep{belal-2004-parallel-models-for-pso}, or this work may be performed
 in serial by the
 master~\citep{schutte-2004-parallel-global-optimization-with-pso}.  Before
@@ -445,9 +449,9 @@ koh-2006-parallel-asynchronous-pso}.
 The other area of research in parallelizing PSO deals not with the
 implementation details of architecture and synchronicity, but with what should
 be done with the PSO equations when many hundreds or thousands of processors
-are available.  The main issues that have been addressed in this space are how
-many particles to use for a particular number of processors and what
-communication topology should be employed.
+are available.  The main issues that have been addressed are how many particles
+to use for a particular number of processors and what communication topology
+should be employed.
 
 The number of particles per processor has typically been decided by how long it
 takes to evaluate the function being optimized.  When the function takes longer
@@ -479,7 +483,7 @@ With regard to increasing the swarm size in PSO, some recent work has suggested
 that increasing the swarm size throughout the course of the optimization
 process provides better results than having a set swarm
 size~\citep{hsieh-2009-efficient-population-utilization-for-pso,
-montes-de-oca-2010-incremental-social-learning-pso}.  However, these results
+montes-de-oca-2011-incremental-social-learning-pso}.  However, these results
 focused on serial computation and are based on total number of function
 evaluations, which, when running in parallel on expensive functions, is less
 important than total number of iterations.  Other work focusing on
@@ -490,14 +494,13 @@ jin-2005-pso-antenna-designs}.  If the swarm size were varied throughout the
 course of the optimization process, some processors would be sitting idle at
 most iterations.
 
-The contribution of our work is in this area of what should be done with the
-PSO equations to better utilize a thousand processors when they are available.
-In our work we use a synchronous, MapReduce implementation of parallel PSO.
-While we use a specific implementation, we describe how speculative evaluation
-can be performed in any of the synchronous architectures mentioned in the
-previous section.  The adaptation of our methods to asynchronous PSO
-parallelization methods should be straightforward, though it is left to future
-work.
+The contribution of our work lies in the realm of efficiently utilizing
+parallel resources.  In our work we use a synchronous, MapReduce implementation
+of parallel PSO.  While we use a specific implementation, we describe how
+speculative evaluation can be performed in any of the synchronous architectures
+mentioned in the previous section.  The adaptation of our methods to
+asynchronous PSO parallelization methods should be straightforward, though it
+is left to future work.
 
 \section{Speculative Evaluation in PSO}
 \label{sec:sepso}
@@ -559,7 +562,7 @@ implementation in \sec{implementation} is independent of specific topologies,
 and we use several different topologies in our experiments.
 
 The refactoring hinges on the idea that there are only a few possible new
-positions, or updates, for $\nbest$ and $\pbest$ (assuming the random
+positions, or updates, for $\pbest$ and $\nbest$ (assuming the random
 coefficients $\pURand_{t}$ and $\nURand_{t}$ have been drawn).  For the Ring
 topology there are 7 possible update cases, identified in
 Table~\ref{tab:evals}.  We label each case with an identifier referring to the
@@ -757,12 +760,11 @@ behavior of the original PSO algorithm.
 
 We outline three main improvements to speculative evaluation.  First, in
 \sec{pickbest} we describe a method that uses all of the information found in
-doing speculative evaluations.  Then Sections~\ref{sec:pruning}
-through~\ref{sec:wrong} present a technique that reduces the number of
-speculative evaluations that need to be done for each particle, allowing
-speculative evaluation to use larger swarm sizes with the same number of
-processors.  Finally, \sec{manyiters} shows a method for speculating several
-iterations ahead, instead of just one.
+doing speculative evaluations.  Then Section~\ref{sec:pruning} presents a
+technique that reduces the number of speculative evaluations that need to be
+done for each particle, allowing speculative evaluation to use larger swarm
+sizes with the same number of processors.  Finally, \sec{manyiters} shows a
+method for speculating several iterations ahead, instead of just one.
 
 None of these methods fundamentally change the PSO algorithm.  They simply lead
 to particles being at different iterations and having different values for
@@ -1231,10 +1233,9 @@ average time to completion is faster than all other methods that have at least
 a 90\% success rate\footnote{``Success rate'' here means that the algorithm
 reached some predefined value which is mentioned in the table or figure
 wherever a success rate is reported.}.  We used a double-sided t-test to test
-for statistical significance in these results, and all bolded values are
-statistically significant with a p-value of less than $10^{-5}$.  In some
-instances two values are bolded because they are statistically tied, while both
-are significantly better than all other methods.
+for statistical significance in these results, and all algorithms whose values
+are bolded are significantly superior to non-bolded algorithms with a p-value
+of less than $10^{-5}$.
 
 We first present results in \sec{20dims} for the 20 dimensional variants of the
 benchmark functions we tested.  We give a discussion of each function
@@ -2023,7 +2024,7 @@ used gets into the thousands.
 
 We mentioned related work showing that increasing the swarm size throughout the
 course of the algorithm could provide improved performance over a fixed swarm
-size in serial PSO~\citep{montes-de-oca-2010-incremental-social-learning-pso}.
+size in serial PSO~\citep{montes-de-oca-2011-incremental-social-learning-pso}.
 If this method were extended to parallel PSO, most processors would be idle in
 the first few iterations, while more would be utilized at the end.  During
 iterations where there are many un-utilized processors, a natural use of them
