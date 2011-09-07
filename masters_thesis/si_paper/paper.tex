@@ -349,19 +349,9 @@ ideal topology for one function may perform very poorly for another function.
 The No Free Lunch Theorems for Optimization show that this is true in
 general---if an algorithm performs well on average for one class of functions
 then it must do poorly on average for other
-problems~\citep{wolpert-1997-nfl-for-optimization}.
-
-An attempt to standardize PSO found that although a Complete swarm of 50
-particles converged to the global optimum more quickly for many benchmark
-functions than the same swarm size with a Ring topology, it was also more
-likely to prematurely converge to local optima for other functions.  The study
-found no significant improvement for any other swarm size between 20 and 100
-and concluded with a recommendation to use a swarm of 50 particles with a Ring
-topology as a starting point.  The authors acknowledged that choosing the ideal
-topology requires thorough experimentation for the particular
-problem~\citep{bratton-2007-defining-a-standard-for-pso}.  Other authors have
-explained that a large swarm with a sparse topology propagates information
-slowly~\citep{montes-de-oca-2009-frankensteins-pso}.
+problems~\citep{wolpert-1997-nfl-for-optimization}.  A good starting point
+seems to be a swarm of 50 particles using a Ring
+topology~\citep{bratton-2007-defining-a-standard-for-pso}.
 
 \section{Related Work}
 \label{sec:related}
@@ -385,7 +375,10 @@ fundamental decision to make in parallel PSO is which parallel architecture to
 use.  Several architectures have been proposed, including Master-Slave, fully
 distributed (sometimes called ``diffusion''), and reformulating PSO into
 Google's MapReduce framework~\citep{belal-2004-parallel-models-for-pso,
-mcnabb-2007-parallel-pso-using-mapreduce}.
+mcnabb-2007-parallel-pso-using-mapreduce}.  For inexpensive objective
+functions, graphics processors (GPUs) have also been used to parallelize PSO
+using either texture rendering~\citep{li-2007-fine-grained-parallel-pso-gpu} or
+a general purpose GPU API~\citep{zhou-2009-gpu-based-parallel-pso}.
 
 An important part of the parallel architecture is the type of interprocessor
 communication used.  PSO has previously been parallelized with both synchronous
@@ -1382,14 +1375,18 @@ Rastrigin is a multi-modal function that is best optimized with a large,
 Complete swarm.  It has been shown that with Rastrigin, the more particles
 there are in the swarm, the lower function value it finds, up to at least 4000
 particles~\citep{mcnabb-2009-large-particle-swarms}.  Smaller swarms get caught
-in local optima and converge to poorer values.  Because our speculative
-algorithms require significantly smaller swarm sizes, we would expect to not
-perform very well on functions such as Rastrigin.  Our experiments show our
-intuition to be correct.  In this experiment we used 240 processors, so SEPSO
-and Pick Best each had 30 particles, and the Standard algorithms had 240
-particles.  As expected, SEPSO and Pick Best converge quickly to worse local
-optima than Standard does.  \fig{rastrigin} shows the results graphically, and
-\tabref{rastrigin-20} shows results for all of the methods we tried.
+in local optima and converge to poorer values.  In fact, none of the algorithms
+that we tested were able to solve this problem optimally.  We thus set a
+somewhat arbitrary success threshold, simply to be able to compare algorithms.
+
+Because our speculative algorithms require significantly smaller swarm sizes,
+we would expect to not perform very well on functions such as Rastrigin.  Our
+experiments show our intuition to be correct.  In this experiment we used 240
+processors, so SEPSO and Pick Best each had 30 particles, and the Standard
+algorithms had 240 particles.  As expected, SEPSO and Pick Best converge
+quickly to worse local optima than Standard does.  \fig{rastrigin} shows the
+results graphically, and \tabref{rastrigin-20} shows results for all of the
+methods we tried.
 
 \begin{table}
   \caption{Summary of results for function Rastrigin with 20 dimensions,
@@ -1675,12 +1672,12 @@ fast.
 Given our observation from the 20 dimensional benchmark functions that Many
 Iterations most often outperforms other speculative approaches, we only present
 results for Many Iterations and Standard for the 50 and 500 dimensional
-variants.  For these experiments we used 800 processors, as the problems are
-more difficult and speculative approaches perform best when many processors are
-available, as we showed in \sec{griewank-20}.  Many Iterations Complete showed
-the same premature convergence that was observed with the 20 dimensional
-benchmark functions, so we do not include those results in our tables; the
-success rate was 0\% for all functions.
+variants.  We used 800 processors for these experiments because the problems
+are more difficult, and because speculative approaches perform best when many
+processors are available, as we showed in \sec{griewank-20}.  Many Iterations
+Complete showed the same premature convergence that was observed with the 20
+dimensional benchmark functions, so we do not include those results in our
+tables; the success rate was 0\% for all functions.
 
 Tables~\ref{tab:rastrigin-50} through~\ref{tab:bohachevsky-50} present
 summaries of our results for each of the benchmark functions. As with the 20
@@ -2004,8 +2001,9 @@ processors, as we have shown, is to perform some amount of speculative
 evaluation.
 
 Large parallel clusters are often required to successfully optimize practical
-modern problems.  To properly use PSO with such clusters, a balance needs to be
-made between using processors to increase the swarm size and using them to
+modern problems, and the world's computing resources are increasingly coming
+from such clusters.  To properly use PSO with these systems, a balance needs to
+be made between using processors to increase the swarm size and using them to
 increase the speed of the algorithm.  This work is a first step in that
 direction that opens the door to many future improvements on speculative
 methods in the parallelization of PSO.
@@ -2064,7 +2062,7 @@ evaluation.
 
 \appendix
 
-\section{Implementing Speculative Evaluation}
+\section*{Appendix A Implementing Speculative Evaluation}
 \label{sec:implementation}
 
 It is not trivial in some parallel architectures to determine which speculative
@@ -2079,7 +2077,7 @@ messages to and from other particles.  Finally we discuss the further
 complications of a dynamic topology such as Random, where a particle's
 neighbors change from one iteration to another.
 
-\subsection{Terminology}
+\subsection*{A.1 Terminology}
 
 To aid in describing our methodology, we introduce a few terms.  A particle's
 set of \emph{speculative children} is the set of all possible next iteration
@@ -2104,7 +2102,7 @@ neighbors, it is denoted as $\nonbest{\p}_t$.  Only when the particle has
 updated its neighborhood best is it a complete particle at iteration $t$.  It
 is then simply denoted as $\p_t$.
 
-\subsection{Centralized Algorithms}
+\subsection*{A.2 Centralized Algorithms}
 
 In a centralized, or Master-Slave, parallel PSO algorithm, one machine, the
 master, keeps track of all necessary information, and all other machines are
@@ -2197,7 +2195,7 @@ $\pset_{t+1}$.  That set of particles can subsequently be used to produce the
 sets $\noeval{\pset}_{t+2}$ and $\noeval{\sset}_{t+3}$ (steps 1 and 2 in
 \alg{centralized}), and the process repeats itself.
 
-\subsection{Distributed Algorithms}
+\subsection*{A.3 Distributed Algorithms}
 
 \label{sec:distributed}
 
@@ -2252,7 +2250,7 @@ with only one round of communication per two iterations.  However, the
 methodology is tedious and distracting from the present discussion, so we defer
 its description to Appendix B.
 
-\subsection{Dynamic Topologies}
+\subsection*{A.4 Dynamic Topologies}
 
 Performing speculative evaluation in PSO with a dynamic topology (where
 neighbors change from iteration to iteration) raises a sticky issue of its own.
@@ -2280,7 +2278,7 @@ $\noeval{\nset}_{t+2}$ before calculating the next possible positions for
 $\noeval{\sset}_{t+3}$, there are still only $2n+1$ possible next positions,
 and the problem is avoided.
 
-\section{Alternate form of message passing}
+\section*{Appendix B Alternate form of message passing}
 
 Here we describe a method that requires only one round of communication for
 each pair of iterations, which happens at step 5 of \alg{centralized}.  Many
