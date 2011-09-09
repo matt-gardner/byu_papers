@@ -173,7 +173,7 @@ increases, the performance improves.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{iters_sphere}
+  \includegraphics[width=.9\columnwidth]{iters_sphere}
   \caption{Function Sphere with various swarm sizes, comparing performance with
   the number of iterations of the algorithm performed.}
   \label{fig:iters-sphere}
@@ -197,7 +197,7 @@ implementation.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{evals_sphere}
+  \includegraphics[width=.9\columnwidth]{evals_sphere}
   \caption{Function Sphere with various swarm sizes, showing performance after
   a set number of function evaluations.  Error bars show mean and 10th and 90th
   percentiles.}
@@ -741,7 +741,7 @@ approximate the Complete topology.  In~\sec{results} we report results for
 SEPSO using both the Ring topology and the Random topology on a number of
 common benchmark functions.
 
-\section{Relaxing the Requirements}
+\section{Speculative Variations on PSO}
 \label{sec:relax}
 
 Refactoring the PSO equations led us to find that speculative approaches are
@@ -753,11 +753,11 @@ behavior of the original PSO algorithm.
 
 We outline three main improvements to speculative evaluation.  First, in
 \sec{pickbest} we describe a method that uses all of the information found in
-doing speculative evaluations.  Then Section~\ref{sec:pruning} presents a
-technique that reduces the number of speculative evaluations that need to be
-done for each particle, allowing speculative evaluation to use larger swarm
-sizes with the same number of processors.  Finally, \sec{manyiters} shows a
-method for speculating several iterations ahead, instead of just one.
+doing speculative evaluations.  Then \sec{pruning} presents a technique that
+reduces the number of speculative evaluations that need to be done for each
+particle, allowing speculative evaluation to use larger swarm sizes with the
+same number of processors.  Finally, \sec{manyiters} shows a method for
+speculating several iterations ahead, instead of just one.
 
 None of these methods fundamentally change the PSO algorithm.  They simply lead
 to particles being at different iterations and having different values for
@@ -1436,7 +1436,7 @@ methods we tried.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{rastrigin}
+  \includegraphics[width=.9\columnwidth]{rastrigin}
   \caption{Function Rastrigin with 20 dimensions.  Each method performs one
   evaluation on each of 240 processors per time step.}
   \label{fig:rastrigin}
@@ -1466,7 +1466,7 @@ successful, though it is only successful 84\% of the time.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank6}
+  \includegraphics[width=.9\columnwidth]{griewank6}
   \caption{Function Griewank with 20 dimensions.  Each method performs one
   evaluation on each of 800 processors per time step.  Instead of showing
   average function value, we show the percentage of runs that have found the
@@ -1509,11 +1509,11 @@ various algorithms at this point.
 We show results in \fig{basic-griewank2} for swarms of size 30 and 240 using
 the Ring topology.  One can see in the figure that when SEPSO is successful, it
 finds the optimum much faster than Standard.  However, because the swarm size
-is so small, SEPSO gets stuck a little less than half of the time.
+is so small, SEPSO gets stuck almost half of the time.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank1}
+  \includegraphics[width=.9\columnwidth]{griewank1}
   \caption{Function Griewank with 20 dimensions.  Each method performs one
   evaluation of the objective function on each of 240 processors per time step.
   All algorithms use the Ring topology.}
@@ -1531,7 +1531,7 @@ greediness of the approach.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank3}
+  \includegraphics[width=.9\columnwidth]{griewank3}
   \caption{Function Griewank with 20 dimensions, comparing Pick Best with
   results from \fig{basic-griewank2}.  Each method performs one evaluation on
   each of 240 processors per time step.  All algorithms use the Ring topology.}
@@ -1548,7 +1548,7 @@ original PSO.  These results are shown in \fig{griewank-pruned}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank4}
+  \includegraphics[width=.9\columnwidth]{griewank4}
   \caption{Function Griewank with 20 dimensions, comparing pruning with the
   best results from \fig{griewank-pickbest}.  Each method performs one
   evaluation on each of 240 processors per time step.  All algorithms use the
@@ -1568,7 +1568,7 @@ optimum, the less likely it is to be successful.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank5}
+  \includegraphics[width=.9\columnwidth]{griewank5}
   \caption{Function Griewank with 20 dimensions, comparing speculating several
   iterations ahead with selections from \fig{griewank-pruned}.  Each method
   performs one evaluation on each of 240 processors per time step.  All
@@ -1602,7 +1602,7 @@ speculate as far ahead as possible, speeding up the progress of the algorithm.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewankall}
+  \includegraphics[width=.9\columnwidth]{griewankall}
   \caption{Function Griewank with 20 dimensions, comparing the performance of
   standard and speculative parallelizations as the number of processors
   increases.  All algorithms use the Ring topology.}
@@ -1626,7 +1626,7 @@ fast.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{bohachevsky}
+  \includegraphics[width=.9\columnwidth]{bohachevsky}
   \caption{Function Bohachevsky with 20 dimensions.  Each method performs one
   evaluation on each of 480 processors per time step.}
   \label{fig:bohachevsky}
@@ -1858,7 +1858,7 @@ parallelizations on Rastrigin, whereas they did not at 20 and 50 dimensions.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{sphere500}
+  \includegraphics[width=.9\columnwidth]{sphere500}
   \caption{Function Sphere with 500 dimensions.  Each method performs one
   evaluation on each of 800 processors per time step.}
   \label{fig:sphere500}
@@ -1866,7 +1866,7 @@ parallelizations on Rastrigin, whereas they did not at 20 and 50 dimensions.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{griewank500}
+  \includegraphics[width=.9\columnwidth]{griewank500}
   \caption{Function Griewank with 500 dimensions.  Each method performs one
   evaluation on each of 800 processors per time step.}
   \label{fig:griewank500}
@@ -1874,7 +1874,7 @@ parallelizations on Rastrigin, whereas they did not at 20 and 50 dimensions.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{rastrigin500}
+  \includegraphics[width=.9\columnwidth]{rastrigin500}
   \caption{Function Rastrigin with 500 dimensions.  Each method performs one
   evaluation on each of 800 processors per time step.}
   \label{fig:rastrigin500}
@@ -1903,7 +1903,7 @@ minutes to reach a successful value, while Standard Subswarms takes 50 minutes.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{rbf}
+  \includegraphics[width=.9\columnwidth]{rbf}
   \caption{Results for fitting a radial basis function to noisy data.  We use
   144 processors for each method, so each time step corresponds to 144 function
   evaluations.}
@@ -1912,7 +1912,7 @@ minutes to reach a successful value, while Standard Subswarms takes 50 minutes.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{rbf_stuck}
+  \includegraphics[width=.9\columnwidth]{rbf_stuck}
   \caption{Results for fitting a radial basis function to noisy data.  We use
   144 processors for each method, so each time step corresponds to 144 function
   evaluations.}
@@ -1937,7 +1937,7 @@ other than the standard constricted PSO.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.7\columnwidth]{bare_bones}
+  \includegraphics[width=.9\columnwidth]{bare_bones}
   \caption{Results for optimizing the 20-dimensional Sphere function with Bare
   Bones PSO.  We use 240 processors for each method, so each time step
   corresponds to 240 function evaluations.}
@@ -1965,14 +1965,15 @@ standard practice of adding particles to the swarm when extra processors are
 available, giving speed ups of up to six compared to previous parallelization
 techniques.
 
-What we have presented is not a new variant of PSO.  We presented a new
-parallelization technique, so we compared parallelization strategies on the
-same algorithm, the original PSO.  Our most promising techniques do change the
-behavior of the PSO algorithm slightly, as do some other previously proposed
-parallelization techniques, such as asynchronous PSO.  However, our methods are
-applicable to almost all PSO variants, and so a comparison using the same
-variant for each of the parallelization techniques tested is justified.  We
-presented results on a separate PSO variant that give evidence for this claim.
+What we have presented is not a new variant of the PSO equations.  We presented
+a new parallelization technique, so we compared parallelization strategies on
+the same algorithm, the original PSO.  Our most promising techniques do change
+the behavior of the PSO algorithm slightly, as do some other previously
+proposed parallelization techniques, such as asynchronous PSO.  However, our
+methods are applicable to almost all PSO variants, and so a comparison using
+the same variant for each of the parallelization techniques tested is
+justified.  We presented results on a separate PSO variant that give evidence
+for this claim.
 
 We have given five different possible approaches to speculative evaluation,
 each of which has different properties.  These approaches perform differently

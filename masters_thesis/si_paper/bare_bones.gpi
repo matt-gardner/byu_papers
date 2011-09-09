@@ -2,6 +2,7 @@ set xlabel "Time Steps"
 set ylabel "Best Function Value Seen"
 set logscale y 10
 set clip two
+set term postscript enhanced eps size 4in, 2.25in dl 2 font 12
 plot [1:750] [1e-64:10000.0] '-' title "Standard Complete" with lines lw 4, '-' title "Pick Best Pruned Complete" with lines lw 4
 1 8149.22010331
 2 7536.13140879

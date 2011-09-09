@@ -3,6 +3,7 @@ set ylabel "Percent of Swarms With a value below 1e-6"
 set key bottom right
 set clip two
 set y2tics
+set term postscript enhanced eps size 4in, 2.25in dl 2 font 12
 plot [1:600] [0:100] '-' title "Standard Complete" with lines lw 4, '-' title "SEPSO" with lines lw 4, '-' title "Pick Best" with lines lw 4, '-' title "Pick Best Pruned" with lines lw 4, '-' title "Many Iterations" with lines lw 4 lc rgb "#442266"
 1 0.0
 2 0.0
