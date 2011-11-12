@@ -1,5 +1,5 @@
-set xlabel "Time Steps"
-set ylabel "Best Function Value Seen"
+set xlabel "Time steps"
+set ylabel "Best function value seen"
 set logscale y 10
 set clip two
 set term postscript enhanced eps size 4in, 2.25in dl 2 font 12

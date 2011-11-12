@@ -2,8 +2,8 @@
 set key bottom left Left reverse
 #set rmargin 30
 set term postscript enhanced eps size 4in, 2.25in dl 2 font 12
-set xlabel "Time Steps"
-set ylabel "Best Function Value"
+set xlabel "Time steps"
+set ylabel "Best function value"
 set logscale y 10
 set logscale y2 10
 set y2range [1e-100:1e30]

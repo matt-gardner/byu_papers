@@ -1263,7 +1263,10 @@ Complete on this function.
 
 \begin{table}
   \caption{Summary of results for function Sphere with 20 dimensions,
-  measuring number of time steps to reach a value of 1e-35}
+  measuring number of time steps to reach a value of 1e-35.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:sphere-20}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1323,7 +1326,10 @@ similar to that of Sphere, we simply present all of our results in
 
 \begin{table}
   \caption{Summary of results for function Schwefel with 20 dimensions,
-  measuring number of time steps to reach a value of 1e-06}
+  measuring number of time steps to reach a value of 1e-06.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:schwefel-20}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1379,7 +1385,10 @@ methods we tried.
 
 \begin{table}
   \caption{Summary of results for function Rastrigin with 20 dimensions,
-  measuring number of time steps to reach a value of 20}
+  measuring number of time steps to reach a value of 20.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:rastrigin-20}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1458,14 +1467,18 @@ successful, though it is only successful 84\% of the time.
   \includegraphics[width=.9\columnwidth]{griewank6}
   \caption{Function Griewank with 20 dimensions.  Each method performs one
   evaluation on each of 800 processors per time step.  Instead of showing
-  average function value, we show the percentage of runs that have found the
-  global optimum by each iteration.  All algorithms use the Ring topology.}
+  average function value, we show the percent of runs that are sufficiently
+  close to the global optimum by each iteration ($10^{-6}$, as noted on the
+  y-axis and explained in the text).  All algorithms use the Ring topology.}
   \label{fig:basic-griewank1}
 \end{figure}
 
 \begin{table}
   \caption{Summary of results for function Griewank with 20 dimensions,
-  measuring number of time steps to reach a value of 1e-06}
+  measuring number of time steps to reach a value of 1e-06.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:griewank-20}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1505,7 +1518,8 @@ is so small, SEPSO gets stuck almost half of the time.
   \includegraphics[width=.9\columnwidth]{griewank1}
   \caption{Function Griewank with 20 dimensions.  Each method performs one
   evaluation of the objective function on each of 240 processors per time step.
-  All algorithms use the Ring topology.}
+  We show the percent of runs that are sufficiently close to the global optimum
+  at each iteration.  All algorithms use the Ring topology.}
   \label{fig:basic-griewank2}
 \end{figure}
 
@@ -1523,7 +1537,9 @@ greediness of the approach.
   \includegraphics[width=.9\columnwidth]{griewank3}
   \caption{Function Griewank with 20 dimensions, comparing Pick Best with
   results from \fig{basic-griewank2}.  Each method performs one evaluation on
-  each of 240 processors per time step.  All algorithms use the Ring topology.}
+  each of 240 processors per time step.  We show the percent of runs that are
+  sufficiently close to the global optimum at each iteration.  All algorithms
+  use the Ring topology.}
   \label{fig:griewank-pickbest}
 \end{figure}
 
@@ -1540,8 +1556,9 @@ original PSO.  These results are shown in \fig{griewank-pruned}.
   \includegraphics[width=.9\columnwidth]{griewank4}
   \caption{Function Griewank with 20 dimensions, comparing pruning with the
   best results from \fig{griewank-pickbest}.  Each method performs one
-  evaluation on each of 240 processors per time step.  All algorithms use the
-  Ring topology.}
+  evaluation on each of 240 processors per time step.  We show the percent of
+  runs that are sufficiently close to the global optimum at each iteration.
+  All algorithms use the Ring topology.}
   \label{fig:griewank-pruned}
 \end{figure}
 
@@ -1560,8 +1577,9 @@ optimum, the less likely it is to be successful.
   \includegraphics[width=.9\columnwidth]{griewank5}
   \caption{Function Griewank with 20 dimensions, comparing speculating several
   iterations ahead with selections from \fig{griewank-pruned}.  Each method
-  performs one evaluation on each of 240 processors per time step.  All
-  algorithms use the Ring topology.}
+  performs one evaluation on each of 240 processors per time step.  We show the
+  percent of runs that are sufficiently close to the global optimum at each
+  iteration.  All algorithms use the Ring topology.}
   \label{fig:griewank-manyiters}
 \end{figure}
 
@@ -1594,7 +1612,8 @@ speculate as far ahead as possible, speeding up the progress of the algorithm.
   \includegraphics[width=.9\columnwidth]{griewankall}
   \caption{Function Griewank with 20 dimensions, comparing the performance of
   standard and speculative parallelizations as the number of processors
-  increases.  All algorithms use the Ring topology.}
+  increases.  We show the percent of runs that are sufficiently close to the
+  global optimum at each iteration.  All algorithms use the Ring topology.}
   \label{fig:griewank-all}
 \end{figure}
 
@@ -1617,13 +1636,17 @@ fast.
   \centering
   \includegraphics[width=.9\columnwidth]{bohachevsky}
   \caption{Function Bohachevsky with 20 dimensions.  Each method performs one
-  evaluation on each of 480 processors per time step.}
+  evaluation on each of 480 processors per time step.  We show the percent of
+  runs that are sufficiently close to the global optimum at each iteration.}
   \label{fig:bohachevsky}
 \end{figure}
 
 \begin{table}
   \caption{Summary of results for function Bohachevsky with 20 dimensions,
-  measuring number of time steps to reach a value of 1e-06.}
+  measuring number of time steps to reach a value of 1e-06.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:bohachevsky-20}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1681,7 +1704,10 @@ from two to six times compared to previous methods.
 
 \begin{table}
   \caption{Summary of results for function Rastrigin with 50 dimensions,
-  measuring number of time steps to reach a value of 100}
+  measuring number of time steps to reach a value of 100.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:rastrigin-50}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1704,7 +1730,10 @@ from two to six times compared to previous methods.
 
 \begin{table}
   \caption{Summary of results for function Sphere with 50 dimensions,
-  measuring number of time steps to reach a value of 1e-06}
+  measuring number of time steps to reach a value of 1e-06.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:sphere-50}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1727,7 +1756,10 @@ from two to six times compared to previous methods.
 
 \begin{table}
   \caption{Summary of results for function Schwefel with 50 dimensions,
-  measuring number of time steps to reach a value of 80}
+  measuring number of time steps to reach a value of 80.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:schwefel-50}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1750,7 +1782,10 @@ from two to six times compared to previous methods.
 
 \begin{table}
   \caption{Summary of results for function Griewank with 50 dimensions,
-  measuring number of time steps to reach a value of 1e-06}
+  measuring number of time steps to reach a value of 1e-06.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:griewank-50}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1767,7 +1802,10 @@ from two to six times compared to previous methods.
 
 \begin{table}
   \caption{Summary of results for function Bohachevsky with 50 dimensions,
-  measuring number of time steps to reach a value of 0.01}
+  measuring number of time steps to reach a value of 0.01.  The ``best''
+  algorithm is bolded, meaning that it has at least 90\% complete and its mean
+  time to completion is significantly lower than all non-bolded algorithms,
+  with a p-value of less than $10^{-5}$.}
   \label{tab:bohachevsky-50}
   \centering
   \begin{tabular}{|l|r|r|r|}
@@ -1904,7 +1942,8 @@ minutes to reach a successful value, while Standard Subswarms takes 50 minutes.
   \includegraphics[width=.9\columnwidth]{rbf_stuck}
   \caption{Results for fitting a radial basis function to noisy data.  We use
   144 processors for each method, so each time step corresponds to 144 function
-  evaluations.}
+  evaluations.  Here we show the percent of runs with a function value below
+  55000, which we considered successful.}
   \label{fig:rbf-stuck}
 \end{figure}
 

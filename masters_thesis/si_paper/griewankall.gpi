@@ -1,5 +1,5 @@
-set xlabel "Time Steps"
-set ylabel "Percent of Swarms Below 1e-06"
+set xlabel "Time steps"
+set ylabel "Percent of swarms below 1e-06"
 set key bottom center Left reverse
 set term postscript enhanced eps size 4in, 2.25in dl 2 font 12
 set clip two
