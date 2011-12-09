@@ -1,38 +1,60 @@
-==============
+=========
 Accepted:
-==============
+=========
+
+School applications:
+--------------------
 
 Admission to Bachelors degree at BYU: accepted (2004)
 
-National Merit Scholarship: accepted (2004)
-
-ORCA Grant application: accepted (2008)
-
-"An Exploration of Topologies and Communication in Large Particle Swarms"
-(second author) submitted to CEC: accepted (2009)
-
-ORCA Grant application: accepted (2009)
-
-"Automatic Topic Discovery in 100 Years of General Conference Talks" sent to
-BYU Studies Symposium: accepted as a poster (2010)
-
 Admission to Masters degree at BYU: accepted (2010)
-
-NAACL Scholarship to Johns Hopkins NLP Summer School: accepted (2010)
-
-"Speculative Evaluation in PSO" sent to PPSN: accepted (2010)
-
-"The Topic Browser: An Interactive Tool for Browsing Topic Models" submitted to
-a NIPS workshop: accepted (2010)
 
 Admission to PhD Program at CMU: accepted (2011)
 
 Admission to PhD Program at UMass Amherst: accepted (2011)
 
 
-==============
+Scholarship applications:
+-------------------------
+
+National Merit Scholarship: accepted (2004)
+
+ORCA Grant application: accepted (2008)
+
+ORCA Grant application: accepted (2009)
+
+NAACL Scholarship to Johns Hopkins NLP Summer School: accepted (2010)
+
+
+Papers submitted:
+-----------------
+
+"An Exploration of Topologies and Communication in Large Particle Swarms"
+(second author) submitted to CEC: accepted (2009)
+
+"Automatic Topic Discovery in 100 Years of General Conference Talks" sent to
+BYU Studies Symposium: accepted as a poster (2010)
+
+"Speculative Evaluation in PSO" sent to PPSN: accepted (2010)
+
+"The Topic Browser: An Interactive Tool for Browsing Topic Models" submitted to
+a NIPS workshop: accepted (2010)
+
+"A Speculative Approach to Particle Swarm Optimization" submitted to
+Swarm Intelligence: accepted (2011)
+
+=========
 Rejected:
-==============
+=========
+
+School applications:
+--------------------
+
+Admission to PhD Program at UC Berkeley: rejected (2011)
+
+
+Scholarship applications:
+-------------------------
 
 Hinckley Scholarship at BYU: finalist, but rejected (2004)
 
@@ -45,13 +67,6 @@ Claricode Medical Software Essay Scholarship: finalist, but rejected (2009)
 
 Phi Kappa Phi Graduate Fellowship: rejected (2010)
 
-"Speculative Evaluation in PSO" sent to GECCO: rejected (2010)
-
-"A Speculative Approach to Particle Swarm Optimization" submitted to
-Transactions on Evolutionary Computation: rejected (2010)
-
-Admission to PhD Program at UC Berkeley: rejected (2011)
-
 Hertz Foundation Graduate Research Fellowship: finalist (1 of 50 in the nation
 in all of physical sciences; a finalist itself is kind of a big deal), but
 rejected (2011)
@@ -61,12 +76,19 @@ National Science Foundation Graduate Research Fellowship: rejected (2011)
 National Defense Science and Engineering Graduate Research Fellowship: rejected
 (2011)
 
-==============
-Waiting:
-==============
+
+Papers submitted:
+-----------------
+
+"Speculative Evaluation in PSO" sent to GECCO: rejected (2010)
 
 "A Speculative Approach to Particle Swarm Optimization" submitted to
-Swarm Intelligence: waiting (2010)
+Transactions on Evolutionary Computation: rejected (2010)
+
+========
+Waiting:
+========
+
 
 
 
