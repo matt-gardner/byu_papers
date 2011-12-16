@@ -1,0 +1,60 @@
+The Publications, Awards, and Research experiences sections would be tedious to
+copy here, and they are pretty straightforward from other materials I have in
+this repository (my list_of_applications and list_of_awards, for example).
+There are four shorter parts that I will list (each had to be under 400
+characters, with a short description and contact info for someone who could
+verify).
+
+
+Leadership experiences:
+-----------------------
+
+Led a small research group developing a tool to visualize the analysis of topic
+models.
+Contact: Eric Ringger (advisor), ringger@cs.byu.edu
+
+Eagle scout.
+Contact: Robert Gardner (Scoutmaster), rgardner@google.com
+
+Supervised the efforts of 20 volunteer missionaries in Alabama, Mississippi and
+Tennessee for six months.
+Contact: Douglas Johnson (mission president), djohnson@projectcontrol-inc.com
+
+
+Teamwork experiences:
+---------------------
+
+Worked in several research groups, including on PSO and topic models.
+Contact: Kevin Seppi, k@cs.byu.edu
+
+Raising two children with my wife; family life requires teamwork.
+Contact: Sabrina Gardner, sabrina.cromwell@gmail.com
+
+Played on several intramural sports teams at BYU.
+Contact: Intramural office, (801) 422–7597
+
+Work during Google internship.
+Contact: Tom Stepleton, stepleton@google.com
+
+
+Memberships and Certifications:
+-------------------------------
+
+Phi Kappa Phi - February 2010
+
+Member of the Association for Computational Linguistics - July 2010
+
+
+Community and Volunteer work:
+-----------------------------
+
+Judge for FIRST Lego League competition, 8 hours in Dec. 2011
+Contact: Norman Kerman, normtema@msn.com
+
+Full-time missionary for the Church of Jesus Christ of Latter-day Saints, May
+2005-May 2007. 112 hrs/week.
+Contact: Douglas Johnson, djohnson@projectcontrol-inc.com
+
+Volunteer at the missionary training center, Sept. 2008-Apr. 2011. 2 hrs/week.
+Contact: Teaching Resource Center, (801) 422-4567.
+

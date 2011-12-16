@@ -1,0 +1,46 @@
+How do we learn? At least at some level, one way we learn is by reading text,
+processing the information contained in the text, and updating a representation
+of knowledge or belief in our brain. We are able to continually build our
+knowledge over time, and the knowledge that we gain aids our processing of new
+text, allowing us to learn more complicated things.
+
+How do computers learn? Generally, "machine learning" is taken to mean
+determining the parameters of a pre-specified model given some amount of data.
+While such methods have been able to accomplish wonders in recent years, they
+are far removed from the way humans learn, and they suffer from some severe
+deficiencies. More data only allows for better tuning of the model's
+parameters, not the further understanding of new kinds of data.
+Semi-supervised machine learning methods generally reach a point where further
+"learning" degrades performance, so computers cannot currently continue
+learning over time.
+
+At CMU I am working with Tom Mitchell on the "never ending language learner,"
+NELL (http://rtw.ml.cmu.edu/rtw/). We are trying to solve some of these
+problems and bring machine learning closer to human learning. Previously, Tom's
+group has made progress in improving performance on semi-supervised relation
+extraction, allowing a machine learning system to continue learning forever
+without a complete degradation of system performance.  However, NELL currently
+only uses aggregated statistics from a very large set of web pages and does not
+understand text at the level of individual sentences.
+
+Over the course of my PhD, I want to make NELL learn like humans, by reading
+individual sentences, understanding them, and updating its knowledge based on
+what it reads. Almost all of the world's knowledge is stored in books that
+humans can read; a computer that could read and integrate that knowledge would
+be able to solve problems far larger than answering Jeopardy questions.
+
+My current work on this problem is determining which concept in NELL is
+referred to by every noun phrase in a given document (e.g., mapping "the
+president" to NELL's conception of Barack Obama or George Bush).  To learn from
+individual sentences one must first discover what concepts are mentioned in the
+sentence. This problem is similar to word-sense disambiguation, except that we
+are deciding between concepts in a knowledge base instead of word senses in a
+dictionary. Also, noun phrases like "the president" could refer to any number
+of real-world entities, in addition to more general senses of the common noun.
+
+I am trying to solve this problem using an extension of coreference resolution,
+looking at syntactic cues to determine which noun phrases in a document are
+coreferent, and then using properties of the noun phrases to determine which
+entity the coreferent phrases refer to. As the knowledge base improves, the
+recognition of entities will improve, which will further improve learning from
+the text in a nice feedback loop.
