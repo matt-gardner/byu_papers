@@ -1,1 +1,1 @@
-../../../latex/makefile
+/home/matt/clone/latex-makefile/Makefile
